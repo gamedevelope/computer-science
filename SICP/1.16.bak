@@ -1,0 +1,10 @@
+#lang sicp
+
+(define (square x) (* x x))
+
+(define (fast-expt p n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt p (/ n 2))))
+        (else (* p (fast-expt p (- n 1))))))
+
+(fast-expt 2 10)
