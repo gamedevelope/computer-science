@@ -68,3 +68,21 @@
 ;(integral cube 0 1 0.01) ; 0.24998750000000042
 
 ; 辛普森规则
+(display "辛普森规则")
+(newline)
+(define (integral f a b n)
+  ; 定义 h h = (b - a)/n
+  (define h (/ (- b a) n))
+
+  ; 定义每一项的求值方法
+  (define (g k)
+    ; 计算系数
+    (define (fk k)
+      (cond ((= k 0) 1)
+            ((= k n) 1)
+            (else
+             (if (even? k) 2 4))))
+    (* (fk k) (f (+ a (* k h)))))
+  (* (/ h 3)
+     (sum g 0 inc n)))
+(integral cube 0 1 2)
