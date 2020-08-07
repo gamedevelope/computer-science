@@ -102,3 +102,17 @@
 ; 采用 prime? 1718863
 (search-for-primes 1000000000000000 (runtime))
 
+; 1.28
+; Miller-Rabin 测试
+(define (miller-rabin-test n)
+  (define (expmod base exp m)
+    (cond ((= exp 0) 1)
+          ((even? exp)
+           (remainder (square (expmod base (/ exp 2) m))
+                      m))
+          (else
+           (remainder (* base (expmod base (- exp 1) m))
+                      m))))
+
+  )
+  
