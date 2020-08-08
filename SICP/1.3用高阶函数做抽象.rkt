@@ -137,3 +137,36 @@
 
 ; 计算 pi 值
 (* 4.0 (factorial-pi 100))
+
+(display "练习 1.32")
+(newline)
+
+; 定义 accumulate
+; 递归计算过程
+(define (accumulate combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+                (accumulate combiner null-value term (next a) next b))))
+
+; 迭代版本
+(define (accumulate-v2 combiner null-value term a next b)
+  (define (iter combiner a result)
+    (if (> a b)
+        null-value
+        (combiner (term a)
+                  result
+                  (iter combiner (next a) result))))
+  (iter combiner a null-value))
+(display "递归计算过程")
+(newline)
+(accumulate + 0 identity 1 inc 10)
+(accumulate * 1 identity 1 inc 10)
+
+(display "迭代计算过程")
+(newline)
+(accumulate-v2 + 0 identity 1 inc 10)
+(accumulate-v2 * 1 identity 1 inc 10)
+
+; 练习 1.33
+
