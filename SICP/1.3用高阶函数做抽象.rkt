@@ -168,5 +168,25 @@
 (accumulate-v2 + 0 identity 1 inc 10)
 (accumulate-v2 * 1 identity 1 inc 10)
 
+(display "练习 1.33")
+(newline)
 ; 练习 1.33
+; 定义 accumulate
+; 递归计算过程
+(define (filtered-accumulate combiner null-value term a next b filter)
+  (if (> a b)
+      null-value
+      (combiner (if (filter a) (term a) null-value)
+                (filtered-accumulate combiner null-value term (next a) next b filter))))
 
+; gcd 求最大公约数
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+
+(define (relative-prime a b)
+  (= 1 (gcd a b)))
+
+; 带过滤功能的累计
+(filtered-accumulate * 1 identity 1 inc 10 (lambda (x) (= 1 (gcd x 10))))
