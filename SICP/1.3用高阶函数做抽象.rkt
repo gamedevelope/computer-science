@@ -312,3 +312,34 @@
 (fixed-point (lambda (x) (average x (/ (log 1000) (log x))))
              2.0)
 
+; 练习 1.37 计算连分式的值
+(newline)
+(display "求解连分式的值")
+(newline)
+(define (cont-frac n d k)
+  (define (iter n d i)
+    (if (= i k)
+        (d i)
+        (/ (n i)
+           (+ (d i)
+              (iter n d (inc i))))))
+  (iter n d 1))
+
+; 迭代版本，不太容易想
+(define (cont-frac-iter n d k)
+  (define (iter n d i result)
+    (cond ((= i 0) result)
+          (else (let ((result (/ (n i)
+                                 (d i))))
+                  (/ (n (dec i))
+                     (+ (d (dec i))
+                        (iter n d (dec i) result)))))))
+  (iter n d k 0))
+
+(cont-frac (lambda (i) 1.0)
+           (lambda (i) 1.0)
+           20)
+
+(cont-frac-iter (lambda (i) 1.0)
+                (lambda (i) 1.0)
+                20)
