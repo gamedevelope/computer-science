@@ -190,3 +190,6 @@
 
 ; 带过滤功能的累计
 (filtered-accumulate * 1 identity 1 inc 10 (lambda (x) (= 1 (gcd x 10))))
+
+; 章节 1.3.2
+; 使用 lambda
