@@ -330,10 +330,8 @@
   (define (iter n d i result)
     (cond ((= i 0) result)
           (else (let ((result (/ (n i)
-                                 (d i))))
-                  (/ (n (dec i))
-                     (+ (d (dec i))
-                        (iter n d (dec i) result)))))))
+                                 (+ (d i) result))))
+                  (iter n d (dec i) result)))))
   (iter n d k 0))
 
 (cont-frac (lambda (i) 1.0)
@@ -343,3 +341,25 @@
 (cont-frac-iter (lambda (i) 1.0)
                 (lambda (i) 1.0)
                 20)
+
+(newline)
+(display "练习1.38 用欧拉给出的连分式计算 e")
+(newline)
+
+; 练习 1.38
+; 计算欧拉给出的计算 e 值的连分式
+(define (double x) (+ x x))
+(define (d i)
+  (if (= (remainder i 3) 2)
+      (double (/ (+ i 1) 3))
+      1))
+
+
+(+ 2 (cont-frac (lambda (i) 1.0)
+           d
+           500))
+
+(+ 2 (cont-frac-iter (lambda (i) 1.0)
+           d
+           500))
+
