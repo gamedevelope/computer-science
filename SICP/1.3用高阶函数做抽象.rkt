@@ -1,5 +1,7 @@
 #lang sicp
 
+(define (square x) (* x x))
+
 ; 1.3 用高阶函数做抽象
 (define (cube x) (* x x x))
 (cube 1)
@@ -193,3 +195,30 @@
 
 ; 章节 1.3.2
 ; 使用 lambda
+((lambda (x) (+ 1 x)) 1)
+
+; 使用 let
+(define (test-let)
+  (let ((a 'hello)
+        (b 'world))
+  (display a)
+  (display b)))
+
+(test-let)
+
+(define (f x y)
+  (let ((a (+ 1 (* x y)))
+        (b (- 1 y)))
+    (+ (* x (square a))
+       (* y b)
+       (* a b))))
+
+(f 10 20)
+(+ (let ((x 3))
+     (+ x (* x 10)))
+   3)
+(define (ff g)
+  (g 2))
+(ff square)
+(ff (lambda (x) (* x (inc x))))
+; (ff ff)
