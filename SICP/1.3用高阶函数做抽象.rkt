@@ -86,3 +86,54 @@
   (* (/ h 3)
      (sum g 0 inc n)))
 (integral cube 0 1 2)
+
+; 练习 1.30, 写一个迭代过程的 sum
+(display "练习 1.30")
+(newline)
+(define (sum-v2 term a next b)
+  (define (iter a result)
+    (if (> a b)
+        0
+        (+ (term a)
+           result
+           (iter (inc a) result))))
+  (iter a 0))
+(sum-v2 identity 1 inc 10)
+(sum-v2 cube 1 inc 10)
+
+; 练习 1.31
+; 定义 product 计算乘积
+
+(display "练习 1.31")
+(newline)
+
+; 递归计算过程
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a) (product term (next a) next b))))
+(product identity 1 inc 10)
+
+; 迭代计算过程
+(define (product-v2 term a next b)
+  (define (iter a result)
+    (if (> a b)
+        1
+        (* (term a)
+           result
+           (iter (next a) result))))
+  (iter a 1))
+(product-v2 identity 1 inc 10)
+
+; 利用乘积计算 pi 值
+(define (factorial-pi n)
+  (define (next p)
+    (+ 2 p))
+  (define (square p) (* p p))
+  (define (term p)
+    (/ (* p (+ 2 p)) (square (inc p))))
+
+  (product term 2 next n))
+
+; 计算 pi 值
+(* 4.0 (factorial-pi 100))
