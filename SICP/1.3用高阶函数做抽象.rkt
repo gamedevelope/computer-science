@@ -317,22 +317,22 @@
 (display "求解连分式的值")
 (newline)
 (define (cont-frac n d k)
-  (define (iter n d i)
+  (define (iter i)
     (if (= i k)
         (d i)
         (/ (n i)
            (+ (d i)
-              (iter n d (inc i))))))
-  (iter n d 1))
+              (iter (inc i))))))
+  (iter 1))
 
 ; 迭代版本，不太容易想
 (define (cont-frac-iter n d k)
-  (define (iter n d i result)
+  (define (iter i result)
     (cond ((= i 0) result)
           (else (let ((result (/ (n i)
                                  (+ (d i) result))))
-                  (iter n d (dec i) result)))))
-  (iter n d k 0))
+                  (iter (dec i) result)))))
+  (iter k 0))
 
 (cont-frac (lambda (i) 1.0)
            (lambda (i) 1.0)
@@ -356,10 +356,27 @@
 
 
 (+ 2 (cont-frac (lambda (i) 1.0)
-           d
-           500))
+                d
+                500))
 
 (+ 2 (cont-frac-iter (lambda (i) 1.0)
-           d
-           500))
+                     d
+                     500))
 
+; 练习 1.39
+(define (f139 x n k)
+  (if (= n k)
+      (- (double n) 1)
+      (- (double n)
+         (g139 x n k))))
+
+(define (g139 x n k)
+  (/ (square x)
+     (f139 x (inc n) k)))
+
+(define (tan-cf x k)
+  (/ x (f139 x 1 k)))
+
+(tan-cf 3.1415926 10)
+(tan-cf 1.0 10)
+(tan 1.0)
