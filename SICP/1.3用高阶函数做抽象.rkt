@@ -446,3 +446,42 @@
                             newton-transform
                             1.0))
 (fixed-point-newton-sqrt 10)
+
+; 练习 1.40
+(new-section "练习 1.40")
+
+; 练习 1.41
+(new-section "练习 1.41")
+(new-section "double 将一个过程应用两次")
+(define (pdouble f)
+  (lambda (x)
+    (f (f x))))
+((pdouble inc) 1)
+(((pdouble (pdouble pdouble)) inc) 5)
+;(((pdouble (pdouble pdouble)) square) 2)
+((pdouble square) 2)
+((pdouble (pdouble square)) 2)
+
+; 练习 1.42
+(new-section "练习 1.42")
+(define (compose f g)
+  (lambda (x) (f (g x))))
+((compose square inc) 6)
+
+; 练习 1.43
+(new-section "练习 1.43")
+(define (repeated f n)
+  (if (= n 1)
+      f
+      (compose f f)))
+((repeated square 2) 5)
+
+; 练习 1.44
+(new-section "练习 1.44")
+(define (smooth f)
+  (lambda (x)
+    (/ (+ (f (- x dx))
+          (f x)
+          (f (+ x dx)))
+       3)))
+       
