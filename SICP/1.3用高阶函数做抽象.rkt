@@ -363,20 +363,86 @@
                      d
                      500))
 
-; 练习 1.39
-(define (f139 x n k)
-  (if (= n k)
-      (- (double n) 1)
-      (- (double n)
-         (g139 x n k))))
 
-(define (g139 x n k)
-  (/ (square x)
-     (f139 x (inc n) k)))
+(define (new-section str)
+  (newline)
+  (display str)
+  (newline))
+
+(new-section "练习1.39")
 
 (define (tan-cf x k)
-  (/ x (f139 x 1 k)))
+  (define (iter x i)
+    (if (= i k)
+        (dec (double i))
+        (- (dec (double i))
+           (/ (square x)
+              (iter x (inc i))))))
+  (/ x (iter x 1)))
 
 (tan-cf 3.1415926 10)
 (tan-cf 1.0 10)
 (tan 1.0)
+
+; 章节 1.3.4 过程作为返回值
+(new-section "定义平均阻尼方法")
+
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+
+((average-damp inc) 10)
+((average-damp square) 10)
+
+(new-section "用平均阻尼方法定义 sqrt")
+(define (ad-sqrt x)
+  (fixed-point (average-damp (lambda (y) (/ x y)))
+               1.0))
+
+(ad-sqrt 10)
+(ad-sqrt 100)
+
+(new-section "用平均阻尼方法定义 求立方根的方法")
+(define (ad-cube-root x)
+  (fixed-point (average-damp (lambda (y) (/ x (square y))))
+               1.0))
+(ad-cube-root 10)
+
+(new-section "牛顿法")
+(define dx 0.000001)
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))
+
+((deriv cube) 10)
+(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) ((deriv g) x)))))
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (newton-sqrt x)
+  (newtons-method (lambda (y) (- (square y) x))
+                  1.0))
+
+(define (newton-cube-root x)
+  (newtons-method (lambda (y) (- (cube y) x))
+                  1.0))
+
+(newton-sqrt 10)
+(newton-cube-root 10)
+
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+(new-section "更一般的求平方根的方法")
+(define (fixed-point-sqrt x)
+  (fixed-point-of-transform (lambda (y) (/ x y))
+                            average-damp
+                            1.0))
+(fixed-point-sqrt 10)
+(define (fixed-point-newton-sqrt x)
+  (fixed-point-of-transform (lambda (y) (- (square y) x))
+                            newton-transform
+                            1.0))
+(fixed-point-newton-sqrt 10)
