@@ -484,4 +484,21 @@
           (f x)
           (f (+ x dx)))
        3)))
-       
+
+; 练习 1.45
+(new-section "练习 1.45")
+(define fpot fixed-point-of-transform)
+(define (root-for-power3 x)
+  (fpot (lambda (y)
+          (- x (cube y)))
+        newton-transform
+        1.0))
+(root-for-power3 10)
+
+(new-section "练习 1.45 求4次方根")
+(define (root-for-power4 x)
+  (fpot (lambda (y)
+          (- x (* y y y y)))
+        newton-transform
+        1.0))
+(root-for-power4 100)
