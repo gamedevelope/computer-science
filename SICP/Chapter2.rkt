@@ -31,6 +31,19 @@
 ;           (cons (/ n c)
 ;                 (/ d c))))))
 
+(new-section "练习 2.1")
+; 定义更好的 make-rat
+; 分子,分母都为负数,将其转换成正数
+; 如果分母为负,分子为整,将分子转换负数,分母转为正数
+(define (make-rat n d)
+  (cond ((= d 0) (error "should not be zero"))
+        (else
+         (let ((nd (* n d)))
+           (let ((n (if (< d 0) (- 0 n) n)))
+             (let ((d (/ nd n))
+                   (c (abs (gcd n d))))
+               (cons (/ n c)
+                     (/ d c))))))))
 (define (numer rat)
   (car rat))
 (define (denom rat)
@@ -75,17 +88,6 @@
 (print-rat x1)
 (print-rat (dev-rat x1 y1))
 
-(new-section "练习 2.1")
-; 定义更好的 make-rat
-; 分子，分母都为负数，将其转换成正数
-; 如果分母为负，分子为整，将分子转换负数，分母转为正数
-(define (make-rat n d)
-  (cond ((= d 0) (error "should not be zero"))
-        (else
-         (let ((c (gcd n d))
-               (nd (* n d)))               
-           (cons (/ (/ nd d) c)
-                 (/ (/ nd  c))))))
-
-(make-rat 1 -1)
+(newline)
+(make-rat 1 -5)
 (make-rat -1 -2)
