@@ -1,5 +1,11 @@
 #lang sicp
 
+; 公共方法
+(define (gcd m n)
+  (if (= n 0)
+      m
+      (gcd n (remainder m n))))
+
 ; 第二章
 ; 构建数据抽象
 
@@ -8,7 +14,12 @@
 
 ; 构建一个有理数
 (define (make-rat n d)
-  (cons n d))
+  (cond ((= d 0) (error "should not be zero"))
+        (else
+         (let ((c (gcd n d)))
+           (cons (/ n c)
+                 (/ d c))))))
+
 (define (numer rat)
   (car rat))
 (define (denom rat)
@@ -43,8 +54,8 @@
   (display "/")
   (display (denom p)))
 
-(define x1 (make-rat 5 3))
-(define y1 (make-rat 1 5))
+(define x1 (make-rat 3 10))
+(define y1 (make-rat 2 5))
 
 (add-rat x1 y1)
 (sub-rat x1 y1)
