@@ -91,3 +91,68 @@
 (newline)
 (make-rat 1 -5)
 (make-rat -1 -2)
+
+(new-section "练习 2.2")
+; 练习 2.2
+(define (make-segment x1 y1 x2 y2)
+  (cons (cons x1 y1)
+        (cons x2 y2)))
+
+(define (x-point p)
+  (car p))
+
+(define (y-point p)
+  (cdr p))
+
+(define (x-coord p)
+  (car p))
+
+(define (y-coord p)
+  (cdr p))
+
+(define (left-point-x p)
+  (car (x-point p)))
+(define (left-point-y p)
+  (cdr (x-point p)))
+(define (right-point-x p)
+  (car (y-point p)))
+(define (right-point-y p)
+  (cdr (y-point p)))
+
+(define (midpoint-segment p)
+  (let ((p1 (x-point p))
+        (p2 (y-point p)))
+    (cons (/ (+ (x-coord p1) (x-coord p2)) 2.0)
+          (/ (+ (y-coord p1) (y-coord p2)) 2.0))))
+
+(define (print-point p)
+  (newline)
+  (display "(")
+  (display (x-point p))
+  (display ",")
+  (display (y-point p))
+  (display ")"))
+
+(define p (make-segment 1 1 10 3))
+(x-point p)
+(y-point p)
+(print-point p)
+(newline)
+(midpoint-segment p)
+
+; 计算矩形周长
+(define (rectangle-perimeter p)
+  (+ (* (- (right-point-x p) (left-point-x p))
+        2)
+     (* (- (right-point-y p) (left-point-y p))
+        2)))
+
+; 计算矩形面积
+(define (rectangle-area p)
+  (* (- (right-point-x p) (left-point-x p))
+     (- (right-point-y p) (left-point-y p))))
+
+(right-point-x p)
+(left-point-x p)
+(rectangle-perimeter p)
+(rectangle-area p)
