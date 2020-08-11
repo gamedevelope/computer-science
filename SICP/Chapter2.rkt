@@ -140,6 +140,8 @@
 (newline)
 (midpoint-segment p)
 
+(define make-rectangle make-segment)
+
 ; 计算矩形周长
 (define (rectangle-perimeter p)
   (+ (* (- (right-point-x p) (left-point-x p))
@@ -156,3 +158,14 @@
 (left-point-x p)
 (rectangle-perimeter p)
 (rectangle-area p)
+
+(define q (make-rectangle 1 2 3 4))
+(rectangle-perimeter q)
+(rectangle-area q)
+
+(new-section "练习 2.3")
+(define (make-rectangle-v2 x1 y1 length height)
+  (make-segment x1 y1 (+ x1 length) (+ y1 height)))
+(define mr1 (make-rectangle-v2 0 0 5 10))
+(rectangle-perimeter mr1)
+(rectangle-area mr1)
