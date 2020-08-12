@@ -47,10 +47,36 @@
 
 ; 除法
 (define (div-interval x y)
-  (mul-interval x
-                (make-interval (/ 1.0 (upper-bound y))
-                               (/ 1.0 (lower-bound y)))))
+  (let ((a (upper-bound y))
+        (b (lower-bound y)))
+    (if (and (<= b 0) (<= 0 a))
+        (error "除以跨0的区间")
+        (mul-interval x
+                      (make-interval (/ 1.0 (upper-bound y))
+                                     (/ 1.0 (lower-bound y)))))))
 
 (div-interval n1 n2)
-
+(div-interval n1
+              (make-interval -1 -0.00001))
 ; 练习 2.9
+; n1与n2之和的宽度是n1与n2的宽度之和
+; n1与n2之差的宽度是n1与n2的宽度之和
+
+; 练习 2.11
+; 分别比较两个区间与0的关系
+(define (mul-interval x y)
+  (let ((xl (lower-bound x))
+        (xu (upper-bound x))
+        (yl (lower-bound y))
+        (yu (upper-bound y)))
+    (cond ((< 0 xl)
+           (cond ((< 0 yl) (make-interval (* xl yl) (* xu yu)))
+                 ((< yl 0) (make-interval (* xu yl) (* xl yu)))
+                 (else (make-interval (* xu yl) (* xu yu)))))
+          ((< xu 0)
+           (cond ((< 0 yl) (make-interval (* xl yu) (* xu yl)))
+                 ((< yu 0) (make-interval (* xl yl) (* xu yu)))
+                 (else (make-interval (* xl yu) (* xl yl)))))
+          (else
+            
+           
