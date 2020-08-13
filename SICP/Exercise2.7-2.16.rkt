@@ -97,3 +97,39 @@
   (* 100 (/ (width i) (center i))))
 
 (percent (make-interval-by-percent 10 10))
+
+; 练习 2.13
+; 误差很小时
+; 以区间都是正整数为例，区间积的误差是
+(define (mul-tolerance n1 n2)
+  (percent (mul-interval n1 n2)))
+
+; 误差之积是
+(define (mul-of-tolerance n1 n2)
+  (* (percent n1) (percent n2)))
+
+(define n3 (make-interval 99 100))
+(define n4 (make-interval 999 1000))
+
+(display n3)
+(display n4)
+(newline)
+(display "积的误差是")
+(mul-tolerance n3 n4)
+(newline)
+(display "误差的积是")
+(mul-of-tolerance n3 n4)
+(newline)
+
+(define n5 (make-interval 30 100))
+(define n6 (make-interval 40 100))
+(display n3)
+(display n4)
+(newline)
+(display "积的误差是")
+(mul-tolerance n5 n5)
+(newline)
+(display "误差的积是")
+(mul-of-tolerance n5 n5)
+
+; 练习 2.14
