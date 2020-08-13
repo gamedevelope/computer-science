@@ -64,19 +64,36 @@
 
 ; 练习 2.11
 ; 分别比较两个区间与0的关系
-(define (mul-interval x y)
-  (let ((xl (lower-bound x))
-        (xu (upper-bound x))
-        (yl (lower-bound y))
-        (yu (upper-bound y)))
-    (cond ((< 0 xl)
-           (cond ((< 0 yl) (make-interval (* xl yl) (* xu yu)))
-                 ((< yl 0) (make-interval (* xu yl) (* xl yu)))
-                 (else (make-interval (* xu yl) (* xu yu)))))
-          ((< xu 0)
-           (cond ((< 0 yl) (make-interval (* xl yu) (* xu yl)))
-                 ((< yu 0) (make-interval (* xl yl) (* xu yu)))
-                 (else (make-interval (* xl yu) (* xl yl)))))
-          (else
-            
-           
+;(define (mul-interval x y)
+;  (let ((xl (lower-bound x))
+;        (xu (upper-bound x))
+;        (yl (lower-bound y))
+;        (yu (upper-bound y)))
+;    (cond ((< 0 xl)
+;           (cond ((< 0 yl) (make-interval (* xl yl) (* xu yu)))
+;                 ((< yl 0) (make-interval (* xu yl) (* xl yu)))
+;                 (else (make-interval (* xu yl) (* xu yu)))))
+;          ((< xu 0)
+;           (cond ((< 0 yl) (make-interval (* xl yu) (* xu yl)))
+;                 ((< yu 0) (make-interval (* xl yl) (* xu yu)))
+;                 (else (make-interval (* xl yu) (* xl yl)))))
+;          (else
+
+; 练习 2.12
+(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+(define (make-interval-by-percent c p)
+  (let ((d (/ (* p c) 100.0)))
+    (make-center-width c (abs d))))
+
+(define (percent i)
+  (* 100 (/ (width i) (center i))))
+
+(percent (make-interval-by-percent 10 10))
