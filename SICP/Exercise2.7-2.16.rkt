@@ -45,6 +45,13 @@
                    (max p1 p2 p3 p4))))
 (mul-interval n1 n2)
 
+;(define (mul-interval x y)
+;  (let ((p2 (* (lower-bound x) (upper-bound y)))
+;        (p3 (* (upper-bound x) (lower-bound y))))
+;    (make-interval (min p2 p3)
+;                   (max p2 p3))))
+(mul-interval n1 n2)
+
 ; 除法
 (define (div-interval x y)
   (let ((a (upper-bound y))
@@ -105,11 +112,11 @@
   (percent (mul-interval n1 n2)))
 
 ; 误差之积是
-(define (mul-of-tolerance n1 n2)
-  (* (percent n1) (percent n2)))
+(define (mul-of-tolerance x y)
+  (* (percent x) (percent y)))
 
-(define n3 (make-interval 99 100))
-(define n4 (make-interval 999 1000))
+(define n3 (make-interval 9 10))
+(define n4 (make-interval 99 800))
 
 (display n3)
 (display n4)
@@ -121,15 +128,69 @@
 (mul-of-tolerance n3 n4)
 (newline)
 
-(define n5 (make-interval 30 100))
-(define n6 (make-interval 40 100))
-(display n3)
-(display n4)
+(define n5 (make-interval 99 100))
+(define n6 (make-interval 99 100))
+(display n5)
+(display n6)
 (newline)
 (display "积的误差是")
-(mul-tolerance n5 n5)
+(mul-tolerance n5 n6)
 (newline)
 (display "误差的积是")
-(mul-of-tolerance n5 n5)
+(mul-of-tolerance n5 n6)
 
 ; 练习 2.14
+(define (par1 r1 r2)
+  (div-interval (mul-interval r1 r2)
+                (add-interval r1 r2)))
+
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1)))
+    (div-interval one
+                  (add-interval (div-interval one r1)
+                                (div-interval one r2)))))
+
+(define r1 (make-interval 3 5))
+(define r2 (make-interval 4 6))
+(par1 r1 r2)
+(par2 r1 r2)
+
+(div-interval r1 r1)
+(div-interval r1 r2)
+
+(set! r1 (make-interval-by-percent 10 20))
+(set! r2 (make-interval-by-percent 10 20))
+(par1 r1 r2)
+(par2 r1 r2)
+
+; 误差越大，两种计算方法的结果相差越大
+(div-interval (make-interval 1 1)
+              (div-interval (make-interval 1 1)
+                            (make-interval 2 5)))
+
+; r1 / r2
+(div-interval r1 r2)
+
+; r1 * 1 / r2
+(mul-interval r1
+              (div-interval (make-interval 1 1)
+                            r2))
+
+(set! r1 (make-interval-by-percent 10 10))
+(set! r2 (make-interval-by-percent 10 10))
+(define r3 (add-interval r1 r2))
+(display r3)
+(percent r3)
+(width r3)
+(center r3)
+(define r4 (mul-interval r1 r2))
+(display r4)
+(percent r4)
+; 练习 2.16
+; 用如下的计算方法，可以消除两种计算方法的不同
+; 但是乘积的误差计算不对
+;(define (mul-interval x y)
+;  (let ((p2 (* (lower-bound x) (upper-bound y)))
+;        (p3 (* (upper-bound x) (lower-bound y))))
+;    (make-interval (min p2 p3)
+;                   (max p2 p3))))
