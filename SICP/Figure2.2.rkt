@@ -76,4 +76,29 @@
                 coin-values)))))
 
 ; 练习 2.20
+; 有点麻烦，对变参语法不熟悉的原因
+(define (f x y . z)
+  (display x)
+  (display y)
+  (display z))
 
+(display "练习 2.20")
+(newline)
+(define (same-parity x . y)
+  (define (iter a b)
+    (if (null? b)
+        (if (even? (- x a))
+            (cons a nil)
+            nil)
+        (if (even? (- x a))
+            (cons a (iter (car b) (cdr b)))
+            (iter (car b) (cdr b)))))
+  (iter x y))
+
+(newline)
+(same-parity 1 2 3 4 5)
+(same-parity 2 2 3 4 5)
+
+(define (d x . y)
+  (display x)
+  (display y))
