@@ -99,6 +99,55 @@
 (same-parity 1 2 3 4 5)
 (same-parity 2 2 3 4 5)
 
-(define (d x . y)
-  (display x)
-  (display y))
+(define (scale-list items factor)
+  (if (null? items)
+      nil
+      (cons (factor (car items))
+            (scale-list (cdr items) factor))))
+
+(define (map proc items)
+  (if (null? items)
+      nil
+      (cons (proc (car items))
+            (map proc (cdr items)))))
+
+(map inc (list 1 2 3 4 5))
+(map abs (list -1 2 -3 4))
+
+(define (square x)
+  (* x x))
+
+; 练习 2.21
+(define (square-list lst)
+  (map (lambda (x) (* x x)) lst))
+
+(define (square-list-v2 lst)
+  (if (null? lst)
+      nil
+      (cons (* (car lst) (car lst))
+            (square-list (cdr lst)))))
+
+; 练习 2.22
+; 错误版本 1
+(define (square-list-ex2.22 items)
+  (define (iter things answer)
+    (if (null? things)
+        answer
+        (iter (cdr things)
+              (cons (square (car things))
+                    answer))))
+  (iter items nil))
+
+(square-list-ex2.22 (list 1 2 3 4))
+
+; 错误版本2
+(define (square-list-ex2.22-v2 items)
+  (define (iter things answer)
+    (if (null? things)
+        answer
+        (iter (cdr things)
+              (cons answer
+                    (square (car things))))))
+  (iter items nil))
+
+(square-list-ex2.22-v2 (list 1 2 3 4))
