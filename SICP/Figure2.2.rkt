@@ -129,6 +129,7 @@
 
 ; 练习 2.22
 ; 错误版本 1
+; 错误的原因是 cons 把后面的数放到了前面
 (define (square-list-ex2.22 items)
   (define (iter things answer)
     (if (null? things)
@@ -141,6 +142,7 @@
 (square-list-ex2.22 (list 1 2 3 4))
 
 ; 错误版本2
+; cons 参数类型不正确
 (define (square-list-ex2.22-v2 items)
   (define (iter things answer)
     (if (null? things)
@@ -151,3 +153,76 @@
   (iter items nil))
 
 (square-list-ex2.22-v2 (list 1 2 3 4))
+
+; 正确的版本
+; 可以加一个 reverse
+(define (square-list-ex2.22-v3 items)
+  (define (iter things answer)
+    (if (null? things)
+        answer
+        (iter (cdr things)
+              (cons (square (car things))
+                    answer))))
+  (reverse (iter items nil)))
+(square-list-ex2.22-v3 (list 1 2 3 4 5))
+
+; 练习 2.23
+;(define (no p)
+;  (p))
+(define (for-each proc items)
+  (cond ((null? items) true)
+        (else
+         (proc (car items))
+         (for-each proc (cdr items)))))
+
+(for-each (lambda (x) (display x))
+          (list 1 2 3 4 5))
+
+; figure 2.2.2
+(define (count-leaves x)
+  (cond ((null? x) 0)
+        ((not (pair? x)) 1)
+        (else (+ (count-leaves (car x))
+                 (count-leaves (cdr x))))))
+
+; 练习 2.24
+(count-leaves (list 1 (list 2 (list 3 4))))
+
+; 练习 2.25
+(car (cdr (car (cdr (cdr (list 1 3 (list 5 7) 9))))))
+(car (car (list (list 7))))
+(car(cdr
+     (car (cdr
+           (car (cdr
+                 (car (cdr
+                       (car (cdr
+                             (car (cdr
+                                   (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7))))))))))))))))))
+
+; 练习 2.26
+(define x2.26 (list 1 2 3))
+(define y2.26 (list 4 5 6))
+(append x2.26 y2.26)
+(cons x2.26 y2.26)
+(list x2.26 y2.26)
+
+; 练习 2.27
+(define (reverse-v2 lst)
+  (define (iter a b)
+    (if (null? b)
+        a
+        (iter (cons (car b) a) (cdr b))))
+  (iter nil lst))
+
+; 深度反转
+(define (deep-reverse lst)
+  (define (iter a b)
+    (if (null? b)
+        a
+        (let ((fb (car b)))
+          (iter (cons (if (pair? fb)
+                          (iter nil fb)
+                          fb)
+                      a)
+                (cdr b)))))
+  (iter nil lst))
