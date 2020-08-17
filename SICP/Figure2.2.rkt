@@ -226,3 +226,26 @@
                       a)
                 (cdr b)))))
   (iter nil lst))
+
+; 练习 2.28
+(define (fringe tree)
+  (define (iter lst tree)
+    (cond ((null? tree) nil)
+          ((not (pair? tree)) (cons tree lst))
+          (else
+           (append (iter lst (car tree))
+                   (iter lst (cdr tree))))))
+  (reverse (iter nil tree)))
+
+(fringe (list 1 2 (list 3 4) (list 4 5 6 (list 7 8))))
+
+(define (frigne-v2 tree)
+  (define (iter lst tree)
+    (cond ((null? tree) nil)
+          ((not (pair? tree)) (cons tree lst))
+          (else
+           (append (iter lst (car tree))
+                   (iter lst (cdr tree))))))
+  (reverse (iter nil tree)))
+
+(frigne-v2 (list 1 2 (list 3 4) (list 4 5 6 (list 7 8))))
