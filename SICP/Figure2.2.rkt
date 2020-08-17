@@ -249,3 +249,60 @@
   (reverse (iter nil tree)))
 
 (frigne-v2 (list 1 2 (list 3 4) (list 4 5 6 (list 7 8))))
+
+; 练习 2.29
+(define (make-mobile left right)
+;  (list left right))
+  (cons left right))
+
+(define (make-branch length structure)
+;  (list length structure))
+  (cons length structure))
+
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+;  (cadr mobile))
+  (cdr mobile))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+;  (cadr branch))
+  (cdr branch))
+
+(define (total-weight mobile)
+  (cond ((not (pair? (left-branch mobile)))
+         (if (not (pair? (right-branch mobile)))
+             (branch-structure mobile)
+             (total-weight (right-branch mobile))))
+        (else (+ (total-weight (left-branch mobile))
+                 (total-weight (right-branch mobile))))))
+
+(define mb2.29 (make-mobile
+                (make-branch 1 10)
+                (make-branch 10
+                             (make-mobile
+                              (make-branch 1 2)
+                              (make-branch 1 3)))))
+
+(total-weight mb2.29)
+
+(define mb2.29-v1 (make-mobile
+                   (make-branch
+                    10
+                    (make-mobile
+                     (make-branch 10 2)
+                     (make-branch 10 2)))
+                   (make-branch 4 10)))
+
+(define (mobile-blance? mobile)
+  (if (pair? (left-branch mobile))
+      (and (= (* (branch-length (left-branch mobile)) (total-weight (left-branch mobile)))
+              (* (branch-length (right-branch mobile)) (total-weight (right-branch mobile))))
+           (mobile-blance? (left-branch mobile))
+           (mobile-blance? (right-branch mobile)))
+      true))
+(mobile-blance? mb2.29-v1)
