@@ -343,3 +343,23 @@
                        (list 4 5
                              (list 6 7))))
 (square-tree-map tree2.30)
+
+; 练习 2.31
+(define (tree-map proc tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (tree-map proc sub-tree)
+             (proc sub-tree)))
+       tree))
+
+; 练习 2.32
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (x)
+                            (cons (car s) x)) rest)))))
+
+(map (lambda (x)
+       (cons 1 x)) (list (list 1 2) (list 3 4)))
+(subsets (list 1 2 3))
