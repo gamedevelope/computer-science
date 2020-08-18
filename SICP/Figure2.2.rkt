@@ -306,3 +306,40 @@
            (mobile-blance? (right-branch mobile)))
       true))
 (mobile-blance? mb2.29-v1)
+
+(define (scale-tree tree factor)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (* tree factor))
+        (else (cons (scale-tree (car tree) factor)
+                    (scale-tree (cdr tree) factor)))))
+
+(scale-tree (list 1 2 3 4 5)
+            10)
+
+(define (scale-tree-map tree factor)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (scale-tree-map sub-tree factor)
+             (* sub-tree factor)))
+       tree))
+
+(scale-tree-map (list 1 2 3 (list 4 5 6)) 10)
+
+; 练习 2.30
+(define (square-tree tree)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (square tree))
+        (else (cons (square-tree (car tree))
+                    (square-tree (cdr tree))))))
+
+(define (square-tree-map tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (square-tree-map sub-tree)
+             (square sub-tree)))
+       tree))
+
+(define tree2.30 (list 1 2
+                       (list 4 5
+                             (list 6 7))))
+(square-tree-map tree2.30)
