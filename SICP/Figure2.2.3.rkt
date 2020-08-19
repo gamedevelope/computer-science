@@ -106,3 +106,31 @@
               coefficient-sequence))
 
 (horner-eval 2 (list 1 2 3 4 5 6 7))
+
+; 练习 2.35
+; 第一个版本
+(define (count-leaves2.35 t)
+  (accumulate (lambda (x y)
+                (cond ((null? x) 0)
+                      (else (+ (if (not (pair? x))
+                                   1
+                                   (count-leaves2.35 x))
+                               y))))
+              0
+              t))
+
+; 第二个版本
+(define (count-leaves2.35-v2 t)
+  (accumulate (lambda (x y)
+                (+ x y))
+              0
+              (map (lambda (x)
+                     (cond ((null? x) 0)
+                           (else (if (pair? x)
+                                     (count-leaves2.35-v2 x)
+                                     1))))
+                   t)))
+
+(define lst2.35 (list 1 (list 2 3 (list 3 4 5) (list 1))))
+(count-leaves2.35 lst2.35)
+(count-leaves2.35-v2 lst2.35)
