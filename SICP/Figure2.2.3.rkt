@@ -95,3 +95,14 @@
                 (inc y))
               0
               seq))
+
+; 练习 2.34
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms)
+                (+ this-coeff
+                   ; higher-terms 表示后续序列的值
+                   (* x higher-terms)))
+              0
+              coefficient-sequence))
+
+(horner-eval 2 (list 1 2 3 4 5 6 7))
