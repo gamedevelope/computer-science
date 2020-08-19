@@ -65,4 +65,33 @@
               (filter even?
                       (map fib
                            (enumerate-interval 0 n)))))
-(even-fibs 100)
+;(even-fibs 100)
+
+(newline)
+(display "组合运算")
+(filter (lambda (x)
+          (= 0 (remainder x 2)))
+        (map inc
+             (map inc
+                  (map square
+                       (map (lambda (x)
+                              (* x x x))
+                            (enumerate-interval 0 10))))))
+
+; 练习 2.33
+(define (map2.33 p seq)
+  (accumulate (lambda (x y)
+                (cons (p x) y))
+              nil
+              seq))
+
+(define (append2.33 seq1 seq2)
+  (accumulate cons
+              seq2
+              seq1))
+
+(define (length2.33 seq)
+  (accumulate (lambda (x y)
+                (inc y))
+              0
+              seq))
