@@ -134,3 +134,12 @@
 (define lst2.35 (list 1 (list 2 3 (list 3 4 5) (list 1))))
 (count-leaves2.35 lst2.35)
 (count-leaves2.35-v2 lst2.35)
+
+; 练习 2.36
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
+
+(define lst2.36 (list (list 1 2 3) (list 1 2 3) (list 1 2 3)))
