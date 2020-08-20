@@ -194,10 +194,7 @@
 
 (define (reverse2.39 seq)
   (fold-right (lambda (x y)
-                (cond ((null? y) x)
-                      ((not (pair? y)) (list y x))
-                      (else
-                       (append y (list x)))))
+                (append y (list x)))
               nil
               seq))
 
