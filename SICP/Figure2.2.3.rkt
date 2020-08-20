@@ -143,3 +143,29 @@
             (accumulate-n op init (map cdr seqs)))))
 
 (define lst2.36 (list (list 1 2 3) (list 1 2 3) (list 1 2 3)))
+
+; 练习 2.37
+(define m (list (list 1 2 3 4) (list 4 5 6 6 ) (list 6 7 8 9)))
+(define v (list 1 2 3 4))
+
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+
+(dot-product v v)
+
+(define (matrix-*-vector m v)
+  (map (lambda (v0)
+              (dot-product v v0))
+            m))
+
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (x)
+           (matrix-*-vector cols x))
+         m)))
+
+(define n2.37 (transpose m))
+(matrix-*-matrix m n2.37)
