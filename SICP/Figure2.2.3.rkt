@@ -169,3 +169,43 @@
 
 (define n2.37 (transpose m))
 (matrix-*-matrix m n2.37)
+
+; 练习 2.38
+(define fold-right accumulate)
+(define (fold-left op initial seq)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial seq))
+(fold-right list nil (list 1 2 3))
+(fold-left list nil (list 1 2 3))
+
+; 如果 (op x y)结果与(op y x)相等
+; 那么 fold-left fold-right 结果一枝
+
+(display "练习 2.39")
+(newline)
+(define lst2.39 (list 1 2 3 4 5 6))
+
+; 练习 2.39
+; 有点小麻烦
+
+(define (reverse2.39 seq)
+  (fold-right (lambda (x y)
+                (cond ((null? y) x)
+                      ((not (pair? y)) (list y x))
+                      (else
+                       (append y (list x)))))
+              nil
+              seq))
+
+(reverse2.39 lst2.39)
+
+(define (reverse2.39-v2 seq)
+  (fold-left (lambda (x y)
+               (cons y x))
+             nil
+             seq))
+(reverse2.39-v2 lst2.39)
