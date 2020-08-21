@@ -257,3 +257,19 @@
                  (map (lambda (p) (cons x p))
                       (permutations (remove x s))))
                s)))
+
+; 练习 2.40
+(define (unique-pairs n)
+  (flatmap
+   (lambda (i)
+     (map (lambda (j) (list i j))
+          (enumerate-interval 1 (- i 1))))
+   (enumerate-interval 1 n)))
+
+
+(define (prime-sum-pairs-v2 n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (unique-pairs n))))
+
+; 练习 2.41
