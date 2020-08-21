@@ -206,3 +206,54 @@
              nil
              seq))
 (reverse2.39-v2 lst2.39)
+
+(define (prime? n)
+  (define (iter i)
+    (cond ((< n 2) false)
+          ((= n 2) true)
+          ((= n 3) true)
+          ((even? n) false)
+          ((> i (/ n 2)) true)
+          (else (if (= 0 (remainder n i))
+                    false
+                    (iter (+ i 2))))))
+  (iter 3))
+
+; 嵌套映射
+(enumerate-interval 1 10)
+(accumulate append
+            nil
+            (map (lambda (i)
+                   (map (lambda (j) (list i j))
+                        (enumerate-interval 1 (- i 1))))
+                 (enumerate-interval 1 5)))
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (flatmap
+                (lambda (i)
+                  (map (lambda (j) (list i j))
+                       (enumerate-interval 1 (- i 1))))
+                (enumerate-interval 1 n)))))
+
+(define (remove item seq)
+  (filter (lambda (x) (not (= x item)))
+          seq))
+
+(define (permutations s)
+  (if (null? s)
+      (list nil)
+      (flatmap (lambda (x)
+                 (map (lambda (p) (cons x p))
+                      (permutations (remove x s))))
+               s)))
