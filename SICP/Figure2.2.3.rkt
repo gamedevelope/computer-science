@@ -272,11 +272,95 @@
        (filter prime-sum?
                (unique-pairs n))))
 
+; flatmap 的作用
+(map inc (list 1 2 3))
+(accumulate append nil (list (list 1 2) (list 3 4)))
+
+(accumulate cons nil (map inc (list 1 2 3)))
+
+; flatmap 操作对象是列表的列表
+; 对每个list内的list元组操作之后，再将其组合成一个列表
+(flatmap (lambda (x) (cons 1 x)) (list (list 1 2) (list 3 4)))
+
 ; 练习 2.41
 ; 有些麻烦，需要复习
 ; accumulate, flatmap 的作用
-(define (unique-pairs-v3 lst)
-  (map
-   (lambda (p)
-     (cons (- (car p) 1) p))
-   lst))
+(define (unique-pairs-v2 n)
+  (flatmap
+   (lambda (i)
+     (map (lambda (j) (list i j))
+          (enumerate-interval 1 (- i 1))))
+   (enumerate-interval 1 n)))
+
+(define (unique-triples n)
+  (flatmap
+   (lambda (i)
+     (map (lambda (j) (cons i j))
+          (unique-pairs-v2 (dec i))))
+   (enumerate-interval 1 n)))
+(unique-triples 5)
+; 生成三元组
+; 步骤:
+; 1 先生成二元组
+; 2 处理每个二元组,成为三元组
+(define (sum lst)
+  (if (null? lst)
+      0
+      (+ (car lst)
+         (sum (cdr lst)))))
+
+(define (three-sum-2.41 n s)
+  (filter
+   (lambda (lst)
+     (= s (sum lst)))
+   (unique-triples n)))
+(three-sum-2.41 5 10)
+
+; 练习 2.42
+; 八皇后问题
+(define empty-board nil)
+(define (nth n lst)
+    (if (= n 1)
+        (car lst)
+        (nth (dec n) (cdr lst))))
+
+(define (can-attack? p1 p2)
+  (display p1)
+  (display p2)
+  (or (= (car p1) (car p2))
+      (= (cdr p1) (cdr p2))
+      (= (abs (- (car p1) (car p2)))
+         (abs (- (cdr p1) (cdr p2))))))
+
+(can-attack? (cons 1 1) (cons 2 2))
+(can-attack? (cons 1 2) (cons 2 1))
+(can-attack? (cons 1 3) (cons 2 2))
+(can-attack? (cons 1 3) (cons 2 2))
+
+(define (safe? k positions)
+  (define p (nth k positions))
+  (define (check i lst)
+    (if (= i k)
+        true
+        (if (can-attack? p (car lst))
+            false
+            (check (inc i) (cdr lst)))))
+  (check 1 positions))
+
+(safe? 3 (list (cons 1 2) (cons 2 3) (cons 3 5)))
+(define (adjoin-position new-row k rest-of-queens)
+  (append rest-of-queens (cons k new-row)))
+   
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions) (safe? k positions))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoin-position new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))
