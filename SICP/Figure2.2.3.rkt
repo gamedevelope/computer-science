@@ -422,4 +422,30 @@
 ;(queens 4)
 ;(queens 5)
 ;(queens 6)
+(define t1 (runtime))
 (queens 8)
+(define t2 (runtime))
+(display "快的版本")
+(comment (- t2 t1))
+; 练习 2.43
+(define (queens-2.43 board-size)
+  ; queen-cols 返回棋盘的前k咧中放皇后的所有格局的序列
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions)
+           (safe? k positions))
+         (flatmap
+          (lambda (new-row)
+            (map (lambda (rest-of-queens)
+                   (adjoin-position new-row k rest-of-queens))
+                 (queen-cols (- k 1))))
+          (enumerate-interval 1 board-size)))))
+  (queen-cols board-size))
+
+(define t3 (runtime))
+(queens-2.43 8)
+(define t4 (runtime))
+(display "慢的版本")
+(comment (- t4 t3))
