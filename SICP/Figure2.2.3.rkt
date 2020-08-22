@@ -273,3 +273,10 @@
                (unique-pairs n))))
 
 ; 练习 2.41
+; 有些麻烦，需要复习
+; accumulate, flatmap 的作用
+(define (unique-pairs-v3 lst)
+  (map
+   (lambda (p)
+     (cons (- (car p) 1) p))
+   lst))
