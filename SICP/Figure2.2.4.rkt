@@ -1,28 +1,39 @@
-#lang racket
+#lang sicp
 
-(require (planet "sicp.ss" ("soegaard" "sicp.plt" 2 1)))
+(#%require sicp-pict)
+
 (define wave einstein)
-(paint einstein)
-(define wave2
-  (beside einstein (flip-vert einstein)))
-(paint wave2)
-(define wave4
-  (below wave2 wave2))
-(paint wave4)
-(define wave8
-  (below wave4 wave4))
-(paint wave8)
+; 输出画板
+(paint wave)
+; 水平翻转
+(paint (flip-vert wave))
+; 垂直翻转
+(paint (flip-horiz wave))
+; 旁边
+(paint (beside wave wave))
+; 上下
+(paint (below wave wave))
+(paint (beside (below wave wave) wave))
+
 (define (flipped-pairs painter)
   (let ((painter2 (beside painter (flip-vert painter))))
     (below painter2 painter2)))
-(define wave4-v2 (flipped-pairs einstein))
-(paint wave4-v2)
+
 (define (right-split painter n)
   (if (= n 0)
       painter
       (let ((smaller (right-split painter (- n 1))))
         (beside painter (below smaller smaller)))))
 (paint (right-split wave 3))
+
+; 练习 2.44
+(define (up-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (up-split painter (- n 1))))
+        (below painter (beside smaller smaller)))))
+(paint (up-split wave 3))
+
 (define (corner-split painter n)
   (if (= n 0)
       painter
@@ -33,3 +44,4 @@
               (corner (corner-split painter (- n 1))))
           (beside (below painter top-left)
                   (below bottom-right corner))))))
+(paint (corner-split wave 3))

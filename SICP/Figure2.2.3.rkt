@@ -443,7 +443,7 @@
                  (queen-cols (- k 1))))
           (enumerate-interval 1 board-size)))))
   (queen-cols board-size))
-
+; 2.43比2.42慢的原因是，queen-cols 被多次重复调用
 (define t3 (runtime))
 (queens-2.43 8)
 (define t4 (runtime))
