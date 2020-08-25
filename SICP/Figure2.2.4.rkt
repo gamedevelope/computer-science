@@ -77,3 +77,12 @@
 (paint (right-split-v2 wave))
 (define up-split-v2 (split below beside))
 (paint (up-split-v2 wave))
+
+(define (frame-coord-map frame)
+  (lambda (v)
+    (add-rect
+     (origin-frame frame)
+     (add-vect (scale-vect (xcor-vect v)
+                           (edge1-frame frame))
+               (scale-vect (ycor-vect v)
+                           (edge2-frame frame))))))
