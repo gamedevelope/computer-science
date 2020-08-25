@@ -127,3 +127,38 @@
 ((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 0 1))
 ((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 1 0))
 ((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 1 1))
+
+; 练习 2.47
+(define (display-point v)
+  (display (string-append "["
+                          (number->string (car v))
+                          ","
+                          (number->string (cdr v))
+                          "] ")))
+
+(define (draw-line v1 v2)
+  (display-point v1)
+  (display-point v2))
+
+(define (start-segment segment)
+  (car segment))
+
+(define (end-segment segment)
+  (cdr segment))
+
+(define (segments->painter segment-list)
+  (lambda (frame)
+    (for-each
+     (lambda (segment)
+       (draw-line
+        ((frame-coord-map frame) (start-segment segment))
+        ((frame-coord-map frame) (end-segment segment))))
+     segment-list)))
+
+(for-each
+ (lambda (x)
+   (display x))
+ (list 1 2 3 4 5 6))
+
+((segments->painter (list (cons (cons 1 2) (cons 3 4)) (cons (cons 1 2) (cons 3 4))))
+ (make-frame (cons 1 2) (cons 3 4) (cons 5 7)))
