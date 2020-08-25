@@ -78,11 +78,52 @@
 (define up-split-v2 (split below beside))
 (paint (up-split-v2 wave))
 
+; 练习 2.46
+(define (make-vect x y)
+  (cons x y))
+
+(define (xcor-vect p)
+  (car p))
+
+(define (ycor-vect p)
+  (cdr p))
+
+(define (add-rect p1 p2)
+  (cons (+ (xcor-vect p1) (xcor-vect p2))
+        (+ (ycor-vect p1) (ycor-vect p2))))
+
+(define (origin-frame frame)
+  (car frame))
+
+(define (edge1-frame frame)
+  (cadr frame))
+
+;(define (edge2-frame frame)
+;  (caddr frame))
+
+(define (edge2-frame frame)
+  (cddr frame))
+
+(define (scale-vect s v)
+            (make-vect (* s (xcor-vect v))
+                       (* s (ycor-vect v))))
+                        
+;(define (make-frame v1 v2 v3)
+;  (list v1 v2 v3))
+
+(define (make-frame origin edge1 edge2)
+  (cons origin (cons edge1 edge2)))
+
 (define (frame-coord-map frame)
   (lambda (v)
     (add-rect
      (origin-frame frame)
-     (add-vect (scale-vect (xcor-vect v)
+     (add-rect (scale-vect (xcor-vect v)
                            (edge1-frame frame))
                (scale-vect (ycor-vect v)
                            (edge2-frame frame))))))
+
+((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 0 0))
+((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 0 1))
+((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 1 0))
+((frame-coord-map (make-frame (make-vect 1 1) (make-vect -1 1) (make-vect 1 1))) (make-vect 1 1))
