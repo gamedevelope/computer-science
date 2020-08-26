@@ -199,3 +199,11 @@
                       [paint-callback (lambda (canvas dc) (draw-face dc))]))
 
 (send myWindow show #t)
+
+(define (draw-line-v2 start-segment end-segment)
+  (send dc draw-line
+        (car start-segment)
+        (cdr start-segment)
+        (car end-segment)
+        (cdr end-segment)))
+        
