@@ -1,4 +1,4 @@
-#lang sicp
+#lang racket
 
 (#%require sicp-pict)
 (#%require scheme/gui)
@@ -137,9 +137,8 @@
                           (number->string (cdr v))
                           "] ")))
 
-(define (draw-line v1 v2)
-  (display-point v1)
-  (display-point v2))
+(define (draw-line dc v1 v2)
+  (send dc draw-line (car v1) (cdr v1) (car v2) (cdr v2)))
 
 (define (start-segment segment)
   (car segment))
@@ -147,11 +146,12 @@
 (define (end-segment segment)
   (cdr segment))
 
-(define (segments->painter segment-list)
+(define (segments->painter segment-list dc)
   (lambda (frame)
     (for-each
      (lambda (segment)
        (draw-line
+        dc
         ((frame-coord-map frame) (start-segment segment))
         ((frame-coord-map frame) (end-segment segment))))
      segment-list)))
@@ -161,8 +161,8 @@
    (display x))
  (list 1 2 3 4 5 6))
 
-((segments->painter (list (cons (cons 1 2) (cons 3 4)) (cons (cons 1 2) (cons 3 4))))
- (make-frame (cons 1 2) (cons 3 4) (cons 5 7)))
+;((segments->painter (list (cons (cons 1 2) (cons 3 4)) (cons (cons 1 2) (cons 3 4))) dc)
+; (make-frame (cons 1 2) (cons 3 4) (cons 5 7)))
 
 ;定义一些画刷
 (define no-pen (make-object pen% "BLACK" 1 'transparent))
@@ -175,22 +175,18 @@
 
 ;定义图形
 (define (draw-face dc)
-  (send dc set-smoothing 'smoothed)
-  (send dc set-pen black-pen)
-  (send dc set-brush no-brush)
-  (send dc draw-ellipse 50 50 100 100)
-  (send dc set-brush yellow-brush)
-  (send dc draw-line 70 100 90 100)
-  (send dc draw-ellipse 50 90 20 20)
-  (send dc draw-ellipse 90 90 20 20)
-  (send dc set-brush no-brush)
-  (send dc set-pen red-pen)
-  (let ([-pi (atan 0 -1)])
-    (send dc draw-arc 50 60 60 80 (* 3/2 -pi) (* 7/4 -pi))))
+  ((segments->painter (list (cons (cons 0 0) (cons 0 300))
+                            (cons (cons 0 300) (cons 300 300))
+                            (cons (cons 300 300) (cons 300 0))
+                            (cons (cons 300 0) (cons 0 0)))
+                      dc)
+   (make-frame (cons 0 150) (cons 0.5 0.5) (cons 0.5 -0.5))))
 
 ;定义一个窗口
-(define myWindow (new frame% [label "example window"] 
-                   [width 300] [height 300]))
+(define myWindow (new frame%
+                      [label "画板"]
+                      [width 1000]
+                      [height 1000]))
 
 ;定义一个面板,附着在刚才的窗口上
 (define myCanvas (new canvas% 
@@ -199,11 +195,11 @@
                       [paint-callback (lambda (canvas dc) (draw-face dc))]))
 
 (send myWindow show #t)
-
-(define (draw-line-v2 start-segment end-segment)
-  (send dc draw-line
-        (car start-segment)
-        (cdr start-segment)
-        (car end-segment)
-        (cdr end-segment)))
+;
+;(define (draw-line-v2 start-segment end-segment)
+;  (send dc draw-line
+;        (car start-segment)
+;        (cdr start-segment)
+;        (car end-segment)
+;        (cdr end-segment)))
         
