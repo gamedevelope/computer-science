@@ -172,6 +172,8 @@
 (define yellow-brush (make-object brush% "YELLOW" 'solid))
 (define red-brush (make-object brush% "RED" 'solid))
 
+(define W 512)
+(define H 512)
 
 ;定义图形
 (define (draw-face dc)
@@ -180,13 +182,13 @@
                             (cons (cons 300 300) (cons 300 0))
                             (cons (cons 300 0) (cons 0 0)))
                       dc)
-   (make-frame (cons 0 150) (cons 0.5 0.5) (cons 0.5 -0.5))))
+   (make-frame (cons 150 150) (cons 0.5 -0.5) (cons 0.5 0))))
 
 ;定义一个窗口
 (define myWindow (new frame%
                       [label "画板"]
-                      [width 1000]
-                      [height 1000]))
+                      [width W]
+                      [height H]))
 
 ;定义一个面板,附着在刚才的窗口上
 (define myCanvas (new canvas% 
@@ -202,4 +204,5 @@
 ;        (cdr start-segment)
 ;        (car end-segment)
 ;        (cdr end-segment)))
+
         
