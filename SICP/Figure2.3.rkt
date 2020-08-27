@@ -1,10 +1,11 @@
-#lang racket
+#lang sicp
 
 ; Figure 2.3 符号数据
 ; 练习 2.53
 (list 'a 'b 'c)
 (list (list 'george))
 (cdr '((x1 x2) (y1 y2)))
+
 (cadr '((x1 x2) (y1 y2)))
 (pair? (car '(a short list)))
 (memq 'red '((red shoes) (blue socks)))
@@ -27,10 +28,11 @@
         ((not (eq? (pair? l1) (pair? l2))) false)
         ((not (eq? (null? l1) (null? l2))) false)
         (else (and (eq? (car l1) (car l2))
-             (equal? (cdr l1) (cdr l2))))))
+                   (equal? (cdr l1) (cdr l2))))))
 
 ; 练习 2.55
 ; 'abracadabra 整个是一个元素
 (car ''abracadabra)
 (cdr ''abracadabra)
 (cdr (cdr ''abracadabra))
+(identity 123)
