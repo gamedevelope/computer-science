@@ -55,14 +55,17 @@
         ((=number? m2 1) m1)
         ((and (number? m1) (number? m2)) (* m1 m2))
         (else (list '* m1 m2))))
-         
+(define (make-exponentiation m1 m2)
+  (cond ((=number? m2 0) 1)
+        ((=number? m2 1) m1)
+        (else (list '** m1 m2))))
 (define (sum? x) (and (pair? x) (eq? (car x) '+)))
 (define (addend s) (cadr s))
 (define (augend s) (caddr s))
 (define (product? x) (and (pair? x) (eq? (car x) '*)))
 (define (multiplier p) (cadr p))
 (define (multiplicand p) (caddr p))
-
+(define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp) (if (same-variable? exp var) 1 0))
@@ -74,8 +77,20 @@
                         (deriv (multiplicand exp) var))
           (make-product (deriv (multiplier exp) var)
                         (multiplicand exp))))
+        ; 练习 2.56 增加指数函数的求导规则
+        ((exponentiation? exp)
+         (make-product (make-product (caddr exp)
+                                     (make-exponentiation (cadr exp) (dec (caddr exp))))
+                       (deriv (cadr exp) var)))
+          
         (else
          (error "unknow expression type: DERIV" exp))))
+
+(define (deriv-n exp var n)
+  (if (< n 1)
+      exp
+      (deriv-n (deriv exp var) var (dec n))))
+      
 
 (deriv '(+ x x) 'x)
 (deriv '(* x x x) 'x)
