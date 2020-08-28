@@ -90,7 +90,6 @@
   (if (< n 1)
       exp
       (deriv-n (deriv exp var) var (dec n))))
-      
 
 (deriv '(+ x x) 'x)
 (deriv '(* x x x) 'x)
