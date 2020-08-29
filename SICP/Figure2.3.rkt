@@ -60,12 +60,27 @@
         ((=number? m2 1) m1)
         (else (list '** m1 m2))))
 (define (sum? x) (and (pair? x) (eq? (car x) '+)))
+
+; 练习 2.57
+; 扩充求导程序，使之能处理任意项
 (define (addend s) (cadr s))
-(define (augend s) (caddr s))
+;(define (augend s) (caddr s))
+(define (augend s)
+  (let ((l (length s)))
+    (cond ((< l 3) (error "arguments error"))
+          ((= l 3) (caddr s))
+          (else (cons (car s) (cddr s))))))
 (define (product? x) (and (pair? x) (eq? (car x) '*)))
 (define (multiplier p) (cadr p))
-(define (multiplicand p) (caddr p))
+;(define (multiplicand p) (caddr p))
+(define (multiplicand s)
+  (let ((l (length s)))
+    (cond ((< l 3) (error "arguments error"))
+          ((= l 3) (caddr s))
+          (else (cons (car s) (cddr s))))))
 (define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
+
+; 求导程序主要步骤
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp) (if (same-variable? exp var) 1 0))
@@ -96,5 +111,4 @@
 (deriv '(* x y z) 'x)
 (deriv (deriv (deriv (deriv '(* (* x x) (* x x)) 'x) 'x) 'x) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
-
-'(+ (+ 1 2) (+ 3 4))
+(deriv '(** x 10) 'x)
