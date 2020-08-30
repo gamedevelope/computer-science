@@ -112,3 +112,55 @@
 (deriv (deriv (deriv (deriv '(* (* x x) (* x x)) 'x) 'x) 'x) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
 (deriv '(** x 10) 'x)
+
+; 练习 2.58
+; 求导中缀表达式
+(define (make-sum-v2 a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2))
+         (+ a1 a2))
+        (else
+         (cons a1 (list '+ a2)))))
+
+(define (make-product-v2 m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (cons m1 (list '* m2)))))
+(define (make-exponentiation-v2 m1 m2)
+  (cond ((=number? m2 0) 1)
+        ((=number? m2 1) m1)
+        (else (list '** m1 m2))))
+(define (sum-v2? x) (and (pair? x) (eq? (cadr x) '+)))
+
+(define (addend-v2 s) (car s))
+(define (augend-v2 s) (caddr s))
+
+(define (product-v2? x) (and (pair? x) (eq? (cadr x) '*)))
+(define (multiplier-v2 p) (car p))
+(define (multiplicand-v2 p) (caddr p))
+
+(define (exponentiation-v2? x) (and (pair? x) (eq? (car x) '**)))
+
+; 求导程序主要步骤
+(define (deriv-v2 exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) (if (same-variable? exp var) 1 0))
+        ((sum-v2? exp) (make-sum-v2 (deriv-v2 (addend-v2 exp) var)
+                              (deriv-v2 (augend-v2 exp) var)))
+        ((product-v2? exp)
+         (make-sum-v2
+          (make-product-v2 (multiplier-v2 exp)
+                        (deriv-v2 (multiplicand-v2 exp) var))
+          (make-product-v2 (deriv-v2 (multiplier-v2 exp) var)
+                        (multiplicand-v2 exp))))
+        ; 练习 2.56 增加指数函数的求导规则
+        ((exponentiation-v2? exp)
+         (make-product-v2 (make-product-v2 (caddr exp)
+                                     (make-exponentiation-v2 (cadr exp) (dec (caddr exp))))
+                       (deriv-v2 (cadr exp) var)))
+          
+        (else
+         (error "unknow expression type: DERIV" exp))))
