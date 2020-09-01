@@ -87,6 +87,7 @@
 (define (partial-tree elts n)
   (if (= n 0)
       (cons '() elts)
+      ; quotient 求商
       (let ((left-size (quotient (- n 1) 2)))
         (let ((left-result (partial-tree elts left-size)))
           (let ((left-tree (car left-result))
@@ -99,4 +100,25 @@
                     (remaining-elts (cdr right-result)))
                 (cons (make-tree this-entry left-tree right-tree)
                       remaining-elts))))))))
-(list->tree '(1 2 3 4 5 6 7))
+(define tree1 (list->tree '(1 2 3 4)))
+(define tree2 (list->tree '(3 4 5 6)))
+
+; 练习 2.65
+(define (union-set-list l1 l2)
+    (cond ((or (null? l1) (null? l2)) '())
+          (else
+           (let ((x1 (car l1))
+                 (x2 (car l2)))
+             (cond ((= x1 x2)
+                    (cons x1 (union-set-list (cdr l1) (cdr l2))))
+                   ((< x1 x2)
+                    (union-set-list (cdr l1) l2))
+                   (else
+                    (union-set-list l1 (cdr l2))))))))
+
+(define (union-set t1 t2)
+  (let ((s1 (tree->list-v1 t1))
+        (s2 (tree->list-v1 t2)))
+    (list->tree (union-set-list s1 s2))))
+
+(display (union-set tree1 tree2))
