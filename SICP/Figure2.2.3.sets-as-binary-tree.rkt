@@ -142,3 +142,15 @@
 
 (display (intersection-set tree1 tree2))
 (display (union-set tree1 tree2))
+
+(define (key record)
+  (car record))
+
+(define (lookup given-key set-of-records)
+  (cond ((null? set-of-records) false)
+        ((equal? given-key (key (car set-of-records)))
+         (car set-of-records))
+        (else (lookup given-key (cdr set-of-records)))))
+
+(lookup 'a '((a 1) (b 2) (c 3)))
+(lookup 'd '((a 1) (b 2) (c 3)))
