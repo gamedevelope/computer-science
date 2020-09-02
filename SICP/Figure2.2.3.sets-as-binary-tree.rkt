@@ -104,21 +104,41 @@
 (define tree2 (list->tree '(3 4 5 6)))
 
 ; 练习 2.65
-(define (union-set-list l1 l2)
+(define (intersection-list l1 l2)
     (cond ((or (null? l1) (null? l2)) '())
           (else
            (let ((x1 (car l1))
                  (x2 (car l2)))
              (cond ((= x1 x2)
-                    (cons x1 (union-set-list (cdr l1) (cdr l2))))
+                    (cons x1 (intersection-list (cdr l1) (cdr l2))))
                    ((< x1 x2)
-                    (union-set-list (cdr l1) l2))
+                    (intersection-list (cdr l1) l2))
                    (else
-                    (union-set-list l1 (cdr l2))))))))
+                    (intersection-list l1 (cdr l2))))))))
+
+(define (union-list l1 l2)
+  (cond ((null? l1) l2)
+        ((null? l2) l1)
+        (else
+         (let ((x1 (car l1))
+               (x2 (car l2)))
+           (cond ((= x1 x2)
+                  (cons x1 (union-list (cdr l1) (cdr l2))))
+                 ((< x1 x2)
+                  (cons x1 (union-list (cdr l1) l2)))
+                 ((< x2 x1)
+                  (cons x2 (union-list l1 (cdr l2)))))))))
+
+(define (intersection-set t1 t2)
+  (let ((s1 (tree->list-v1 t1))
+        (s2 (tree->list-v1 t2)))
+    (list->tree (intersection-list s1 s2))))
 
 (define (union-set t1 t2)
   (let ((s1 (tree->list-v1 t1))
         (s2 (tree->list-v1 t2)))
-    (list->tree (union-set-list s1 s2))))
+    (let ((ut (union-list s1 s2)))
+      (list->tree (union-list s1 s2)))))
 
+(display (intersection-set tree1 tree2))
 (display (union-set tree1 tree2))
