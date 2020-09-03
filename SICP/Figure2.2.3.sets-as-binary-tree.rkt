@@ -154,3 +154,22 @@
 
 (lookup 'a '((a 1) (b 2) (c 3)))
 (lookup 'd '((a 1) (b 2) (c 3)))
+
+(define (lookup-tree given-key tree)
+  (cond ((null? tree) false)
+        (else
+         (let ((root (entry tree))
+               (left-leaf (left-branch tree))
+               (right-leaf (right-branch tree)))
+           (cond ((= given-key (key root)) root)
+                 ((< given-key (key root))
+                  (lookup-tree given-key left-leaf))
+                 ((> given-key (key root))
+                  (lookup-tree given-key right-leaf)))))))
+
+(define tree2.66 (make-tree '(1 a)
+                            (make-tree '(0 (1 2 3)) '() '())
+                            (make-tree '(2 22222) '() '())))
+
+(lookup-tree 2 tree2.66)
+(lookup-tree 0 tree2.66)
