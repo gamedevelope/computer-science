@@ -70,3 +70,11 @@
 (define sample-message '(0 1 1 0 0 1 0 1 0 1 1 1 0))
 
 (decode sample-message sample-tree)
+
+; 练习 2.68
+; 有点复杂
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append ((encode-symbol (car message) tree)
+               (encode (cdr message) tree)))))
