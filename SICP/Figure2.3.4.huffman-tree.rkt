@@ -76,5 +76,16 @@
 (define (encode message tree)
   (if (null? message)
       '()
-      (append ((encode-symbol (car message) tree)
-               (encode (cdr message) tree)))))
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+(define (encode-symbol symbol tree)
+  (cond ((null? tree) (error "bit symbol -- SEARCH SYMBOL" symbol))
+        ((eq? symbol (caar tree)) (cadar tree))
+        (else
+         (encode-symbol symbol (cdr tree)))))
+
+(define message2.68 '(A D A B B C A))
+(define tree2.68 (list '(A (0)) '(B (1 0)) '(C (1 1 1)) '(D (1 1 0))))
+(define bits2.68 (encode message2.68 tree2.68))
+(equal? sample-message bits2.68)
