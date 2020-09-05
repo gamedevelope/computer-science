@@ -89,3 +89,19 @@
 (define tree2.68 (list '(A (0)) '(B (1 0)) '(C (1 1 1)) '(D (1 1 0))))
 (define bits2.68 (encode message2.68 tree2.68))
 (equal? sample-message bits2.68)
+
+; 练习 2.69
+(make-leaf-set '((A 4) (B 2) (C 1) (D 1)))
+
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+(define (successive-merge leaf-set)
+  (cond ((null? (cdr leaf-set)) (car leaf-set))
+        (else
+         (let ((leaf1 (car leaf-set))
+               (leaf2 (cadr leaf-set)))
+           (let ((merge-tree (make-code-tree leaf1 leaf2)))
+             (successive-merge (adjoin-set merge-tree (cddr leaf-set))))))))
+
+(define tree2.69 (generate-huffman-tree '((A 4) (B 2) (C 1) (D 1))))
