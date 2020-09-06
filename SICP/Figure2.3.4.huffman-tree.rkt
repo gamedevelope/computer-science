@@ -51,6 +51,12 @@
         (else (cons (car s)
                     (adjoin-set x (cdr s))))))
 
+(define (element-of-set? x s)
+  (cond ((null? s) false)
+        ((eq? x (car s)) true)
+        (else
+         (element-of-set? x (cdr s)))))
+
 (define (make-leaf-set pairs)
   (if (null? pairs)
       '()
@@ -105,3 +111,36 @@
              (successive-merge (adjoin-set merge-tree (cddr leaf-set))))))))
 
 (define tree2.69 (generate-huffman-tree '((A 4) (B 2) (C 1) (D 1))))
+
+; 练习 2.70
+(define tree2.70 (generate-huffman-tree '((A 2)
+                                          (NA 16)
+                                          (BOOM 1)
+                                          (SHA 3)
+                                          (GET 2)
+                                          (YIP 9)
+                                          (JOB 2)
+                                          (WAH 1))))
+
+(define (encode-branch bit word tree)
+    (cond ((null? tree) '())
+          ((leaf? tree)
+           (if (eq? (symbol-leaf tree) word)
+               (list bit)
+               '()))
+          (else
+           (if (element-of-set? word (symbols tree))
+               (append (list bit)
+                (encode-branch 0 word (left-branch tree))
+                (encode-branch 1 word (right-branch tree)))
+               '()))))
+
+(define (encode-2.70 message tree)
+  (if (null? message)
+      '()
+      (append (encode-branch 0 (car message) (left-branch tree))
+              (encode-branch 1 (car message) (right-branch tree))
+              (encode-2.70 (cdr message) tree))))
+
+(encode-2.70 '(NA) tree2.70)
+(encode-2.70 message2.68 tree2.69)
