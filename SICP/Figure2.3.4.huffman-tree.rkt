@@ -113,14 +113,16 @@
 (define tree2.69 (generate-huffman-tree '((A 4) (B 2) (C 1) (D 1))))
 
 ; 练习 2.70
-(define tree2.70 (generate-huffman-tree '((A 2)
-                                          (NA 16)
-                                          (BOOM 1)
-                                          (SHA 3)
-                                          (GET 2)
-                                          (YIP 9)
-                                          (JOB 2)
-                                          (WAH 1))))
+(define pairs2.70 '((A 2)
+                    (NA 16)
+                    (BOOM 1)
+                    (SHA 3)
+                    (GET 2)
+                    (YIP 9)
+                    (JOB 2)
+                    (WAH 1)))
+
+(define tree2.70 (generate-huffman-tree pairs2.70))
 
 (define (encode-branch bit word tree)
     (cond ((null? tree) '())
@@ -144,3 +146,19 @@
 
 (encode-2.70 '(NA) tree2.70)
 (encode-2.70 message2.68 tree2.69)
+(define message2.70 (append '(GET A JOB)
+                            '(SHA NA NA NA NA NA NA NA NA)
+                            '(GET A JOB)
+                            '(SHA NA NA NA NA NA NA NA NA)
+                            '(WHA YIP YIP YIP YIP YIP YIP YIP YIP YIP)
+                            '(SHA BOOM)))
+(define bits (encode-2.70 message2.70 tree2.70))
+(reverse (make-leaf-set pairs2.70))
+
+(define (make-decode-tree leaf-set)
+  (if (null? (cdr leaf-set))
+      (car leaf-set)
+      (make-code-tree (car leaf-set)
+                      (make-decode-tree (cdr leaf-set)))))
+
+(decode bits (make-decode-tree (reverse (make-leaf-set pairs2.70))))
