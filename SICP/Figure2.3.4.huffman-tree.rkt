@@ -124,7 +124,8 @@
 
 (define tree2.70 (generate-huffman-tree pairs2.70))
 
-(define (encode-branch bit word tree)
+(define (encode-branch word tree)
+  (define (eb bit word tree)
     (cond ((null? tree) '())
           ((leaf? tree)
            (if (eq? (symbol-leaf tree) word)
@@ -133,15 +134,16 @@
           (else
            (if (element-of-set? word (symbols tree))
                (append (list bit)
-                (encode-branch 0 word (left-branch tree))
-                (encode-branch 1 word (right-branch tree)))
+                (eb 0 word (left-branch tree))
+                (eb 1 word (right-branch tree)))
                '()))))
+  (append (eb 0 word (left-branch tree))
+          (eb 1 word (right-branch tree))))
 
 (define (encode-2.70 message tree)
   (if (or (null? message) (null? tree))
       '()
-      (append (encode-branch 0 (car message) (left-branch tree))
-              (encode-branch 1 (car message) (right-branch tree))
+      (append (encode-branch (car message) tree)
               (encode-2.70 (cdr message) tree))))
 
 (encode-2.70 '(NA) tree2.70)
