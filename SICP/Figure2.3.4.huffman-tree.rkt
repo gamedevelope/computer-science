@@ -138,7 +138,7 @@
                '()))))
 
 (define (encode-2.70 message tree)
-  (if (null? message)
+  (if (or (null? message) (null? tree))
       '()
       (append (encode-branch 0 (car message) (left-branch tree))
               (encode-branch 1 (car message) (right-branch tree))
@@ -150,11 +150,12 @@
                             '(SHA NA NA NA NA NA NA NA NA)
                             '(GET A JOB)
                             '(SHA NA NA NA NA NA NA NA NA)
-                            '(WHA YIP YIP YIP YIP YIP YIP YIP YIP YIP)
+                            '(WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP)
                             '(SHA BOOM)))
 (define bits (encode-2.70 message2.70 tree2.70))
 (reverse (make-leaf-set pairs2.70))
 
+; 这种 decode 方式解出来的结果与原消息不一致
 (define (make-decode-tree leaf-set)
   (if (null? (cdr leaf-set))
       (car leaf-set)
@@ -162,3 +163,6 @@
                       (make-decode-tree (cdr leaf-set)))))
 
 (decode bits (make-decode-tree (reverse (make-leaf-set pairs2.70))))
+
+(define result2.70 (decode bits tree2.70))
+(equal? result2.70 message2.70)
