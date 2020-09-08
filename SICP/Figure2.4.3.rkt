@@ -144,3 +144,6 @@
 
 (install-rectangular-package)
 (install-polar-package)
+
+(define z1 (make-from-real-imag 1 1))
+(define z2 (make-from-mag-ang 1.4142 (/ 3.1415926 4)))
