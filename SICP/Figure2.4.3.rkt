@@ -77,7 +77,9 @@
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
+          ;; apply 将 proc 应用到列表中
           (apply proc (map contents args))
+;          (proc (map contents args))
           (error
            "No method for these types -- APPLY-GENERIC"
            (list op type-tags))))))
@@ -149,3 +151,50 @@
 (define z2 (make-from-mag-ang 1.4142 (/ 3.1415926 4)))
 
 ; 练习 2.73
+(define (variable? exp)
+  (symbol? exp))
+(define (same-variable? v1 v2)
+  (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+;(define (deriv exp var)
+;  (cond ((number? exp) 0)
+;        ((variable? exp) (if (same-variable? exp var) 1 0))
+;        ((sum? exp)
+;         (make-sum (deriv (addend exp) var)
+;                   (deriv (augend exp) var)))
+;        ((product? exp)
+;         (make-sum
+;          (make-product (multiplier exp)
+;                        (deriv (multiplicand exp) var))
+;          (make-product (deriv (multiplier exp) var)
+;                        (multiplicand exp))))
+;        (else (error "unknow expression type -- DERIV" exp))))
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) (if (same-variable? exp var) 1 0))
+        (else ((get 'deriv (operator exp)) (operands exp)
+                                           var))))
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+(define (=number? a n)
+  (and (number? a) (= a n)))
+
+; 用数据导向的方式重写该过程
+(define (install-deriv-sum-package)
+  (define (addend exp)
+    (car exp))
+  (define (augend exp)
+    (cadr exp))
+  (define (make-sum a1 a2)
+    (cond ((=number? a1 0) a2)
+          ((=number? a2 0) a1)
+          ((and (number? a1) (number? a2)) (+ a1 a2))
+          (else (list '+ a1 a2))))
+  (define (sum-deriv exp var)
+    (make-sum (deriv (addend exp) var)
+              (deriv (augend exp) var)))
+  (put 'deriv '+ sum-deriv)
+  'done)
+(install-deriv-sum-package)
+
+(deriv '(+ x y) 'x)
