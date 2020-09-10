@@ -249,3 +249,51 @@
 (deriv '(** x n) 'x)
 (deriv '(** x 3) 'x)
 (deriv '(* (** x m) (** x n)) 'x)
+
+; 练习 2.74
+(define (get-record company employ data)
+  ((get 'get-record company) employ data))
+
+(define (get-salary company employ data)
+  ((get 'get-salary company) (get-record company employ data)))
+
+(define (install-microsoft-package)
+  (define (get-name data)
+    (car data))
+  (define (get-salary data)
+    (caddr data))
+  (define (get-record employ data)
+    (cond ((null? data) '())
+          ((eq? (get-name (car data)) employ) (car data))
+          (else
+           (get-record employ (cdr data)))))
+  (put 'get-record 'microsoft get-record)
+  (put 'get-salary 'microsoft get-salary)
+  'microsoft-done)
+
+(install-microsoft-package)
+(define microsoft-data
+    (list '(a 1 2)
+          '(b 3 4)
+          '(c 5 6)))
+(get-record 'microsoft 'a microsoft-data)
+(get-record 'microsoft 'b microsoft-data)
+
+(define (install-huawei-package)
+  (define (get-name data)
+    (car data))
+  (define (get-salary data)
+    (caddr data))
+  (define (get-record employ data)
+    (cond ((null? data) '())
+          ((eq? (get-name (car data)) employ) (car data))
+          (else
+           (get-record employ (cdr data)))))
+  (put 'get-record 'huawei get-record)
+  (put 'get-salary 'huawei get-salary)
+  'huawei-done)
+(install-huawei-package)
+(define huawei-data
+  (list '(黄晓明 北京 一万)
+        '(刘腾达 上海 两万)))
+(get-salary 'huawei '黄晓明 huawei-data)
