@@ -48,18 +48,18 @@
 (define (install-polar-package)
   ;; internal procedures
   (define (real-part z)
-  (* (magnitude z) (cos (angle z))))
-(define (imag-part z)
-  (* (magnitude z) (sin (angle z))))
-(define (magnitude z) (car z))
-(define (angle z) (cdr z))
+    (* (magnitude z) (cos (angle z))))
+  (define (imag-part z)
+    (* (magnitude z) (sin (angle z))))
+  (define (magnitude z) (car z))
+  (define (angle z) (cdr z))
 
-(define (make-from-real-imag x y)
-  (cons (sqrt (+ (square x) (square y)))
-        (atan y x)))
+  (define (make-from-real-imag x y)
+    (cons (sqrt (+ (square x) (square y)))
+          (atan y x)))
 
-(define (make-from-mag-ang r a)
-  (cons r a))
+  (define (make-from-mag-ang r a)
+    (cons r a))
   
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'polar x))
@@ -318,3 +318,24 @@
 (get-record '黄晓明 microsoft-data)
 (get-record '黄晓明 huawei-data)
 (find-employee-record '黄晓明 (list microsoft-data huawei-data))
+
+; Message passing
+(define (make-from-real-imag-v2 x y)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) x)
+          ((eq? op 'imag-part) y)
+          ((eq? op 'magnitude) (sqrt (+ (square x) (square y))))
+          ((eq? op 'angle) (atan y x))
+          (else (error "Unknow op: MAKE-FROM-REAL-IMAG" op))))
+  dispatch)
+
+; 练习 2.75
+(define (make-from-mag-ang-v2 r a)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) (* r (cos a)))
+          ((eq? op 'imag-part) (* r (sin a)))
+          ((eq? op 'magnitude) r)
+          ((eq? op 'angle) a)
+          (else (error "Unknow op: MAKE-FROM-MAG-ANG" op))))
+  dispatch)
+(define z11 (make-from-mag-ang-v2 1.41421256 0.785398))
