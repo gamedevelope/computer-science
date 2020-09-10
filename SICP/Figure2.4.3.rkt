@@ -251,11 +251,19 @@
 (deriv '(* (** x m) (** x n)) 'x)
 
 ; 练习 2.74
-(define (get-record company employ data)
-  ((get 'get-record company) employ data))
+(define (get-record employ data)
+  ((get 'get-record (company-name data)) employ (company-data data)))
 
-(define (get-salary company employ data)
-  ((get 'get-salary company) (get-record company employ data)))
+(define (get-salary employ data)
+  (let ((company (company-name data)))
+    ((get 'get-salary company)
+     (get-record employ data))))
+
+(define (company-name data)
+  (car data))
+
+(define (company-data data)
+  (cdr data))
 
 (define (install-microsoft-package)
   (define (get-name data)
@@ -273,11 +281,13 @@
 
 (install-microsoft-package)
 (define microsoft-data
-    (list '(a 1 2)
-          '(b 3 4)
-          '(c 5 6)))
-(get-record 'microsoft 'a microsoft-data)
-(get-record 'microsoft 'b microsoft-data)
+  (list 'microsoft
+        '(黄晓明 北京微软 一万)
+        '(a 1 2)
+        '(b 3 4)
+        '(c 5 6)))
+(get-record 'a microsoft-data)
+(get-record 'b microsoft-data)
 
 (define (install-huawei-package)
   (define (get-name data)
@@ -294,6 +304,17 @@
   'huawei-done)
 (install-huawei-package)
 (define huawei-data
-  (list '(黄晓明 北京 一万)
+  (list 'huawei
+        '(黄晓明 北京华为 一万)
         '(刘腾达 上海 两万)))
-(get-salary 'huawei '黄晓明 huawei-data)
+
+(get-salary '黄晓明 huawei-data)
+
+; 练习 2.74 (c)
+(define (find-employee-record employ data)
+  (if (null? data) '()
+      (cons (get-record employ (car data))
+            (find-employee-record employ (cdr data)))))
+(get-record '黄晓明 microsoft-data)
+(get-record '黄晓明 huawei-data)
+(find-employee-record '黄晓明 (list microsoft-data huawei-data))
