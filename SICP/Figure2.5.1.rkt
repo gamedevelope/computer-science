@@ -225,10 +225,10 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
-;  (put 'real-part '(complex) real-part)
-;  (put 'imag-part '(complex) imag-part)
-;  (put 'magnitude '(complex) magnitude)
-;  (put 'angle '(complex) angle)
+  (put 'real-part '(complex) real-part)
+  (put 'imag-part '(complex) imag-part)
+  (put 'magnitude '(complex) magnitude)
+  (put 'angle '(complex) angle)
   'done)
 (install-complex-package)
 
@@ -246,4 +246,6 @@
   (display (apply-generic 'mul c1 c2))
   (newline)
   (display (apply-generic 'div c1 c2))
+  (newline)
+  (display (apply-generic 'magnitude c1))
   'done)
