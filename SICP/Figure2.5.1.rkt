@@ -312,3 +312,13 @@
 (let ((c1 (make-complex-from-real-imag 1 1))
       (c2 1))
   (apply-generic 'add c1 c2))
+
+(let ((c1 (make-rational 1 2))
+      (c2 (make-rational 3 5)))
+  (apply-generic 'add c1 c2))
+
+(put-coercion 'scheme-number 'rational (lambda (n)
+                                         (make-rational n 1)))
+(let ((c1 (make-rational 1 2))
+      (c2 1))
+  (apply-generic 'add c1 c2))
