@@ -16,16 +16,40 @@
         ((pair? datum) (cdr datum))
         (else
          (error "Bad tagged datum -- CONTENTS" datum))))
+;
+;(define (apply-generic op . args)
+;  (let ((type-tags (map type-tag args)))
+;    (let ((proc (get op type-tags)))
+;      (if proc
+;          ;; apply 将 proc 应用到列表中
+;          (apply proc (map contents args))
+;          (error
+;           "No method for these types -- APPLY-GENERIC"
+;           (list op type-tags))))))
 
+; Figure 2.5.2
+; 支持类型转换
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
-          ;; apply 将 proc 应用到列表中
           (apply proc (map contents args))
-          (error
-           "No method for these types -- APPLY-GENERIC"
-           (list op type-tags))))))
+          (if (= (length args) 2)
+              (let ((type1 (car type-tags))
+                    (type2 (cadr type-tags))
+                    (a1 (car args))
+                    (a2 (cadr args)))
+                (let ((t1->t2 (get-coercion type1 type2))
+                      (t2->t1 (get-coercion type2 type1)))
+                  (cond (t1->t2
+                         (apply-generic op (t1->t2 a1) a2))
+                        (t2->t1
+                         (apply-generic op a1 (t2->t1 a2)))
+                        (else
+                         (error "No method for these types"
+                                (list op type-tags))))))
+              (error "No method for there types"
+                     (list op type-tags)))))))
 
 (define (make-table)
   (let ((local-table (list '*table*)))
@@ -270,3 +294,21 @@
 (apply-generic 'equ?
                (make-complex-from-real-imag 1 2)
                (make-complex-from-real-imag 1 2))
+
+(define (put-coercion t1 t2 f)
+  (put 'coercion (cons t1 t2) f))
+(define (get-coercion t1 t2)
+  (get 'coercion (cons t1 t2)))
+
+(define (scheme-number->complex n)
+  (make-complex-from-real-imag (contents n) 0))
+
+(put-coercion 'scheme-number 'complex scheme-number->complex)
+((get-coercion 'scheme-number 'complex) 1)
+(let ((c1 (make-complex-from-real-imag 1 1))
+      (c2 (make-complex-from-real-imag 2 2)))
+  (apply-generic 'add c1 c2))
+
+(let ((c1 (make-complex-from-real-imag 1 1))
+      (c2 1))
+  (apply-generic 'add c1 c2))
