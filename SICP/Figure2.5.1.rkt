@@ -104,6 +104,7 @@
        (lambda (x) (tag x)))
   (put 'equ? '(scheme-number scheme-number)
        (lambda (x y) (= x y)))
+  (put '=zero? 'scheme-number (lambda (x) (= x 0)))
   'done)
 (install-scheme-number-package)
 (define (make-scheme-number n)
@@ -144,6 +145,9 @@
   (put 'equ? '(rational rational)
        (lambda (x y) (and (= (numer x) (numer y))
                           (= (denom x) (denom y)))))
+  (put '=zero? '(rational) (lambda (x)
+                             (and (= (numer x) 0)
+                                  (= (denom x) 0))))
   (put 'make 'rational
        (lambda (x y) (tag (make-rat x y))))
   'done)
@@ -257,6 +261,8 @@
   (put 'equ? '(complex complex)
        (lambda (z1 z2) (and (= (real-part z1) (real-part z2))
                             (= (imag-part z1) (imag-part z2)))))
+  (put '=zero? '(complex) (lambda (z) (and (= (real-part z) 0)
+                                           (= (imag-part z) 0))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
@@ -294,6 +300,11 @@
 (apply-generic 'equ?
                (make-complex-from-real-imag 1 2)
                (make-complex-from-real-imag 1 2))
+
+(if (apply-generic '=zero?
+                   (make-complex-from-real-imag 0 0))
+    (display "等于0")
+    (display "不等于0"))
 
 (define (put-coercion t1 t2 f)
   (put 'coercion (cons t1 t2) f))
