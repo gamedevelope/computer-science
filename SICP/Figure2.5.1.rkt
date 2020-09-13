@@ -39,18 +39,20 @@
                     (type2 (cadr type-tags))
                     (a1 (car args))
                     (a2 (cadr args)))
-                (let ((t1->t2 (get-coercion type1 type2))
-                      (t2->t1 (get-coercion type2 type1)))
-                  (cond (t1->t2
-                         (apply-generic op (t1->t2 a1) a2))
-                        (t2->t1
-                         (apply-generic op a1 (t2->t1 a2)))
-                        (else
-                         (error "No method for these types"
-                                (list op type-tags))))))
+                (if (eq? type1 type2)
+                    (error "No method for these types" (list op type-tags))
+                    (let ((t1->t2 (get-coercion type1 type2))
+                          (t2->t1 (get-coercion type2 type1)))
+                      (cond (t1->t2
+                             (apply-generic op (t1->t2 a1) a2))
+                            (t2->t1
+                             (apply-generic op a1 (t2->t1 a2)))
+                            (else
+                             (error "No method for these types"
+                                    (list op type-tags)))))))
               (error "No method for there types"
                      (list op type-tags)))))))
-
+  
 (define (make-table)
   (let ((local-table (list '*table*)))
     (define (lookup key-1 key-2)
@@ -100,6 +102,8 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
+  (put 'exp '(scheme-number scheme-number)
+       (lambda (x y) (tag (expt x y))))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
   (put 'equ? '(scheme-number scheme-number)
@@ -333,3 +337,19 @@
 (let ((c1 (make-rational 1 2))
       (c2 1))
   (apply-generic 'add c1 c2))
+
+; 练习 2.81
+(let ((c1 1)
+      (c2 2))
+  (display "练习 2.81")
+  (newline)
+  (apply-generic 'add c1 c2))
+
+; 假设先加入一个将自身类型转换为自身的方法
+(put-coercion 'scheme-number 'scheme-number (lambda (n) n))
+; 先制造一个例子,两个类型相同时,依然会调用“强制”的类型转换过程
+(let ((c1 (make-scheme-number 2))
+      (c2 (make-scheme-number 3)))
+  (display c1)
+  (display c2)
+  (apply-generic 'exp c1 c2))
