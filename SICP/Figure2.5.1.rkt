@@ -16,43 +16,6 @@
         ((pair? datum) (cdr datum))
         (else
          (error "Bad tagged datum -- CONTENTS" datum))))
-;
-;(define (apply-generic op . args)
-;  (let ((type-tags (map type-tag args)))
-;    (let ((proc (get op type-tags)))
-;      (if proc
-;          ;; apply 将 proc 应用到列表中
-;          (apply proc (map contents args))
-;          (error
-;           "No method for these types -- APPLY-GENERIC"
-;           (list op type-tags))))))
-
-; Figure 2.5.2
-; 支持类型转换
-(define (apply-generic op . args)
-  (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
-      (if proc
-          (apply proc (map contents args))
-          (if (= (length args) 2)
-              (let ((type1 (car type-tags))
-                    (type2 (cadr type-tags))
-                    (a1 (car args))
-                    (a2 (cadr args)))
-                (if (eq? type1 type2)
-                    (error "No method for these types" (list op type-tags))
-                    (let ((t1->t2 (get-coercion type1 type2))
-                          (t2->t1 (get-coercion type2 type1)))
-                      (cond (t1->t2
-                             (apply-generic op (t1->t2 a1) a2))
-                            (t2->t1
-                             (apply-generic op a1 (t2->t1 a2)))
-                            (else
-                             (error "No method for these types"
-                                    (list op type-tags)))))))
-              (error "No method for there types"
-                     (list op type-tags)))))))
-  
 (define (make-table)
   (let ((local-table (list '*table*)))
     (define (lookup key-1 key-2)
@@ -82,9 +45,62 @@
             ((eq? m 'insert-proc!) insert!)
             (else (error "Unknown operation -- TABLE" m))))
     dispatch))
+
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
+
+(define (put-coercion t1 t2 f)
+  (put 'coercion (cons t1 t2) f))
+(define (get-coercion t1 t2)
+  (get 'coercion (cons t1 t2)))
+;
+;(define (apply-generic op . args)
+;  (let ((type-tags (map type-tag args)))
+;    (let ((proc (get op type-tags)))
+;      (if proc
+;          ;; apply 将 proc 应用到列表中
+;          (apply proc (map contents args))
+;          (error
+;           "No method for these types -- APPLY-GENERIC"
+;           (list op type-tags))))))
+
+; 练习 2.82
+(define (install-type-raise-package)
+  (put-coercion 'scheme-number 'rational (lambda (n)
+                                           (make-rational n 1)))
+  (put-coercion 'rational 'real (lambda (r)
+                                  (/ ((get 'numer) r) ((get 'demon) r))))
+  (put-coercion 'real 'complex (lambda (r)
+                                 (make-complex-from-real-imag r 0)))
+  'done)
+(install-type-raise-package)
+
+; Figure 2.5.2
+; 支持类型转换
+(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+          (if (= (length args) 2)
+              (let ((type1 (car type-tags))
+                    (type2 (cadr type-tags))
+                    (a1 (car args))
+                    (a2 (cadr args)))
+                (if (eq? type1 type2)
+                    (error "No method for these types" (list op type-tags))
+                    (let ((t1->t2 (get-coercion type1 type2))
+                          (t2->t1 (get-coercion type2 type1)))
+                      (cond (t1->t2
+                             (apply-generic op (t1->t2 a1) a2))
+                            (t2->t1
+                             (apply-generic op a1 (t2->t1 a2)))
+                            (else
+                             (error "No method for these types"
+                                    (list op type-tags)))))))
+              (error "No method for there types"
+                     (list op type-tags)))))))
 
 (define (add x y) (apply-generic 'add x y))
 (define (sub x y) (apply-generic 'sub x y))
@@ -138,6 +154,8 @@
 
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
+  (put 'numer '(rational) numer)
+  (put 'denom '(rational) denom)
   (put 'add '(rational rational)
        (lambda (x y) (tag (add-rat x y))))
   (put 'sub '(rational rational)
@@ -310,10 +328,6 @@
     (display "等于0")
     (display "不等于0"))
 
-(define (put-coercion t1 t2 f)
-  (put 'coercion (cons t1 t2) f))
-(define (get-coercion t1 t2)
-  (get 'coercion (cons t1 t2)))
 
 (define (scheme-number->complex n)
   (make-complex-from-real-imag (contents n) 0))
@@ -331,9 +345,6 @@
 (let ((c1 (make-rational 1 2))
       (c2 (make-rational 3 5)))
   (apply-generic 'add c1 c2))
-
-(put-coercion 'scheme-number 'rational (lambda (n)
-                                         (make-rational n 1)))
 (let ((c1 (make-rational 1 2))
       (c2 1))
   (apply-generic 'add c1 c2))
@@ -353,3 +364,8 @@
   (display c1)
   (display c2)
   (apply-generic 'exp c1 c2))
+
+; 练习 2.82
+(let ((c1 (make-rational 1 2))
+      (c2 (make-complex-from-real-imag 1 2)))
+  (apply-generic 'add c1 c2))
