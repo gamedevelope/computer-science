@@ -67,18 +67,56 @@
 
 ; 练习 2.82
 (define (install-type-raise-package)
-  (put-coercion 'scheme-number
-                'rational
-                (lambda (n)
-                  (make-rational n 1)))
-  (put-coercion 'rational
-                'real
-                (lambda (r)
-                  (/ ((get 'numer) r) ((get 'demon) r))))
-  (put-coercion 'real
-                'complex
-                (lambda (r)
-                  (make-complex-from-real-imag r 0)))
+  (define (type-tower type1 type2 tower)
+    (if (eq? type1 type2)
+        '()
+        (let ((types-procedure (car tower))
+              (left-tower (cdr tower)))
+          (let ((types (car types-procedure))
+                (procedure (cdr types-procedure)))
+            (let ((t1 (car types))
+                  (t2 (cdr types)))
+              (cond ((eq? type1 t1)
+                     (append (list procedure)
+                             (if (eq? type2 t2)
+                                 '()
+                                 (type-tower t2 type2 left-tower))))
+                    ((eq? type2 t1)
+                     (append (list procedure)
+                             (if (eq? type1 t2)
+                                 '()
+                                 (type-tower t2 type1 left-tower))))
+                    (else (type-tower type1 type2 left-tower))))))))
+  (define types (list (cons (cons 'scheme-number 'rational)
+                            (lambda (n) (make-rational n 1)))
+                      (cons (cons 'rational 'real)
+                            (lambda (n)
+                              (/ ((get 'numer '(rational)) (contents n))
+                                 ((get 'denom '(rational)) (contents n)))))
+                      (cons (cons 'real 'complex)
+                            (lambda (n) (make-complex-from-real-imag n 0)))))
+  
+  (define (raise produres n)    
+    (if (null? produres)
+        n
+        (raise (cdr produres) ((car produres) n))))
+  
+  (define (raise-pair n1 n2)
+    (let ((type1 (type-tag n1))
+          (type2 (type-tag n2)))
+      (let ((procedures (type-tower type1 type2 types)))
+        (display procedures)
+        (newline)
+        (display n1)
+        (newline)
+        (display n2)
+        (cons (raise procedures n1)
+              (raise procedures n2)))))
+  
+  (put-coercion 'raise
+                'raise
+                (lambda (n1 n2)
+                  (raise-pair n1 n2)))
   'done)
 
 (install-type-raise-package)
@@ -335,12 +373,17 @@
     (display "等于0")
     (display "不等于0"))
 
+(display "type-raise")
+(newline)
+(get 'numer '(rational))
+((get-coercion 'raise 'raise) 1 (make-complex-from-real-imag 1 2))
 
-(define (scheme-number->complex n)
-  (make-complex-from-real-imag (contents n) 0))
 
-(put-coercion 'scheme-number 'complex scheme-number->complex)
-((get-coercion 'scheme-number 'complex) 1)
+;(define (scheme-number->complex n)
+;  (make-complex-from-real-imag (contents n) 0))
+
+;(put-coercion 'scheme-number 'complex scheme-number->complex)
+;((get-coercion 'scheme-number 'complex) 1)
 (let ((c1 (make-complex-from-real-imag 1 1))
       (c2 (make-complex-from-real-imag 2 2)))
   (apply-generic 'add c1 c2))
@@ -384,34 +427,6 @@
                         (list (cons 'd 'e) (lambda () (display "d->e") false))))
 
 ; 提升类型到同一层
-(define (type-tower type1 type2 tower)
-  (if (eq? type1 type2)
-      '()
-      (let ((types-procedure (car tower)))
-        (let ((types (car types-procedure))
-              (procedure (cadr types-procedure)))
-          (let ((t1 (car types))
-                (t2 (cdr types))
-                (left-tower (cdr tower)))
-            (cond ((eq? type1 t1)
-                   (append (list procedure)
-                           (if (eq? type2 t2)
-                               '()
-                               (type-tower t2 type2 left-tower))))
-                  ((eq? type2 t1)
-                   (append (list procedure)
-                           (if (eq? type1 t2)
-                               '()
-                               (type-tower t2 type1 left-tower))))
-                  (else (type-tower type1 type2 left-tower))))))))
-
-(let ((t1 'a)
-      (t2 'b)
-      (t3 'c))
-  (let ((raise-list (type-tower t1 t3 tower2.84)))
-    (map (lambda (x) (x)) raise-list)))
-
-(let ((t1 'c)
-      (t2 'a))
-  (let ((raise-list (type-tower t1 t2 tower2.84)))
-    (map (lambda (x) (x)) raise-list)))
+(let ((c1 (make-scheme-number 10))
+      (c2 (make-complex-from-real-imag 1 2)))
+  (apply-generic 'add c1 c2))
