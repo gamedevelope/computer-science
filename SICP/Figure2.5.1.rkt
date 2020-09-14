@@ -67,13 +67,20 @@
 
 ; 练习 2.82
 (define (install-type-raise-package)
-  (put-coercion 'scheme-number 'rational (lambda (n)
-                                           (make-rational n 1)))
-  (put-coercion 'rational 'real (lambda (r)
-                                  (/ ((get 'numer) r) ((get 'demon) r))))
-  (put-coercion 'real 'complex (lambda (r)
-                                 (make-complex-from-real-imag r 0)))
+  (put-coercion 'scheme-number
+                'rational
+                (lambda (n)
+                  (make-rational n 1)))
+  (put-coercion 'rational
+                'real
+                (lambda (r)
+                  (/ ((get 'numer) r) ((get 'demon) r))))
+  (put-coercion 'real
+                'complex
+                (lambda (r)
+                  (make-complex-from-real-imag r 0)))
   'done)
+
 (install-type-raise-package)
 
 ; Figure 2.5.2
@@ -365,7 +372,19 @@
   (display c2)
   (apply-generic 'exp c1 c2))
 
-; 练习 2.82
-(let ((c1 (make-rational 1 2))
+; 练习 2.83
+(let ((c1 (make-scheme-number 1.2))
       (c2 (make-complex-from-real-imag 1 2)))
   (apply-generic 'add c1 c2))
+
+; 练习2.84
+(define (type-tower type-bottom type-top tower)
+  (cond ((null? tower) '())
+        ((eq? type-bottom type-top) '())
+        (else
+         (let ((first (car tower))
+               (second (cadr tower)))
+           (cond ((not (eq? type-bottom first)) '())
+                 (else
+                  (append (list type-bottom second)
+                          (type-tower second type-top (cdr tower)))))))))
