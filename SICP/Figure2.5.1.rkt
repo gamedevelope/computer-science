@@ -99,18 +99,17 @@
                       (cons (cons 'real 'complex)
                             (lambda (n) (make-complex-from-real-imag n 0)))))
   
-  (define (raise produres pair)    
+  (define (raise produres pair)
     (if (null? produres)
         pair
-        (raise (cdr produres) (cons ((caar produres) (car pair))
-                                    ((cdar produres) (cdr pair))))))
+        (raise (cdr produres) (list ((caar produres) (car pair))
+                                    ((cdar produres) (cadr pair))))))
   
   (define (raise-pair n1 n2)
     (let ((type1 (type-tag n1))
           (type2 (type-tag n2)))
       (let ((procedures (type-tower type1 type2 types)))
-        (display procedures)
-        (raise procedures (cons n1 n2)))))
+        (raise procedures (list n1 n2)))))
   
   (put-coercion 'raise
                 'raise
@@ -119,32 +118,44 @@
   'done)
 
 (install-type-raise-package)
-
+(define (raise n1 n2)
+  ((get-coercion 'raise 'raise) n1 n2))
 ; Figure 2.5.2
 ; 支持类型转换
+;(define (apply-generic op . args)
+;  (let ((type-tags (map type-tag args)))
+;    (let ((proc (get op type-tags)))
+;      (if proc
+;          (apply proc (map contents args))
+;          (if (= (length args) 2)
+;              (let ((type1 (car type-tags))
+;                    (type2 (cadr type-tags))
+;                    (a1 (car args))
+;                    (a2 (cadr args)))
+;                (if (eq? type1 type2)
+;                    (error "No method for these types" (list op type-tags))
+;                    (let ((t1->t2 (get-coercion type1 type2))
+;                          (t2->t1 (get-coercion type2 type1)))
+;                      (cond (t1->t2
+;                             (apply-generic op (t1->t2 a1) a2))
+;                            (t2->t1
+;                             (apply-generic op a1 (t2->t1 a2)))
+;                            (else
+;                             (error "No method for these types"
+;                                    (list op type-tags)))))))
+;              (error "No method for there types"
+;                     (list op type-tags)))))))
+
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
           (apply proc (map contents args))
           (if (= (length args) 2)
-              (let ((type1 (car type-tags))
-                    (type2 (cadr type-tags))
-                    (a1 (car args))
-                    (a2 (cadr args)))
-                (if (eq? type1 type2)
-                    (error "No method for these types" (list op type-tags))
-                    (let ((t1->t2 (get-coercion type1 type2))
-                          (t2->t1 (get-coercion type2 type1)))
-                      (cond (t1->t2
-                             (apply-generic op (t1->t2 a1) a2))
-                            (t2->t1
-                             (apply-generic op a1 (t2->t1 a2)))
-                            (else
-                             (error "No method for these types"
-                                    (list op type-tags)))))))
+              (let ((raised-params (raise (car args) (cadr args))))
+                (apply-generic op (car raised-params) (cadr raised-params)))
               (error "No method for there types"
-                     (list op type-tags)))))))
+                     (list "op:" op "type-tags:" type-tags "args:" args)))))))
 
 (define (add x y) (apply-generic 'add x y))
 (define (sub x y) (apply-generic 'sub x y))
@@ -387,45 +398,44 @@
       (c2 (make-complex-from-real-imag 2 2)))
   (apply-generic 'add c1 c2))
 
-(let ((c1 (make-complex-from-real-imag 1 1))
+(display "add complex rational")
+(newline)
+(let ((c1 (make-rational 1 1))
       (c2 1))
   (apply-generic 'add c1 c2))
 
 (let ((c1 (make-rational 1 2))
-      (c2 (make-rational 3 5)))
-  (apply-generic 'add c1 c2))
-(let ((c1 (make-rational 1 2))
-      (c2 1))
+      (c2 4))
   (apply-generic 'add c1 c2))
 
-; 练习 2.81
-(let ((c1 1)
-      (c2 2))
-  (display "练习 2.81")
-  (newline)
-  (apply-generic 'add c1 c2))
-
-; 假设先加入一个将自身类型转换为自身的方法
-(put-coercion 'scheme-number 'scheme-number (lambda (n) n))
-; 先制造一个例子,两个类型相同时,依然会调用“强制”的类型转换过程
-(let ((c1 (make-scheme-number 2))
-      (c2 (make-scheme-number 3)))
-  (display c1)
-  (display c2)
-  (apply-generic 'exp c1 c2))
-
-; 练习 2.83
-(let ((c1 (make-scheme-number 1.2))
-      (c2 (make-complex-from-real-imag 1 2)))
-  (apply-generic 'add c1 c2))
-
-; 练习2.84
-(define tower2.84 (list (list (cons 'a 'b) (lambda () (display "a->b") false))
-                        (list (cons 'b 'c) (lambda () (display "b->c") false))
-                        (list (cons 'c 'd) (lambda () (display "c->d") false))
-                        (list (cons 'd 'e) (lambda () (display "d->e") false))))
-
-; 提升类型到同一层
-(let ((c1 (make-scheme-number 10))
-      (c2 (make-complex-from-real-imag 1 2)))
-  (apply-generic 'add c1 c2))
+;; 练习 2.81
+;(let ((c1 1)
+;      (c2 2))
+;  (display "练习 2.81")
+;  (newline)
+;  (apply-generic 'add c1 c2))
+;
+;; 假设先加入一个将自身类型转换为自身的方法
+;(put-coercion 'scheme-number 'scheme-number (lambda (n) n))
+;; 先制造一个例子,两个类型相同时,依然会调用“强制”的类型转换过程
+;(let ((c1 (make-scheme-number 2))
+;      (c2 (make-scheme-number 3)))
+;  (display c1)
+;  (display c2)
+;  (apply-generic 'exp c1 c2))
+;
+;; 练习 2.83
+;(let ((c1 (make-scheme-number 1.2))
+;      (c2 (make-complex-from-real-imag 1 2)))
+;  (apply-generic 'add c1 c2))
+;
+;; 练习2.84
+;(define tower2.84 (list (list (cons 'a 'b) (lambda () (display "a->b") false))
+;                        (list (cons 'b 'c) (lambda () (display "b->c") false))
+;                        (list (cons 'c 'd) (lambda () (display "c->d") false))
+;                        (list (cons 'd 'e) (lambda () (display "d->e") false))))
+;
+;; 提升类型到同一层
+;(let ((c1 (make-scheme-number 10))
+;      (c2 (make-complex-from-real-imag 1 2)))
+;  (apply-generic 'add c1 c2))
