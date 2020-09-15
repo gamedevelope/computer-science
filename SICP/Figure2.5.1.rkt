@@ -67,6 +67,8 @@
 
 ; 练习 2.82
 (define (install-type-raise-package)
+  (define (identity x) x)
+  
   (define (type-tower type1 type2 tower)
     (if (eq? type1 type2)
         '()
@@ -77,16 +79,17 @@
             (let ((t1 (car types))
                   (t2 (cdr types)))
               (cond ((eq? type1 t1)
-                     (append (list procedure)
+                     (append (list (cons procedure identity))
                              (if (eq? type2 t2)
                                  '()
                                  (type-tower t2 type2 left-tower))))
                     ((eq? type2 t1)
-                     (append (list procedure)
+                     (append (list (cons identity procedure))
                              (if (eq? type1 t2)
                                  '()
-                                 (type-tower t2 type1 left-tower))))
+                                 (type-tower type1 t2 left-tower))))
                     (else (type-tower type1 type2 left-tower))))))))
+  
   (define types (list (cons (cons 'scheme-number 'rational)
                             (lambda (n) (make-rational n 1)))
                       (cons (cons 'rational 'real)
@@ -96,22 +99,18 @@
                       (cons (cons 'real 'complex)
                             (lambda (n) (make-complex-from-real-imag n 0)))))
   
-  (define (raise produres n)    
+  (define (raise produres pair)    
     (if (null? produres)
-        n
-        (raise (cdr produres) ((car produres) n))))
+        pair
+        (raise (cdr produres) (cons ((caar produres) (car pair))
+                                    ((cdar produres) (cdr pair))))))
   
   (define (raise-pair n1 n2)
     (let ((type1 (type-tag n1))
           (type2 (type-tag n2)))
       (let ((procedures (type-tower type1 type2 types)))
         (display procedures)
-        (newline)
-        (display n1)
-        (newline)
-        (display n2)
-        (cons (raise procedures n1)
-              (raise procedures n2)))))
+        (raise procedures (cons n1 n2)))))
   
   (put-coercion 'raise
                 'raise
@@ -375,10 +374,10 @@
 
 (display "type-raise")
 (newline)
-(get 'numer '(rational))
-((get-coercion 'raise 'raise) 1 (make-complex-from-real-imag 1 2))
-
-
+((get-coercion 'raise 'raise) 111 (make-complex-from-real-imag 1 2))
+(newline)
+((get-coercion 'raise 'raise) (make-complex-from-real-imag 1 2) 100)
+(display "type-raise-end")
 ;(define (scheme-number->complex n)
 ;  (make-complex-from-real-imag (contents n) 0))
 
