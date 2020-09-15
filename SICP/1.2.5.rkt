@@ -1,7 +1,5 @@
 #lang sicp
-
-; (square x) 求x的平方
-(define (square x) (* x x))
+(#%require "Common.rkt")
 
 ; 快速求幂
 (define (fast-expt p n)
@@ -9,13 +7,7 @@
         ((even? n) (square (fast-expt p (/ n 2))))
         (else (* p (fast-expt p (- n 1))))))
 
-; (remainder a b) 求a除以b的余数
 
-; gcd 求最大公约数
-(define (gcd a b)
-  (if (= b 0)
-      a
-      (gcd b (remainder a b))))
 
 (gcd 35 10)
 (gcd 10 35)
@@ -112,7 +104,5 @@
                       m))
           (else
            (remainder (* base (expmod base (- exp 1) m))
-                      m))))
-
-  )
+                      m)))))
   
