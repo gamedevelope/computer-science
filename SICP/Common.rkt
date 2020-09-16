@@ -4,11 +4,24 @@
            gcd
            make-table
            operation-table
+           get-coercion
+           put-coercion
            put
            get
            attach-tag
            type-tag
-           contents)
+           contents
+           make-rational
+           make-real
+           make-complex-from-real-imag
+           numer
+           apply-generic
+           install-rational-package
+           install-type-raise-package
+           install-rectangular-package
+           install-polar-package
+           install-complex-package
+           install-scheme-number-package)
 
 ; 平方
 (define (square x) (* x x))
@@ -60,19 +73,26 @@
 (define (get-coercion t1 t2)
   (get 'coercion (cons t1 t2)))
 
+(define (make-real n)
+  (if (number? n)
+      (attach-tag 'real n)
+      (error "PARAM MUST BE NUMBER" n)))
+
 (define (attach-tag type-tag contents)
-  (if (number? contents)
-      contents
-      (cons type-tag contents)))
+  (cons type-tag contents))
 
 (define (type-tag datum)
-  (cond ((number? datum) 'scheme-number)
+  (cond ((integer? datum) 'integer)
+        ((real? datum) 'real)
+        ((number? datum) 'scheme-number)
         ((pair? datum) (car datum))
         (else
          (error "Bad tagged datum -- TYPE-TAG" datum))))
 
 (define (contents datum)
-  (cond ((number? datum) datum)
+  (cond ((integer? datum) datum)
+        ((real? datum) datum)
+        ((number? datum) datum)
         ((pair? datum) (cdr datum))
         (else
          (error "Bad tagged datum -- CONTENTS" datum))))
@@ -101,21 +121,32 @@
                                  (type-tower type1 t2 left-tower))))
                     (else (type-tower type1 type2 left-tower))))))))
   
-  (define types (list (cons (cons 'scheme-number 'rational)
+  (define types (list (cons (cons 'integer 'rational)
                             (lambda (n) (make-rational n 1)))
                       (cons (cons 'rational 'real)
                             (lambda (n)
-                              (/ ((get 'numer '(rational)) (contents n))
-                                 ((get 'denom '(rational)) (contents n)))))
+                              (make-real (/ ((get 'numer '(rational)) (contents n))
+                                            ((get 'denom '(rational)) (contents n))))))
                       (cons (cons 'real 'complex)
-                            (lambda (n) (make-complex-from-real-imag n 0)))))
+                            (lambda (n) (make-complex-from-real-imag (contents n) 0)))))
+  (define (raise-number n)
+    (define (r n tower)
+      (if (null? tower)
+          n
+          (let ((level (car tower)))
+            ;            (display level)
+            (if (eq? (type-tag n) (caar level))
+                ((cdr level) n)
+                (r n (cdr tower))))))
+    (r n types))
+  (put 'raise 'number raise-number)
   
   (define (raise produres pair)
     (if (null? produres)
         pair
         (raise (cdr produres) (list ((caar produres) (car pair))
                                     ((cdar produres) (cadr pair))))))
-  
+            
   (define (raise-pair n1 n2)
     (let ((type1 (type-tag n1))
           (type2 (type-tag n2)))
@@ -128,7 +159,6 @@
                   (raise-pair n1 n2)))
   'done)
 
-;(install-type-raise-package)
 (define (raise n1 n2)
   ((get-coercion 'raise 'raise) n1 n2))
 
@@ -187,8 +217,8 @@
        (lambda (x y) (tag (make-rat x y))))
   'done)
 
-
-;(install-rational-package)
+(define (numer n)
+  ((get 'make 'rational) n))
 (define (make-rational n d)
   ((get 'make 'rational) n d))
 
@@ -271,6 +301,7 @@
        (lambda (x y) (= x y)))
   (put '=zero? 'scheme-number (lambda (x) (= x 0)))
   'done)
+
 (define (install-complex-package)
   (install-rectangular-package)
   (install-polar-package)
