@@ -14,7 +14,6 @@
            make-rational
            make-real
            make-complex-from-real-imag
-           numer
            apply-generic
            install-rational-package
            install-type-raise-package
@@ -78,6 +77,7 @@
       (attach-tag 'real n)
       (error "PARAM MUST BE NUMBER" n)))
 
+(put 'equ? '(real real) (lambda (n1 n2) (eq? n1 n2)))
 (define (attach-tag type-tag contents)
   (cons type-tag contents))
 
@@ -168,8 +168,10 @@
       (if proc
           (apply proc (map contents args))
           (if (= (length args) 2)
-              (let ((raised-params (raise (car args) (cadr args))))
-                (apply-generic op (car raised-params) (cadr raised-params)))
+              (if (eq? (type-tag (car args)) (type-tag (cadr args)))
+                  (error "No method for these types" (list op type-tags))
+                  (let ((raised-params (raise (car args) (cadr args))))
+                    (apply-generic op (car raised-params) (cadr raised-params))))
               (error "No method for there types"
                      (list "op:" op "type-tags:" type-tags "args:" args)))))))
 
@@ -216,9 +218,12 @@
   (put 'make 'rational
        (lambda (x y) (tag (make-rat x y))))
   'done)
+;
+;(define (numer n)
+;  ((get 'numer '(rational)) (contents n)))
+;(define (denom n)
+;  ((get 'denom '(rational)) n))
 
-(define (numer n)
-  ((get 'make 'rational) n))
 (define (make-rational n d)
   ((get 'make 'rational) n d))
 
