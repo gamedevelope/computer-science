@@ -84,7 +84,6 @@
 
 (define (type-tag datum)
   (cond ((integer? datum) 'integer)
-        ((real? datum) 'real)
         ((number? datum) 'scheme-number)
         ((pair? datum) (car datum))
         (else
@@ -135,7 +134,6 @@
       (if (null? tower)
           n
           (let ((level (car tower)))
-            ;            (display level)
             (if (eq? (type-tag n) (caar level))
                 ((cdr level) n)
                 (r n (cdr tower))))))
@@ -147,7 +145,7 @@
         pair
         (raise (cdr produres) (list ((caar produres) (car pair))
                                     ((cdar produres) (cadr pair))))))
-            
+  
   (define (raise-pair n1 n2)
     (let ((type1 (type-tag n1))
           (type2 (type-tag n2)))
@@ -163,6 +161,39 @@
 (define (raise n1 n2)
   ((get-coercion 'raise 'raise) n1 n2))
 
+(define (install-drop-package)
+  (define real-part (get 'real-part '(complex)))
+  (define type-tower (list (cons (cons 'complex 'real)
+                                 (lambda (x)
+                                   (make-real
+                                    (real-part (contents x)))))
+                           (cons (cons 'real 'rational)
+                                 (lambda (x)
+                                   (make-rational (round (contents x)) 1)))
+                           (cons (cons 'rational 'integer)
+                                 (lambda (x)
+                                   (apply-generic 'numer x)))))
+  (define (project n)
+    (define (p n tower)
+      (if (null? tower)
+          n
+          (let ((level (car tower)))
+            (if (eq? (type-tag n) (caar level))
+                ((cdr level) n)
+                (p n (cdr tower))))))
+    (p n type-tower))
+  
+  (define (drop n)
+    (let ((dn (project n)))
+      (cond ((eq? (type-tag n) (type-tag dn)) n) ; 类型相同,说明不可继续 drop 了
+            ((apply-generic 'equ? n ((get 'raise 'number) dn)) (drop dn))
+            (else n))))
+  
+  (put 'drop 'project project)
+  (put 'drop 'number drop)
+  "drop done")
+
+
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
@@ -172,7 +203,7 @@
               (if (eq? (type-tag (car args)) (type-tag (cadr args)))
                   (error "No method for these types" (list op type-tags))
                   (let ((raised-params (raise (car args) (cadr args))))
-                    (apply-generic op (car raised-params) (cadr raised-params))))
+                    ((get 'drop 'number) (apply-generic op (car raised-params) (cadr raised-params)))))
               (error "No method for there types"
                      (list "op:" op "type-tags:" type-tags "args:" args)))))))
 
@@ -369,3 +400,15 @@
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+(install-rational-package)
+(install-type-raise-package)
+(install-rectangular-package)
+(install-polar-package)
+(install-complex-package)
+(install-scheme-number-package)
+(install-drop-package)
+
+(define drop (get 'drop 'number))
+(define project (get 'drop 'project))
+(define n (make-real 1))
