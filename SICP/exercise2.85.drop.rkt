@@ -19,7 +19,6 @@
                                    (make-rational (round (contents x)) 1)))
                            (cons (cons 'rational 'integer)
                                  (lambda (x)
-                                   (display x)
                                    (apply-generic 'numer x)))))
   (define (project n)
     (define (p n tower)
@@ -34,9 +33,10 @@
   (define raise-number (get 'raise 'number))
   (define (drop n)
     (let ((dn (project n)))
-      (if (apply-generic 'equ? n (raise-number dn))
-          (drop dn)
-          n)))
+      (cond ((eq? (type-tag n) (type-tag dn)) n) ; 类型相同，说明不可继续 drop 了
+            ((apply-generic 'equ? n (raise-number dn)) (drop dn))
+            (else n))))
+  
   (put 'drop 'project project)
   (put 'drop 'number drop)
   "drop done")
@@ -53,3 +53,6 @@
 (raise (make-real 1))
 (apply-generic 'equ? (make-real 1) (make-real 2))
 (project (make-complex-from-real-imag 1 0))
+(define c1 (make-complex-from-real-imag 1 0))
+(define r1 (make-real 1))
+(drop (make-complex-from-real-imag 1 0))

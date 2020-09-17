@@ -77,6 +77,7 @@
       (attach-tag 'real n)
       (error "PARAM MUST BE NUMBER" n)))
 
+(put 'equ? '(integer integer) (lambda (n1 n2) (eq? n1 n2)))
 (put 'equ? '(real real) (lambda (n1 n2) (eq? n1 n2)))
 (define (attach-tag type-tag contents)
   (cons type-tag contents))
