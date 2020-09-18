@@ -1,5 +1,6 @@
 #lang sicp
-(#%provide square
+(#%provide echo
+           square
            cube
            gcd
            make-table
@@ -21,6 +22,10 @@
            install-polar-package
            install-complex-package
            install-scheme-number-package)
+
+(define (echo arg . args)
+  (display (cons arg args))
+  (display "\n"))
 
 ; 平方
 (define (square x) (* x x))
