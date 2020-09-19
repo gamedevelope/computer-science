@@ -35,27 +35,34 @@
 (define (make-account balance password)
   (define max-count 7)
   (define count 7)
+
+  ; 校验密码
+  (define (check-password pw)
+    (if (eq? password pw)
+        true
+        (begin (set! count (dec count))
+               (if (<= count 0)
+                   (error "Call police")
+                   (error "Incorrect password")))))
+
+  ; 提款
   (define (withdraw amount pw)
-    (cond ((not (eq? password pw))
-           (begin (set! count (dec count))
-                  (if (<= count 0)
-                      (error "Call police")
-                      (error "Incorrect password"))))
-          ((>= balance amount)
-           (begin (set! balance (- balance amount))
-                  (set! count max-count)
-                  balance))
-          (else (error "Insufficient funds"))))
+    (if (check-password pw)
+        (if (>= balance amount)
+            (begin (set! balance (- balance amount))
+                   (set! count max-count)
+                   balance)
+            (error "Insufficient funds"))))
+
+  ; 取款
   (define (deposit amount pw)
-    (cond ((not (eq? password pw))
-           (begin (set! count (dec count))
-                  (if (<= count 0)
-                      (error "Call police")
-                      (error "Incorrect password"))))
-          (else
-           (set! balance (+ balance amount))
-           (set! count max-count)
-           balance)))
+    (if (check-password pw)
+        (begin
+          (set! balance (+ balance amount))
+          (set! count max-count)
+          balance)))
+
+  ; dispatch
   (define (dispatch m)
     (cond ((eq? m 'withdraw) withdraw)
           ((eq? m 'deposit) deposit)
