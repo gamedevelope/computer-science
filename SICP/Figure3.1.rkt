@@ -77,3 +77,9 @@
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'deposit) 1000 '123)))
+
+(define (rand)
+  (let ((x 1970))
+    (lambda ()
+      (begin (set! x (rand-update x))
+             x))))

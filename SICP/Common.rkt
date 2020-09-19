@@ -1,27 +1,34 @@
 #lang sicp
-(#%provide echo
+(#%provide apply-generic
+
            square
            cube
+           echo
            gcd
-           make-table
-           operation-table
-           get-coercion
+
            put-coercion
            put
            get
-           attach-tag
-           type-tag
-           contents
-           make-rational
-           make-real
-           make-complex-from-real-imag
-           apply-generic
+           get-coercion
+           
            install-rational-package
            install-type-raise-package
            install-rectangular-package
            install-polar-package
            install-complex-package
-           install-scheme-number-package)
+           install-scheme-number-package
+           
+           make-table
+           make-rational
+           make-real
+           make-complex-from-real-imag
+           operation-table
+           
+           attach-tag
+           type-tag
+           contents
+
+           rand-update)
 
 (define (echo arg . args)
   (display (cons arg args))
@@ -38,6 +45,10 @@
   (if (= b 0)
       a
       (gcd b (remainder a b))))
+
+; 随机数
+(define (rand-update x)
+  (remainder (+ (* x 1103515245) 12345) 65536))
 
 (define (make-table)
   (let ((local-table (list '*table*)))
