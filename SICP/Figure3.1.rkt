@@ -78,8 +78,33 @@
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'deposit) 1000 '123)))
 
-(define (rand)
+(define rand
   (let ((x 1970))
     (lambda ()
       (begin (set! x (rand-update x))
              x))))
+
+; 蒙特卡罗计算 pi
+(define (estimate-pi trials)
+  (sqrt (/ 6 (monte-carlo trials cesaro-test))))
+
+(define (cesaro-test)
+  (let ((n1 (rand))
+        (n2 (rand)))
+    (display (list "rand: " n1 n2))
+    (= (gcd (rand) (rand)) 1)))
+
+(define (monte-carlo trials experiment)
+  (define (iter trials-remaining trials-passed)
+    (cond ((= trials-remaining 0)
+           (begin
+             (display (list trials-passed trials))
+             (/ trials-passed trials)))
+          ((experiment)
+           (iter (- trials-remaining 1) (+ trials-passed 1)))
+          (else
+           (iter (- trials-remaining 1) trials-passed))))
+  (iter trials 0))
+
+(let ()
+  (estimate-pi 100))
