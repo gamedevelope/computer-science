@@ -78,11 +78,13 @@
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'deposit) 1000 '123)))
 
-(define rand
-  (let ((x 1970))
-    (lambda ()
-      (begin (set! x (rand-update x))
-             x))))
+;(define rand
+;  (let ((x (runtime)))
+;    (lambda ()
+;      (begin (set! x (rand-update x))
+;             x))))
+(define (rand)
+  (random 10000000))
 
 ; 蒙特卡罗计算 pi
 (define (estimate-pi trials)
@@ -91,7 +93,6 @@
 (define (cesaro-test)
   (let ((n1 (rand))
         (n2 (rand)))
-    (display (list "rand: " n1 n2))
     (= (gcd (rand) (rand)) 1)))
 
 (define (monte-carlo trials experiment)
@@ -107,4 +108,24 @@
   (iter trials 0))
 
 (let ()
-  (estimate-pi 100))
+  (estimate-pi 1000))
+
+; 练习 3.5
+(define (random-in-range low high)
+  (let ((range (- high low)))
+    (+ low (random range))))
+
+(define (area-test x y r)
+  (let ((x1 (- x r))
+        (x2 (+ x r))
+        (y1 (- y r))
+        (y2 (+ y r)))
+    (let ((px (/ (random-in-range (* x1 1000) (* x2 1000)) 1000))
+          (py (/ (random-in-range (* y1 1000) (* y2 1000)) 1000)))
+      (< (+ (square (- px x))
+            (square (- py y)))
+         (square r)))))
+(define f (lambda () (area-test 5 7 3)))
+(define (area3.5 trials)
+  (* 36 (monte-carlo trials f)))
+(* 3.14 9)

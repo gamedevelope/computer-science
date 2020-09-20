@@ -48,7 +48,7 @@
 
 ; 随机数
 (define (rand-update x)
-  (remainder (+ (* x 1103515245) 12345) 65536))
+  (remainder (round (/ (+ (* x 1103515245) 12345) 65536)) 32768))
 
 (define (make-table)
   (let ((local-table (list '*table*)))
