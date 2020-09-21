@@ -129,9 +129,9 @@
       (< (+ (square (- px x))
             (square (- py y)))
          (square r)))))
-(define f (lambda () (area-test 5 7 3)))
+
 (define (area3.5 trials)
-  (* 36 (monte-carlo trials f)))
+  (* 36 (monte-carlo trials (lambda () (area-test 5 7 3)))))
 
 ; 练习 3.6
 (define rand-v2
@@ -146,3 +146,11 @@
       (cond ((eq? m 'generate) generate)
             ((eq? m 'reset) reset)))
     dispatch))
+
+; 练习 3.8
+(define f3.8.v1
+  (let ((n -1))
+    (lambda (x)
+      (if (< n 0)
+          (begin (set! n x) n)
+          0))))
