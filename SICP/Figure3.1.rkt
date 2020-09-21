@@ -78,6 +78,33 @@
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'deposit) 1000 '123)))
 
+; 练习 3.7
+(define (make-joint account old-password new-password)
+  ; 校验密码
+  (define (check-password pw)
+    (if (eq? new-password pw)
+        true
+        (error "Incorrect password")))
+
+  ; 提款
+  (define (withdraw amount pw)
+    (if (check-password pw)
+        ((account 'withdraw) amount old-password)))
+
+  ; 取款
+  (define (deposit amount pw)
+    (if (check-password pw)
+        ((account 'deposit) amount pw)))
+
+  ; dispatch
+  (define (dispatch m)
+    (cond ((eq? m 'withdraw) withdraw)
+          ((eq? m 'deposit) deposit)
+          (else
+           (error "Unknow request -- MAKE-ACCOUNT"
+                  m))))
+  dispatch)
+           
 (define rand
   (let ((x (runtime)))
     (lambda ()
