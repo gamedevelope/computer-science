@@ -78,13 +78,14 @@
   (echo ((acc 'withdraw) 10 '123))
   (echo ((acc 'deposit) 1000 '123)))
 
-;(define rand
-;  (let ((x (runtime)))
-;    (lambda ()
-;      (begin (set! x (rand-update x))
-;             x))))
-(define (rand)
-  (random 10000000))
+(define rand
+  (let ((x (runtime)))
+    (lambda ()
+      (begin (set! x (rand-update x))
+             x))))
+
+;(define (rand)
+;  (random 10000000))
 
 ; 蒙特卡罗计算 pi
 (define (estimate-pi trials)
@@ -111,9 +112,12 @@
   (estimate-pi 1000))
 
 ; 练习 3.5
+;(define (random-in-range low high)
+;  (let ((range (- high low)))
+;    (+ low (random range))))
 (define (random-in-range low high)
-  (let ((range (- high low)))
-    (+ low (random range))))
+  (let ((d (- high low)))
+    (+ low (remainder (rand) d))))
 
 (define (area-test x y r)
   (let ((x1 (- x r))
@@ -128,4 +132,17 @@
 (define f (lambda () (area-test 5 7 3)))
 (define (area3.5 trials)
   (* 36 (monte-carlo trials f)))
-(* 3.14 9)
+
+; 练习 3.6
+(define rand-v2
+  (let ((x (runtime)))
+    (define (generate)
+      (begin (set! x (rand-update x))
+             x))
+    (define (reset n)
+      (begin (set! x n)
+             generate))
+    (define (dispatch m)
+      (cond ((eq? m 'generate) generate)
+            ((eq? m 'reset) reset)))
+    dispatch))
