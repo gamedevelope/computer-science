@@ -47,10 +47,37 @@
   (echo (count-pairs (list (cons 1 2) (cons 1 2) (cons 1 2))))
   (echo (count-pairs (list (list (cons 1 2) (cons 1 2) (cons 1 2))))))
 
+(define (in-set s elem)
+  (cond ((null? s) false)
+        ((eq? (car s) elem) true)
+        (else (in-set (cdr s) elem))))
 
 ; 练习 3.17
-(define (count-pairs-v2 x)
-  'done)
+;(define s3.17 '())
+;(define n3.17 0)
+;(define (count-pairs-v2 x s)
+;  (cond ((not (pair? x)) 0)
+;        ((in-set s x) 0)
+;        (else
+;         (map (lambda (n)
+;                (if (pair? n)
+;                    (let ()
+;                      (set! s (append s (list n))))))
+;              x)
+;         (count-pairs-v2 (car x s))
+;         (count-pairs-v2 (cdr x s))
+;         (length s))))
+;
+;(let ()
+;  (echo "练习3.17")
+;  (echo (count-pairs-v2 (list 1 2 3 (cons 1 2)) '()))
+;  (echo (count-pairs-v2 (cons (cons (cons 1 2) 1) 1)))
+;  (echo (count-pairs-v2 (cons 1 (cons (cons 1 2) 1))))
+;  (echo (count-pairs-v2 (list (cons 1 (cons 2 (cons 1 2))))))
+;  (echo (count-pairs-v2 (list (cons 1 2) (cons 1 (cons 1 2)))))
+;  (echo (count-pairs-v2 (list (cons 1 2) (cons 1 2))))
+;  (echo (count-pairs-v2 (list (list (cons 1 2) (cons 1 2) (cons 1 2)))))
+;  (echo "练习3.17"))
 
 ; 练习 3.18
 (define (has-cycle? l s)
@@ -59,10 +86,7 @@
         (else
          (has-cycle? (cdr l) (append s (list (car l)))))))
 
-(define (in-set s elem)
-  (cond ((null? s) false)
-        ((eq? (car s) elem) true)
-        (else (in-set (cdr s) elem))))
+
 
 ; 练习 3.19
 (define (has-cycle-v2? l)
@@ -79,3 +103,19 @@
   (echo (has-cycle-v2? '()))
   (echo (has-cycle-v2? '(1 2 3 4 5)))
   (echo (has-cycle-v2? (make-cycle (list 1 2 3)))))
+
+; 改变也是赋值
+;(define (cons x y)
+;  (define (set-x! v) (set! x v))
+;  (define (set-y! v) (set! y v))
+;  
+;  (define (dispatch m)
+;    (cond ((eq? m 'car) x)
+;          ((eq? m 'cdr) y)
+;          ((eq? m 'set-car!) set-x!)
+;          ((eq? m 'set-cdr!) set-y!)
+;          (else (error "Undefined operation -- CONS" m))))
+;  dispatch)
+
+;(define (car z) (z 'car))
+;(define (cdr z) (z 'cdr))
