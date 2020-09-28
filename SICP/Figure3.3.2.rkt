@@ -31,6 +31,7 @@
          (set-front-ptr! queue (cdr (front-ptr queue)))
          queue)))
 
+; 练习 3.22
 (define (print-queue queue)
   (display (front-ptr queue)))
 ;(define (print-queue queue)
@@ -47,3 +48,20 @@
   (insert-queue! q 'd)
   (insert-queue! q 'e)
   (print-queue q))
+
+; 练习 3.23
+;(define (make-queue-v2)
+;  (let ((front-ptr '())
+;        (rear-ptr '()))
+;    (define (empty-queue?) (null? front-ptr))
+;    (define (set-front-ptr! item) (set-car! front-ptr item))
+;    (define (set-rear-ptr! item) (set-cdr! rear-ptr item))
+;    (define (front-queue)
+;      (if (empty-queue?)
+;          (error "FRONT called witch an empty queue" front-ptr)))
+;    (define (insert item)
+;      (let ((new-pair (cons item '())))
+;        (cond ((empty-queue?)
+;               (set-front-ptr! new-pair)
+;               (set-rear-ptr! new-pair)
+               
