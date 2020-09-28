@@ -30,3 +30,20 @@
         (else
          (set-front-ptr! queue (cdr (front-ptr queue)))
          queue)))
+
+(define (print-queue queue)
+  (display (front-ptr queue)))
+;(define (print-queue queue)
+;  (define (iter p q)
+;    (display p)
+;    (if (not (eq? p q))
+;        (iter (cdr p) q)))
+;  (iter (front-ptr queue) (rear-ptr queue)))
+
+(let ((q (make-queue)))
+  (insert-queue! q 'a)
+  (insert-queue! q 'b)
+  (insert-queue! q 'c)
+  (insert-queue! q 'd)
+  (insert-queue! q 'e)
+  (print-queue q))
