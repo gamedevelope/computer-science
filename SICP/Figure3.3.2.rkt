@@ -95,35 +95,47 @@
 
 ; 练习 3.23
 (define (make-deque)
-  (cons (cons '(a) '(b))
-        (cons '(c) '(d))))
+  (cons '() '()))
 
-(define (left-front-ptr deque) (caar deque))
-(define (left-rear-ptr deque) (cdar deque))
-(define (right-front-ptr deque) (cadr deque))
-(define (right-rear-ptr deque) (cddr deque))
+(define (left-ptr-deque deque) (car deque))
+(define (rear-ptr-deque deque) (cdr deque))
 
 (define (empty-deque? deque)
-  (null? (left-front-ptr deque)))
+  (null? (left-ptr-deque deque)))
 
 (define (front-deque deque)
   (if (empty-deque? deque)
-      (error "FRONT called with an empty deque" (left-front-ptr deque))
-      (car (left-front-ptr deque))))
+      (error "FRONT called with an empty deque" (left-ptr-deque deque))
+      (cdr (left-ptr-deque deque))))
 
 (define (rear-deque deque)
   (if (empty-deque? deque)
-      (error "REAR called with an empty deque" (left-rear-ptr deque))
-      (car (right-front-ptr deque))))
-;
-;(define (front-insert-deque! deque item)
-;  (let ((new-pair (cons item '())))
-;    (cond ((empty-queue? deque)
-;           (set! (left-front-ptr deque) new-pair)
-;           (set! (left-rear-ptr deque) new-pair)
-;           (set! (right-front-ptr deque) new-pair)
-;           (set! (right-rear-ptr deque) new-pair)
-;           deque)
-;          (else
-;           
-;           deque))))
+      (error "REAR called with an empty deque" (rear-ptr-deque deque))
+      (cdr (rear-ptr-deque deque))))
+
+(define (make-deque-node item)
+  (cons (cons '() '()) item))
+
+(define (deque-back-ptr node)
+  (caar node))
+(define (deque-front-ptr node)
+  (cadr node))
+(define (node-data node)
+  (cdr node))
+
+(define (front-insert-deque! deque item)
+  (let ((new-node (make-deque-node item)))
+    (cond ((empty-deque? deque)
+           (set! (left-ptr-deque deque) new-node)
+           (set! (rear-ptr-deque deque) new-node))
+          (else
+           (set! (back-ptr new-node) (left-ptr-deque deque))
+           (set! (deque-front-ptr (left-ptr-deque deque)) new-node)
+           (set! (left-ptr-deque deque) new-node)))))
+
+(define (rear-insert-deque! deque item)
+  'none)
+(define (front-delete-deque! deque)
+  'none)
+(define (rear-delete-deque! deque)
+  'none)
