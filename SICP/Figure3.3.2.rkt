@@ -97,16 +97,29 @@
 (define (make-deque)
   (cons '() '()))
 
-(define (left-ptr-deque deque) (car deque))
+(define (set-front-ptr-deque! deque p) (set-car! deque p))
+(define (set-rear-ptr-deque! deque p) (set-cdr! deque p))
+
+(define (node-ptr node) (car node))
+(define (set-node-next-ptr! node ptr) (set-car! (node-ptr node) ptr))
+(define (set-node-prev-ptr! node ptr) (set-cdr! (node-ptr node) ptr))
+
+(define (next-deque-node node)
+  (cdr (node-ptr node)))
+
+(define (prev-deque-node node)
+  (car (node-ptr node)))
+
+(define (front-ptr-deque deque) (car deque))
 (define (rear-ptr-deque deque) (cdr deque))
 
 (define (empty-deque? deque)
-  (null? (left-ptr-deque deque)))
+  (null? (front-ptr-deque deque)))
 
 (define (front-deque deque)
   (if (empty-deque? deque)
-      (error "FRONT called with an empty deque" (left-ptr-deque deque))
-      (cdr (left-ptr-deque deque))))
+      (error "FRONT called with an empty deque" (front-ptr-deque deque))
+      (cdr (front-ptr-deque deque))))
 
 (define (rear-deque deque)
   (if (empty-deque? deque)
@@ -126,16 +139,39 @@
 (define (front-insert-deque! deque item)
   (let ((new-node (make-deque-node item)))
     (cond ((empty-deque? deque)
-           (set! (left-ptr-deque deque) new-node)
-           (set! (rear-ptr-deque deque) new-node))
+           (set-front-ptr-deque! deque new-node)
+           (set-rear-ptr-deque! deque new-node)
+           deque)
           (else
-           (set! (back-ptr new-node) (left-ptr-deque deque))
-           (set! (deque-front-ptr (left-ptr-deque deque)) new-node)
-           (set! (left-ptr-deque deque) new-node)))))
+           (set-node-next-ptr! new-node (front-ptr-deque deque))
+           (set-node-prev-ptr! (front-ptr-deque deque) new-node)
+           (set-front-ptr-deque! deque new-node)
+           deque))))
 
 (define (rear-insert-deque! deque item)
-  'none)
+  (let ((new-node (make-deque-node item)))
+    (cond ((empty-deque? deque)
+           (set-front-ptr-deque! deque new-node)
+           (set-rear-ptr-deque! deque new-node)
+           deque)
+          (else
+           (set-node-prev-ptr! new-node (rear-ptr-deque deque))
+           (set-node-next-ptr! (rear-ptr-deque deque) new-node)
+           (set-rear-ptr-deque! deque new-node)
+           deque))))
+
 (define (front-delete-deque! deque)
-  'none)
+  (cond ((empty-deque? deque)
+         (error "FRONT called with an empty deque" deque))
+        (else
+         (let ((n (next-deque-node (front-ptr-deque deque))))
+           (set-node-prev-ptr! n '())
+           (set-front-ptr-deque! deque n)))))
+
 (define (rear-delete-deque! deque)
   'none)
+
+(define d (make-deque))
+(front-insert-deque! d 'a)
+(front-insert-deque! d 'b)
+(front-insert-deque! d 'c)
