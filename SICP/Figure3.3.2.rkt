@@ -105,10 +105,10 @@
 (define (set-node-prev-ptr! node ptr) (set-cdr! (node-ptr node) ptr))
 
 (define (next-deque-node node)
-  (cdr (node-ptr node)))
+  (car (node-ptr node)))
 
 (define (prev-deque-node node)
-  (car (node-ptr node)))
+  (cdr (node-ptr node)))
 
 (define (front-ptr-deque deque) (car deque))
 (define (rear-ptr-deque deque) (cdr deque))
@@ -165,13 +165,33 @@
          (error "FRONT called with an empty deque" deque))
         (else
          (let ((n (next-deque-node (front-ptr-deque deque))))
-           (set-node-prev-ptr! n '())
-           (set-front-ptr-deque! deque n)))))
+           (cond ((null? n)
+                  (set-front-ptr-deque! deque '())
+                  (set-rear-ptr-deque! deque '()))
+                 (else
+                  (set-node-prev-ptr! n '())
+                  (set-front-ptr-deque! deque n)))))))
 
 (define (rear-delete-deque! deque)
-  'none)
+  (cond ((empty-deque? deque)
+         (error "REAR called with an empty deque" deque))
+        (else
+         (let ((n (prev-deque-node (rear-ptr-deque deque))))
+           (cond ((null? n)
+                  (set-front-ptr-deque! deque '())
+                  (set-rear-ptr-deque! deque '()))
+                 (else
+                  (set-node-next-ptr! n '())
+                  (set-rear-ptr-deque! deque n)))))))
+
+(define (print-deque deque)
+  (let ((p (front-ptr-deque deque)))
+    (define (loop)
+      (cond ((not (null? p))
+             (display (cdr p))
+             (set! p (next-deque-node p))
+             (loop))))
+    (loop)))
 
 (define d (make-deque))
 (front-insert-deque! d 'a)
-(front-insert-deque! d 'b)
-(front-insert-deque! d 'c)
