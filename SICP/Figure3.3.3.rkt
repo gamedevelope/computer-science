@@ -1,11 +1,11 @@
 #lang sicp
 
 ; 表格的表示
-(define (lookup key table)
-  (let ((record (assoc key (cdr table))))
-        (if record
-            (cdr record)
-            false)))
+;(define (lookup key table)
+;  (let ((record (assoc key (cdr table))))
+;        (if record
+;            (cdr record)
+;            false)))
 
 (define (assoc key records)
   (cond ((null? records) false)
@@ -22,3 +22,14 @@
 
 (define (make-table)
   (list '*table*))
+
+(define (lookup key-1 key-2 table)
+  (let ((subtable
+         (assoc key-1 (cdr table))))
+    (if subtable
+        (let ((record
+               (assoc key-2 (cdr subtable))))
+          (if record
+              (cdr record)
+              false))
+        false)))
