@@ -7,10 +7,10 @@
 ;            (cdr record)
 ;            false)))
 
-(define (assoc key records)
-  (cond ((null? records) false)
-        ((equal? key (caar records)) (car records))
-        (else (assoc key (cdr records)))))
+;(define (assoc key records)
+;  (cond ((null? records) false)
+;        ((equal? key (caar records)) (car records))
+;        (else (assoc key (cdr records)))))
 
 ;(define (insert! key value table)
 ;  (let ((record (assoc key (cdr table))))
@@ -19,6 +19,22 @@
 ;        (set-cdr! table
 ;                  (cons (cons key value) (cdr table)))))
 ;  'ok)
+
+; 练习 3.24
+(define (same-key? key-1 key-2)
+  (cond ((not (and (number? key-1) (number? key-2))) false)
+        ((< (* key-1 key-2) 0) false)
+        (else
+         (if (= key-1 key-2)
+             true
+             (let ((d (- key-1 key-2)))
+               (and (< d 0.000001)
+                    (> d -0.000001)))))))
+
+(define (assoc key records)
+  (cond ((null? records) false)
+        ((same-key? key (caar records)) (car records))
+        (else (assoc key (cdr records)))))
 
 (define (make-table)
   (let ((local-table (list '*table*)))
@@ -56,4 +72,9 @@
 (let ((t (make-table)))
   ((t 'insert-proc!) 'letters 'a 97)
   ((t 'insert-proc!) 'letters 'b 98)
-  (t 'print))
+  ((t 'insert-proc!) 'letters 0.0000000001 100)
+  (t 'print)
+  (display ((t 'lookup-proc) 'letters 0.0000000001))
+  (display ((t 'lookup-proc) 'letters 'a)))
+
+
