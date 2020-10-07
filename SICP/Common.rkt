@@ -31,8 +31,13 @@
            rand-update)
 
 (define (echo arg . args)
-  (display (cons arg args))
-  (display "\n"))
+  (define (iter a b)
+    (if (null? b)
+        (display a)
+        (begin
+          (display a)
+          (iter (car b) (cdr b)))))
+  (iter arg args))
 
 ; 平方
 (define (square x) (* x x))

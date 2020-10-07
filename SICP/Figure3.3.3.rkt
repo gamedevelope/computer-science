@@ -116,16 +116,8 @@
 ;            (else (error "Unknown operation -- TABLE" m))))
 ;    dispatch))
 
-(define (f x . y)
-  (display x)
-  (if (> (length y) 1)
-      (f (car y) (cdr y))))
-
 ;(define (f x . y)
-;  (define (iter a b)
-;    (if (null? a)
-;        (display a)
-;        (begin
-;          (display a)
-;          (iter (car b) (cdr b)))))
-;  (iter x y))
+;  (display x)
+;  (if (> (length y) 1)
+;      (f (car y) (cdr y))))
+
