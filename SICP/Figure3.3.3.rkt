@@ -96,8 +96,14 @@
       (define (insert table key value)
         (let ((subtable (assoc key (cdr table))))
           (if subtable
-              
-        )
+              (if (null? (cdr value))
+                  (set-cdr! subtable
+                            (cons (cons key (car value))
+                                  (cdr subtable)))
+                  (insert subtable (car value) (cdr value)))
+              (set-cdr! table
+                        (cons (insert )
+                              (cdr table)))))))
       (insert local-table key value))
                     
             
