@@ -34,8 +34,23 @@
                             (cdr table)))))
   table)
 
+
+(define (locate! table key)
+  (let ((subtable (assoc key table)))
+    (if subtable
+        table
+        (begin (set-cdr! table
+                         (list (list key)
+                               (cdr table)))
+               table))))
+
 (define (make-table)
   (list '*table*))
+
+; 创建支持任意维度的表格
+; 表头用一个序对表示
+(define (make-xtable)
+  (list (cons '*table* '())))
 
 (define t (make-table))
 (insert! t 'a 100)
