@@ -102,3 +102,21 @@
   ((t 'insert!) (list 'b 'c) 100)
   (display ((t 'lookup) (list 'b 'c)))
   (t 'print))
+
+; 练习 3.26
+; 用二叉树表示 n 维表格
+(define (make-table-3.26)
+  (define (any->string a)
+    (cond ((number? a) (number->string a))
+          ((symbol? a) (symbol->string a))
+          ((string? a) a)
+          (else
+           (error "Unknown TYPE -- PARAM" a))))
+  
+  ; 用字典序比较两个关键码列表
+  (define (> any-1 any-2)
+    (string>? (any->string any-1)
+              (any->string any-2)))
+
+  'done)
+    
