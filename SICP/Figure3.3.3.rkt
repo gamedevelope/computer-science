@@ -114,9 +114,35 @@
            (error "Unknown TYPE -- PARAM" a))))
   
   ; 用字典序比较两个关键码列表
-  (define (> any-1 any-2)
+  (define (>? any-1 any-2)
     (string>? (any->string any-1)
               (any->string any-2)))
 
-  'done)
-    
+  (define (<? any-1 any-2)
+    (string<? (any->string any-1)
+              (any->string any-2)))
+  
+  (define (=? any-1 any-2)
+    (string=? (any->string any-1)
+              (any->string any-2)))
+  
+  (define (list>? list-1 list-2)
+    (cond ((null? list-1) false)
+          ((null? list-2) true)
+          (else
+           (let ((key-1 (any->string (car list-1)))
+                 (key-2 (any->string (car list-2))))
+             (cond ((string>? key-1 key-2) true)
+                   (else
+                    (list>? (cdr list-1) (cdr list-2))))))))
+
+  (define (dispatch m)
+    (cond ((eq? m 'list>?) list>?)))
+  
+  dispatch)
+
+(newline)
+
+(let ((t (make-table-3.26)))
+  (display ((t 'list>?) (list 1 2 3) (list 1 2 4)))
+  (display ((t 'list>?) (list 1 2 3) (list 1 2 0))))
