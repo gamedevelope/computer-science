@@ -106,6 +106,12 @@
 ; 练习 3.26
 ; 用二叉树表示 n 维表格
 (define (make-table-3.26)
+  (define (make-tree node left right)
+    (list node left right))
+  (define (make-node keys value) (cons keys value))
+  (define (entry tree) (car tree))
+  (define (left-branch tree) (cadr tree))
+  (define (right-branch tree) (caddr tree))
   (define (any->string a)
     (cond ((number? a) (number->string a))
           ((symbol? a) (symbol->string a))
@@ -135,14 +141,20 @@
              (cond ((string>? key-1 key-2) true)
                    (else
                     (list>? (cdr list-1) (cdr list-2))))))))
-
-  (define (dispatch m)
-    (cond ((eq? m 'list>?) list>?)))
-  
-  dispatch)
+  (let ((table (list)))
+    (define (insert! keys value)
+      (cond ((null? table) (make-tree (make-node keys value) '() '()))))
+    
+    (define (dispatch m)
+      (cond ((eq? m 'list>?) list>?)
+            ((eq? m 'insert!) insert!)))
+    
+    dispatch))
 
 (newline)
 
 (let ((t (make-table-3.26)))
   (display ((t 'list>?) (list 1 2 3) (list 1 2 4)))
-  (display ((t 'list>?) (list 1 2 3) (list 1 2 0))))
+  (display ((t 'list>?) (list 1 2 3) (list 1 2 0)))
+  (display ((t 'list>?) (list 1 2 3) (list 1 2)))
+  (display ((t 'list>?) (list 1) (list 1 2))))
