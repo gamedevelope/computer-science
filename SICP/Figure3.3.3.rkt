@@ -108,7 +108,9 @@
 (define (make-table-3.26)
   (define (make-tree node left right)
     (list node left right))
-  (define (make-node keys value) (cons keys value))
+  (define (make-node keys value) (list (cons keys value) '() '()))
+  (define (node-keys entry) (car entry))
+  (define (node-value entry) (cdr entry))
   (define (entry tree) (car tree))
   (define (left-branch tree) (cadr tree))
   (define (right-branch tree) (caddr tree))
@@ -141,13 +143,36 @@
              (cond ((string>? key-1 key-2) true)
                    (else
                     (list>? (cdr list-1) (cdr list-2))))))))
-  (let ((table (list)))
+  (define (list=? list-1 list-2)
+    (equal? list-1 list-2))
+
+  (define (list<? list-1 list-2)
+    (cond ((and (null? list-1) (list-2)) true)
+          ((null? list-1) true)
+          ((null? list-2) false)
+          (else
+           (let ((key-1 (any->string (car list-1)))
+                 (key-2 (any->string (car list-2))))
+             (cond ((string<? key-1 key-2) true)
+                   (else
+                    (list<? (cdr list-1) (cdr list-2))))))))
+          
+  
+  (let ((table (list '*binary-table*)))
     (define (insert! keys value)
-      (cond ((null? table) (make-tree (make-node keys value) '() '()))))
+      (let ((root-node (cdr table)))
+        (cond ((null? root-node) (set-cdr! table (make-node keys value))))))
+    ;      (let ((left-node (left-branch table))
+    ;            (right-node (right-branch table)))
+    ;        (cond ((null? root-node) (set-car! table (make-node keys value)))
+    ;              ((list<? keys (node-keys root-node))
+               
+            
     
     (define (dispatch m)
       (cond ((eq? m 'list>?) list>?)
-            ((eq? m 'insert!) insert!)))
+            ((eq? m 'insert!) insert!)
+            ((eq? m 'print) (display table))))
     
     dispatch))
 
@@ -158,3 +183,9 @@
   (display ((t 'list>?) (list 1 2 3) (list 1 2 0)))
   (display ((t 'list>?) (list 1 2 3) (list 1 2)))
   (display ((t 'list>?) (list 1) (list 1 2))))
+
+(newline)
+
+(let ((t (make-table-3.26)))
+  ((t 'insert!) (list 'a) 100)
+  (t 'print))
