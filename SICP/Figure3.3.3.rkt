@@ -109,8 +109,14 @@
   (define (make-tree node left right)
     (list node left right))
   (define (make-node keys value) (list (cons keys value) '() '()))
-  (define (node-keys entry) (car entry))
-  (define (node-value entry) (cdr entry))
+  (define (node-keys entry) (caar entry))
+  (define (node-value entry) (cdar entry))
+  (define (set-node-value! node value)
+    (set-cdr! (car node) value))
+  (define (set-node-left-branch-value! node new-node)
+    (set-car! (cdr node) new-node))
+  (define (set-node-right-branch-value! node new-node)
+    (set-cdr! (cdr node) new-node))
   (define (entry tree) (car tree))
   (define (left-branch tree) (cadr tree))
   (define (right-branch tree) (caddr tree))
@@ -159,15 +165,25 @@
           
   
   (let ((table (list '*binary-table*)))
+    (define (insert-node! node keys value)
+      (cond ((equal? (node-keys node) keys) (set-node-value! node value))
+            ((list<? keys (node-keys node))
+             (if (null? (left-branch node))
+                 (set-node-left-branch-value! node (make-node keys value))
+                 (insert! (left-branch node) keys value)))
+            (else
+             (if (null? (right-branch node))
+                 (set-node-right-branch-value! node (make-node keys value))
+                 (insert! (right-branch node) keys value)))))
+            
     (define (insert! keys value)
       (let ((root-node (cdr table)))
-        (cond ((null? root-node) (set-cdr! table (make-node keys value))))))
+        (cond ((null? root-node) (set-cdr! table (make-node keys value)))
+              (else (insert-node! root-node keys value)))))
     ;      (let ((left-node (left-branch table))
     ;            (right-node (right-branch table)))
     ;        (cond ((null? root-node) (set-car! table (make-node keys value)))
     ;              ((list<? keys (node-keys root-node))
-               
-            
     
     (define (dispatch m)
       (cond ((eq? m 'list>?) list>?)
@@ -188,4 +204,5 @@
 
 (let ((t (make-table-3.26)))
   ((t 'insert!) (list 'a) 100)
+  ((t 'insert!) (list 'b) 200)
   (t 'print))
