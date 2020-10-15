@@ -116,7 +116,7 @@
   (define (set-node-left-branch-value! node new-node)
     (set-car! (cdr node) new-node))
   (define (set-node-right-branch-value! node new-node)
-    (set-cdr! (cdr node) new-node))
+    (set-car! (cddr node) new-node))
   (define (entry tree) (car tree))
   (define (left-branch tree) (cadr tree))
   (define (right-branch tree) (caddr tree))
@@ -153,40 +153,40 @@
     (equal? list-1 list-2))
 
   (define (list<? list-1 list-2)
-    (cond ((and (null? list-1) (list-2)) true)
+    (cond ((and (null? list-1) (null? list-2)) true)
           ((null? list-1) true)
           ((null? list-2) false)
           (else
            (let ((key-1 (any->string (car list-1)))
                  (key-2 (any->string (car list-2))))
-             (cond ((string<? key-1 key-2) true)
+             (cond ((string>? key-1 key-2) false)
                    (else
                     (list<? (cdr list-1) (cdr list-2))))))))
-          
   
   (let ((table (list '*binary-table*)))
     (define (insert-node! node keys value)
+      ; 如果是根节点，替换根节点的值
       (cond ((equal? (node-keys node) keys) (set-node-value! node value))
+            ; 判断是否在左子树
             ((list<? keys (node-keys node))
              (if (null? (left-branch node))
+                 ; 左子树为空，将新节点放入
                  (set-node-left-branch-value! node (make-node keys value))
-                 (insert! (left-branch node) keys value)))
+                 ; 尝试向左子树插入
+                 (insert-node! (left-branch node) keys value)))
             (else
              (if (null? (right-branch node))
                  (set-node-right-branch-value! node (make-node keys value))
-                 (insert! (right-branch node) keys value)))))
+                 (insert-node! (right-branch node) keys value)))))
             
     (define (insert! keys value)
       (let ((root-node (cdr table)))
         (cond ((null? root-node) (set-cdr! table (make-node keys value)))
               (else (insert-node! root-node keys value)))))
-    ;      (let ((left-node (left-branch table))
-    ;            (right-node (right-branch table)))
-    ;        (cond ((null? root-node) (set-car! table (make-node keys value)))
-    ;              ((list<? keys (node-keys root-node))
     
     (define (dispatch m)
       (cond ((eq? m 'list>?) list>?)
+            ((eq? m 'list<?) list<?)
             ((eq? m 'insert!) insert!)
             ((eq? m 'print) (display table))))
     
@@ -201,8 +201,12 @@
   (display ((t 'list>?) (list 1) (list 1 2))))
 
 (newline)
-
+(display "练习 3.26")
 (let ((t (make-table-3.26)))
+  (display ((t 'list<?) (list 'a) (list 'c)))
   ((t 'insert!) (list 'a) 100)
-  ((t 'insert!) (list 'b) 200)
+  ((t 'insert!) (list 'c) 200)
+  ((t 'insert!) (list 'b) 150)
+  ((t 'insert!) (list 'b 'c) 150)
+  ((t 'insert!) (list 'b 'a) 150)
   (t 'print))
