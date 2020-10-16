@@ -178,16 +178,31 @@
              (if (null? (right-branch node))
                  (set-node-right-branch-value! node (make-node keys value))
                  (insert-node! (right-branch node) keys value)))))
-            
+    
     (define (insert! keys value)
       (let ((root-node (cdr table)))
         (cond ((null? root-node) (set-cdr! table (make-node keys value)))
               (else (insert-node! root-node keys value)))))
+
+    (define (lookup-node node keys)
+      (cond ((null? node) false)
+            ((equal? keys (node-keys node)) (node-value node))
+            ((list<? keys (node-keys node))
+             (lookup-node (left-branch node) keys))
+            (else
+             (lookup-node (right-branch node) keys))))
+    
+    (define (lookup keys)
+      (let ((root-node (cdr table)))
+        (cond ((null? root-node) false)
+              (else
+               (lookup-node root-node keys)))))
     
     (define (dispatch m)
       (cond ((eq? m 'list>?) list>?)
             ((eq? m 'list<?) list<?)
             ((eq? m 'insert!) insert!)
+            ((eq? m 'lookup) lookup)
             ((eq? m 'print) (display table))))
     
     dispatch))
@@ -204,9 +219,12 @@
 (display "练习 3.26")
 (let ((t (make-table-3.26)))
   (display ((t 'list<?) (list 'a) (list 'c)))
-  ((t 'insert!) (list 'a) 100)
-  ((t 'insert!) (list 'c) 200)
-  ((t 'insert!) (list 'b) 150)
-  ((t 'insert!) (list 'b 'c) 150)
-  ((t 'insert!) (list 'b 'a) 150)
-  (t 'print))
+  ((t 'insert!) (list 'a) 1)
+  ((t 'insert!) (list 'c) 2)
+  ((t 'insert!) (list 'b) 3)
+  ((t 'insert!) (list 'b 'c) 4)
+  ((t 'insert!) (list 'b 'a) 5)
+  (display ((t 'lookup) (list 'b 'a)))
+  (display ((t 'lookup) (list 'b)))
+  (display ((t 'lookup) (list 'b 'c)))
+  (display ((t 'lookup) (list 'b 'd))))
