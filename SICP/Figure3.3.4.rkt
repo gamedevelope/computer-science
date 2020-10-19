@@ -60,6 +60,10 @@
   (set-cdr! queue item))
 (define (empty-queue? queue)
   (null? (front-ptr queue)))
+(define (front-queue queue)
+  (if (empty-queue? queue)
+      (error "FRONT called with an empty queue" queue)
+      (car (front-ptr queue))))
 (define (insert-queue! queue item)
   (let ((new-pair (cons item '())))
     (cond ((empty-queue? queue)
@@ -70,6 +74,13 @@
            (set-cdr! (rear-ptr queue) new-pair)
            (set-rear-ptr! queue new-pair)
            queue))))
+
+(define (delete-queue! q)
+  (cond ((empty-queue? q)
+         (error "DELETE! called with an empty queue" q))
+        (else
+         (set-front-ptr! q (cdr (front-ptr q)))
+         q)))
 
 (define (add-to-agenda! time action agenda)
   (define (belongs-before? segments)
@@ -153,6 +164,19 @@
   (add-to-agenda! (+ delay (current-time the-agenda))
                   action
                   the-agenda))
+
+(define (first-agenda-item agenda)
+  (if (empty-agenda? agenda)
+      (error "Agenda is empty -- FIRST-AGENDA-ITEM")
+      (let ((first-seg (first-segment agenda)))
+        (set-current-time! agenda (segment-time first-seg))
+        (front-queue (segment-queue first-seg)))))
+
+(define (remove-first-agenda-item! agenda)
+  (let ((q (segment-queue (first-segment agenda))))
+    (delete-queue! q)
+    (if (empty-queue? q)
+        (set-segments! agenda (rest-segments agenda)))))
 
 (define (propagate)
   (if (empty-agenda? the-agenda)
