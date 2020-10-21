@@ -333,3 +333,12 @@
                  (get-signal s2)
                  (get-signal s3)
                  )))
+
+(let ((a (make-wire))
+      (b (make-wire)))
+  (inverter a b)
+  (set-signal! a 0)
+  (propagate)
+  (display (list (get-signal a)
+                 (get-signal b))))
+      
