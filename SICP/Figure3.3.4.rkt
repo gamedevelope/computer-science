@@ -214,10 +214,10 @@
 (define (half-adder a b s c)
   (let ((d (make-wire))
         (e (make-wire)))
-    (or-gate a b d)
-    (and-gate a b c)
     (inverter c e)
     (and-gate d e s)
+    (or-gate a b d)
+    (and-gate a b c)
     'ok))
 
 (define (full-adder a b c-in sum c-out)
@@ -290,8 +290,9 @@
 ;  (set-signal! input-1 1))
 
 ; 练习 3.30
-(define (ripple-carry-adder a1 a2 a3 b1 b2 b3 c c-out s1 s2 s3)
-  (let ((c1 (make-wire))
+(define (ripple-carry-adder a1 a2 a3 b1 b2 b3 c-out s1 s2 s3)
+  (let ((c (make-wire))
+        (c1 (make-wire))
         (c2 (make-wire)))
     (full-adder a3 b3 c s3 c2)
     (full-adder a2 b2 c2 s2 c1)
@@ -312,21 +313,13 @@
   (probe 's2 s2)
   (probe 's3 s3)
   (probe 'c-out c-out)
-  (ripple-carry-adder a1 a2 a3 b1 b2 b3 c c-out s1 s2 s3)
-  (after-delay 10 (lambda ()
-                    (display "set-signal a3 b3")
-                    (set-signal! a3 1)
-                    (set-signal! b3 1)))
-  (propagate)
-  (after-delay 10 (lambda ()
-                    (display "set-signal a2 b2")
-                    (set-signal! a2 1)
-                    (set-signal! b2 1)))
-  (propagate)
-  (after-delay 10 (lambda ()
-                    (display "set-signal a1 b1")
-                    (set-signal! a1 1)
-                    (set-signal! b1 1)))
+  (ripple-carry-adder a1 a2 a3 b1 b2 b3 c-out s1 s2 s3)
+  (set-signal! a3 1)
+  (set-signal! b3 1)
+  (set-signal! a2 1)
+  (set-signal! b2 1)
+  (set-signal! a1 1)
+  (set-signal! b1 1)
   (propagate)
   (display (list (get-signal c-out)
                  (get-signal s1)
@@ -338,7 +331,30 @@
       (b (make-wire)))
   (inverter a b)
   (set-signal! a 0)
+  (after-delay 10
+               (lambda ()
+                 (display (list (get-signal a)
+                                (get-signal b)))))
+  (propagate))
+
+; 需要用 propagate 驱动一下
+
+; 练习 3.31
+; 为什么在 make-wire 里定义的内部过程 accept-action-procedure!
+; 当一个新动作加入时，这一过程应立即执行
+; 猜测与时序有关
+; 半加器 a = 1 b = 0 时，立即执行与不立即执行得到了不同的结果
+; 除非设置门电路时，必须按一定的次序，否则就需要加上立即执行的动作
+
+(newline)
+(display "练习3.31")
+(newline)
+(let ((a (make-wire))
+      (b (make-wire))
+      (s (make-wire))
+      (c (make-wire)))
+  (half-adder a b s c)
+  (set-signal! a 1)
+  (set-signal! b 0)
   (propagate)
-  (display (list (get-signal a)
-                 (get-signal b))))
-      
+  (display (list "s :" (get-signal s) "c :" (get-signal c))))
