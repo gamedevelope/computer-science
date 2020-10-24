@@ -57,10 +57,10 @@
           (begin (set! signal-value new-value)
                  (call-each action-procedures))
           'done))
-
+    
     (define (accept-action-procedure! proc)
-      (set! action-procedures (cons proc action-procedures))
-      (proc))
+      (set! action-procedures (cons proc action-procedures)))
+    ;      (proc))
 
     (define (print)
       (display (list signal-value
@@ -172,6 +172,8 @@
   'ok)
 
 (define (after-delay delay action)
+  (display "current-time:")
+  (display (current-time the-agenda))
   (add-to-agenda! (+ delay (current-time the-agenda))
                   action
                   the-agenda))
@@ -359,6 +361,7 @@
   (set-signal! input-1 1)
   (propagate)
   (set-signal! input-2 0)
+  (display "the-agenda:")
   (display the-agenda)
   (propagate)
   (display (list (get-signal carry)
