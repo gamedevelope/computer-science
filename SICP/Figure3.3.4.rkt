@@ -59,8 +59,8 @@
           'done))
     
     (define (accept-action-procedure! proc)
-      (set! action-procedures (cons proc action-procedures)))
-    ;      (proc))
+      (set! action-procedures (cons proc action-procedures))
+      (proc))
 
     (define (print)
       (display (list signal-value
@@ -151,9 +151,6 @@
            (logical-and (get-signal a1) (get-signal a2))))
       (after-delay and-gate-delay
                    (lambda ()
-                     (newline)
-                     (display "after-delay")
-                     (newline)
                      (set-signal! output new-value)))))
   (add-action! a1 and-action-procedure)
   (add-action! a2 and-action-procedure)
@@ -172,8 +169,6 @@
   'ok)
 
 (define (after-delay delay action)
-  (display "current-time:")
-  (display (current-time the-agenda))
   (add-to-agenda! (+ delay (current-time the-agenda))
                   action
                   the-agenda))
@@ -359,14 +354,9 @@
   (probe 'sum sum)
   (half-adder input-1 input-2 sum carry)
   (set-signal! input-1 1)
-  (propagate)
   (set-signal! input-2 0)
-  (display "the-agenda:")
-  (display the-agenda)
   (propagate)
   (display (list (get-signal carry)
                  (get-signal sum)))
   (newline)
-  (print-wire carry)
-  (newline)
-  (print-wire sum))
+  (newline))
