@@ -2,7 +2,7 @@
 
 ; 3.3.5 约束的传播
 (define (make-connector)
-  (let ((value false) (informat false) (constraints '()))
+  (let ((value false) (informant false) (constraints '()))
     (define (set-my-value newval setter)
       (cond ((not (has-value? me))
              (set! value newval)
@@ -40,4 +40,32 @@
             (else (error "Unknown operation -- CONNECTOR"
                          request))))
     me))
-             
+
+(define (has-value? connector)
+  (connector 'has-value?))
+
+(define (get-value connector)
+  (connector 'value))
+
+(define (set-value! connector new-value informant)
+  ((connector 'set-value!) new-value informant))
+
+(define (forget-value! connector retractor)
+  ((connector 'forget) retractor))
+
+(define (connector connector new-constraint)
+  ((connector 'connect) new-constraint))
+
+(define (for-each-except exception procedure list)
+  (define (loop items)
+    (cond ((null? items) 'done)
+          ((eq? (car items) exception) (loop (cdr items)))
+          (else (procedure (car items))
+                (loop (cdr items)))))
+  (loop list))
+
+(define (inform-about-value constraint)
+  (constraint 'I-have-a-value))
+
+(define (inform-about-no-value constraint)
+  (constraint 'I-lost-my-value))
