@@ -29,7 +29,9 @@
       (if (has-value? me)
           (inform-about-value new-constraint))
       'done)
-
+    (define (print)
+      (display (list value informant constraints)))
+    
     (define (me request)
       (cond ((eq? request 'has-value?)
              (if informant true false))
@@ -37,6 +39,7 @@
             ((eq? request 'set-value!) set-my-value)
             ((eq? request 'forget) forget-my-value)
             ((eq? request 'connect) connect)
+            ((eq? request 'print) print)
             (else (error "Unknown operation -- CONNECTOR"
                          request))))
     me))
@@ -117,7 +120,9 @@
           ((and (has-value? product) (has-value? m2))
            (set-value! m1
                        (/ (get-value product) (get-value m2))
-                       me))))
+                       me))
+          (else
+           (display "There is a value not set"))))
   (define (process-forget-value)
     (forget-value! product me)
     (forget-value! m1 me)
@@ -125,6 +130,8 @@
     (process-new-value))
   (define (me request)
     (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
            (process-forget-value))
           (else
            (error "Unknown request -- MULTIPLIER" request))))
@@ -154,9 +161,63 @@
   (define (me request)
     (cond ((eq? request 'I-have-a-value)
            (process-new-value))
-          ((eq? request 'I-have-my-value)
+          ((eq? request 'I-lost-my-value)
            (process-forget-value))
           (else
            (error "Unknown request -- PROBE" request))))
   (connect connector me)
   me)
+
+(define C (make-connector))
+(define F (make-connector))
+
+(define (celsius-fahrenheit-converter c f)
+  (let ((u (make-connector))
+        (v (make-connector))
+        (w (make-connector))
+        (x (make-connector))
+        (y (make-connector)))
+
+    (multiplier c w u)
+    (multiplier v x u)
+    (adder v y f)
+    (constant 9 w)
+    (constant 5 x)
+    (constant 32 y)
+    'ok))
+
+(celsius-fahrenheit-converter C F)
+
+
+(probe "Celsius temp" C)
+(probe "Fahrenheit temp" F)
+
+; 练习 3.33
+(define a1 (make-connector))
+(define b1 (make-connector))
+(define c1 (make-connector))
+
+(define (average a b c)
+  (let ((x (make-connector))
+        (y (make-connector)))
+    (constant 0.5 x)
+    (adder a b y)
+    (multiplier x y c)
+    'ok))
+(probe "a : " a1)
+(probe "b : " b1)
+(probe "c : " c1)
+(average a1 b1 c1)
+
+; 练习 3.34
+(define a2 (make-connector))
+(define b2 (make-connector))
+
+(define (squarer a b)
+  (multiplier a a b))
+
+(probe "a2 : " a2)
+(probe "b2 : " b2)
+
+(squarer a2 b2)
+
