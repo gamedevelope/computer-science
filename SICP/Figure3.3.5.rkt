@@ -221,3 +221,27 @@
 
 (squarer a2 b2)
 
+; 练习 3.35
+(define (squarer3.35 a b)
+  (define (process-new-value)
+    (cond ((has-value? b)
+           (if (< (get-value b) 0)
+               (error "Error value for sqrt -- " b)
+               (set-value! a (sqrt b))))
+          ((has-value? a)
+           (let ((v (get-value a)))
+             (set-value! b (* v v))))))
+  (define (process-forget-value)
+    (forget-value! a me)
+    (forget-value! b me)
+    (process-new-value))
+  (define (me request)
+    (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
+           (process-forget-value))
+          (else
+           (error "Unknown request -- MULTIPLIER" request))))
+  (connect a b)
+  me)
+
