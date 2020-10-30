@@ -220,6 +220,7 @@
 (probe "b2 : " b2)
 
 (squarer a2 b2)
+(set-value! a2 10 'a3)
 
 ; 练习 3.35
 (define (squarer3.35 a b)
@@ -227,10 +228,10 @@
     (cond ((has-value? b)
            (if (< (get-value b) 0)
                (error "Error value for sqrt -- " b)
-               (set-value! a (sqrt b))))
+               (set-value! a (sqrt (get-value b)) me)))
           ((has-value? a)
            (let ((v (get-value a)))
-             (set-value! b (* v v))))))
+             (set-value! b (* v v) me)))))
   (define (process-forget-value)
     (forget-value! a me)
     (forget-value! b me)
@@ -242,6 +243,12 @@
            (process-forget-value))
           (else
            (error "Unknown request -- MULTIPLIER" request))))
-  (connect a b)
+  (connect a me)
+  (connect b me)
   me)
 
+(define a3 (make-connector))
+(define b3 (make-connector))
+(squarer3.35 a3 b3)
+(set-value! b3 0 'a3)
+(get-value a3)
