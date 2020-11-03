@@ -12,7 +12,6 @@
             ((eq? m 'release) (clear! cell))))
     the-mutex))
 (define (clear! cell) (set-car! cell false))
-
 (define (make-serializer)
   (let ((mutex (make-mutex)))
     (lambda (p)
@@ -22,26 +21,6 @@
           (mutex 'release)
           val))
       serialized-p)))
-
-(define disallow-preempt-current-thread
-  (access disallow-preempt-current-thread
-          (->environment '(runtime thread))))
-
-(define allow-preempt-current-thread
-  (access allow-preempt-current-thread
-          (->environment '(runtime thread))))
-
-(define (kill-thread thread)
-  (let ((event
-         (lambda ()
-           (exit-current-thread 'RIP))))
-    (without-interrupts
-     (lambda ()
-       (case (thread-execution-state thread)
-         ((STOPPED) (restart-thread thread #t event))
-         ((DEAD) unspecific)
-         (else (signal-thread-event thread event)))))))
-
 
 (define (parallel-execute . thunks)
   (let ((my-threads '()))
@@ -61,3 +40,9 @@
                   thunks))
        unspecific))
     terminator))
+
+(define s (make-serializer))
+(parallel-execute
+ (s (lambda () (set! x (* x x))))
+ (s (lambda () (set! x (+ x 1))))
+ (s (lambda () (display x))))
