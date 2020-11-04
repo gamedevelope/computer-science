@@ -1,5 +1,6 @@
 (define (test-and-set! cell)
   (if (car cell) true (begin (set-car! cell true) false)))
+(define (clear! cell) (set-car! cell false))
 
 (define (make-mutex)
   (let ((cell (list false)))
@@ -9,7 +10,7 @@
                  (the-mutex 'acquire))) ; retry
             ((eq? m 'release) (clear! cell))))
     the-mutex))
-(define (clear! cell) (set-car! cell false))
+
 (define (make-serializer)
   (let ((mutex (make-mutex)))
     (lambda (p)
@@ -40,7 +41,20 @@
     terminator))
 
 (define s (make-serializer))
+(define x 10)
 (parallel-execute
- (s (lambda () (set! x (* x x))))
- (s (lambda () (set! x (+ x 1))))
+ (s (lambda () ((set! x (* x x))
+                (display x))))
+ (s (lambda () ((set! x (+ x 1))
+                (display x))))
  (s (lambda () (display x))))
+
+(parallel-execute
+ (display "hello")
+ (display "world")
+ (display "abc")
+ (display "def")
+ (display "xyz"))
+
+(define t1 (create-thread #f (sqrt 2)))
+(create-thread #f (sqrt 2))
