@@ -41,20 +41,43 @@
     terminator))
 
 (define s (make-serializer))
+
 (define x 10)
-(parallel-execute
- (s (lambda () ((set! x (* x x))
-                (display x))))
- (s (lambda () ((set! x (+ x 1))
-                (display x))))
- (s (lambda () (display x))))
+(define lst (list))
 
 (parallel-execute
- (display "hello")
- (display "world")
- (display "abc")
- (display "def")
- (display "xyz"))
+ (lambda () ((set! x (* x x))
+             (set! list (cons x list))))
+ (lambda () ((set! x (+ x 1))))
+ (display lst))
+(display x)
+(display lst)
 
-(define t1 (create-thread #f (sqrt 2)))
-(create-thread #f (sqrt 2))
+(parallel-execute
+ (lambda () (display "hello1"))
+ (lambda () (display "hello2"))
+ (lambda () (display "hello3")))
+
+(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((protected (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) (protected withdraw))
+            ((eq? m 'deposit) (protected deposit))
+            ((eq? m 'balance) balance)
+            (else (error "Unknown request -- MAKE-ACCOUNT"
+                         m))))
+    dispatch))
+
+(define a (make-account 100))
+((a 'withdraw) 10)
+((a 'withdraw) 10)
+((a 'withdraw) 10)
+(a 'balance)
