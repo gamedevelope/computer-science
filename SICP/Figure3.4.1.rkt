@@ -46,17 +46,11 @@
 (define lst (list))
 
 (parallel-execute
- (lambda () ((set! x (* x x))
-             (set! list (cons x list))))
- (lambda () ((set! x (+ x 1))))
- (display lst))
+ (lambda () (set! x (* x x)))
+ (lambda () (set! x (+ x 1))))
+
 (display x)
 (display lst)
-
-(parallel-execute
- (lambda () (display "hello1"))
- (lambda () (display "hello2"))
- (lambda () (display "hello3")))
 
 (define (make-account balance)
   (define (withdraw amount)
@@ -143,3 +137,8 @@
  (lambda () ((a 'withdraw) 10)))
 
 (a 'balance)
+
+(let ()
+  (display "hello")
+  (sleep-current-thread 5000)
+  (display "world"))
