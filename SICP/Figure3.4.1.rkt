@@ -189,3 +189,32 @@
 
 (a1 'balance)
 (a2 'balance)
+
+; 练习 3.44
+; 练习 3.45
+; 这样会死锁
+(define (make-account-and-serializer balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit aount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((balance-serializer (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) (balance-serializer withdraw))
+            ((eq? m 'deposit) (balance-serializer deposit))
+            ((eq? m 'balance) balance)
+            ((eq? m 'serializer) balance-serializer)
+            (else (error "Unknown request -- MAKE-ACCOUNT"
+                         m))))
+    dispatch))
+
+(define a1.3.45 (make-account-and-serializer 1000))
+(define a2.3.45 (make-account-and-serializer 500))
+
+(serialized-exchange a1.3.45 a2.3.45)
+
+
