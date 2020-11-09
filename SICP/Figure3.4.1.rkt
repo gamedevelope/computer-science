@@ -217,4 +217,6 @@
 
 (serialized-exchange a1.3.45 a2.3.45)
 
-
+; 练习 3.46
+(define (make-mutex-n n)
+  (display "make-mutex-n"))
