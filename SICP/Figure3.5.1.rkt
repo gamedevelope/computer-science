@@ -19,8 +19,8 @@
 (define (stream-for-each proc s)
   (if (stream-null? s)
       'done
-      (begin (proc (stream-car s)
-                   (stream-for-each proc (stream-cdr s))))))
+      (begin (proc (stream-car s))
+             (stream-for-each proc (stream-cdr s)))))
 
 (define (display-stream s)
   (stream-for-each display-line s))
@@ -36,9 +36,17 @@
        low
        (stream-enumerate-interval (+ low 1) high))))
 
-(define stream1 (stream-enumerate-interval 1 10))
-(stream-car stream1)
-(stream-car (stream-cdr stream1))
-(stream-car (stream-cdr (stream-cdr stream1)))
+(define s1 (stream-enumerate-interval 1 10))
+(stream-car s1)
+(stream-car (stream-cdr s1))
+(stream-car (stream-cdr (stream-cdr s1)))
 
-(display-stream stream1)
+(display-stream s1)
+
+(define (integers-starting-from n)
+  (cons-stream n (integers-starting-from (+ n 1))))
+
+(define integers (integers-starting-from 1))
+(stream-car integers)
+(stream-car (stream-cdr integers))
+(stream-car (stream-cdr (stream-cdr integers)))
