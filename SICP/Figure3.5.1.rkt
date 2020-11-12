@@ -50,3 +50,19 @@
 (stream-car integers)
 (stream-car (stream-cdr integers))
 (stream-car (stream-cdr (stream-cdr integers)))
+
+(define (fib-starting-from m n)
+  (cons-stream m (fib-starting-from n (+ m n))))
+
+(define fib (fib-starting-from 0 1))
+(define (fib-end n)
+  (define (loop)
+    (let ((p (stream-car fib)))
+      (if (< p n)
+          (begin (display p)
+                 (display " ")
+                 (set! fib (stream-cdr fib))
+                 (loop)))))
+  (loop))
+
+(fib-end 1000)
