@@ -22,6 +22,15 @@
       (begin (proc (stream-car s))
              (stream-for-each proc (stream-cdr s)))))
 
+(define (stream-filter pred stream)
+  (cond ((stream-null? stream) the-empty-stream)
+        ((pred (stream-car stream))
+         (cons-stream
+          (stream-car stream)
+          (stream-filter pred (stream-cdr stream))))
+        (else
+         (stream-filter pred (stream-cdr stream)))))
+
 (define (display-stream s)
   (stream-for-each display-line s))
 
@@ -67,6 +76,10 @@
 
 (fib-end 1000)
 
+(stream-map (lambda (x) (+ x 1)) fib)
+; 练习 3.50
+;(define (stream-map proc . argstreams)
+  
 ; 练习 3.51
 (define (show x)
   (display-line x)
@@ -88,3 +101,13 @@
                          seq))
 (stream-ref y 7)
 (display-stream z)
+
+;(define (stream-car stream) (car stream))
+;(define (stream-cdr stream) (force (cdr stream)))
+;(define (force delayed-object)
+;  (delayed-object))
+;(define (delay lmd)
+;  (lambda () lmd))
+;
+;(define (f (delay (lambda (x) (+ x 1)))))
+;(force f)
