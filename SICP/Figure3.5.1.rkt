@@ -76,10 +76,29 @@
 
 (fib-end 1000)
 
-(stream-map (lambda (x) (+ x 1)) fib)
+(define s2 (stream-map (lambda (x) (* x x)) s1))
+(display-stream s2)
+
+(define (foo x . y)
+  (display (list x y)))
+(foo 1 2 3 4 5 6)
+
 ; 练习 3.50
-;(define (stream-map proc . argstreams)
-  
+(define (stream-map-v2 proc . argstreams)
+  (if (stream-null? (car argstreams))
+      the-empty-stream
+      (cons-stream
+       (apply proc (map car argstreams))
+       (apply stream-map-v2
+              (cons proc (map cdr argstreams))))))
+
+(define s3 (stream-map-v2 * s1 s2 s2 s2 s2))
+(display s3)
+(stream-car s3)
+(stream-cdr s3)
+(stream-car (stream-cdr (stream-cdr s3)))
+(stream-car (stream-cdr (stream-cdr (stream-cdr s3))))
+
 ; 练习 3.51
 (define (show x)
   (display-line x)
