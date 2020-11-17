@@ -97,13 +97,6 @@
 (display s1)
 (display s2)
 (display-stream s3)
-(stream-cdr s3)
-;(apply (lambda (x y) (+ x (stream-car y))) s2)
-;
-;(stream-car s3)
-;(stream-cdr s3)
-;(stream-car (stream-cdr (stream-cdr s3)))
-;(stream-car (stream-cdr (stream-cdr (stream-cdr s3))))
 
 ; 练习 3.51
 (define (show x)
@@ -127,15 +120,6 @@
 (stream-ref y 7)
 (display-stream z)
 
-;(define (stream-car stream) (car stream))
-;(define (stream-cdr stream) (force (cdr stream)))
-;(define (force delayed-object)
-;  (delayed-object))
-;(define (delay lmd)
-;  (lambda () lmd))
-;
-;(define (f (delay (lambda (x) (+ x 1)))))
-;(force f)
 (define p 10)
 (apply + (list 1 2 3 4))
 (map + (list 1 2 3 4) (list 1 2 3 4) (list 1 2 3 4))
