@@ -150,3 +150,35 @@
            (stream-cdr stream)))))
 (define primes (sieve (integers-starting-from 2)))
 (stream-values primes 100)
+
+(define ones (cons-stream 1 ones))
+(define (add-streams s1 s2) (stream-map-v2 + s1 s2))
+(define integers
+  (cons-stream 1 (add-streams ones integers)))
+(stream-values integers 10)
+
+(define fibs
+  (cons-stream
+   0
+   (cons-stream 1 (add-streams (stream-cdr fibs) fibs))))
+(stream-values fibs 10)
+
+(define (scale-stream stream factor)
+  (stream-map (lambda (x) (* x factor))
+              stream))
+(define double (cons-stream 1 (scale-stream double 2)))
+(stream-values double 10)
+
+(define primes
+  (cons-stream
+   2
+   (stream-filter prime? (integers-starting-from 3))))
+(define (prime? n)
+  (define (iter ps)
+    (cond ((> (square (stream-car ps)) n) true)
+          ((divisible? n (stream-car ps)) false)
+          (else
+           (iter (stream-cdr ps)))))
+  (iter primes))
+
+(stream-values primes 10)
