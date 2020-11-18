@@ -182,3 +182,7 @@
   (iter primes))
 
 (stream-values primes 10)
+
+; 练习 3.53
+(define s (cons-stream 1 (add-streams s s)))
+(stream-values s 10)
