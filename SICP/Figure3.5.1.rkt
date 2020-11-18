@@ -5,6 +5,13 @@
 (stream-car cs)
 (stream-cdr cs)
 
+(define (stream-values s n)
+  (if (= n 0)
+      '()
+      (cons
+       (stream-car s) 
+       (stream-values (stream-cdr s) (- n 1)))))
+
 (define (stream-ref s n)
   (if (= n 0)
       (stream-car s)
@@ -123,3 +130,23 @@
 (define p 10)
 (apply + (list 1 2 3 4))
 (map + (list 1 2 3 4) (list 1 2 3 4) (list 1 2 3 4))
+
+(define (divisible? x y) (= (remainder x y) 0))
+(define no-sevens
+  (stream-filter (lambda (x) (not (divisible? x 7)))
+                 integers))
+(stream-ref no-sevens 100)
+
+(define (fibgen a b) (cons-stream a (fibgen b (+ a b))))
+(define fibs (fibgen 0 1))
+(stream-ref fibs 20)
+
+(define (sieve stream)
+  (cons-stream
+   (stream-car stream)
+   (sieve (stream-filter
+           (lambda (x)
+             (not (divisible? x (stream-car stream))))
+           (stream-cdr stream)))))
+(define primes (sieve (integers-starting-from 2)))
+(stream-values primes 100)
