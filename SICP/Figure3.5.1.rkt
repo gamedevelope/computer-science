@@ -192,3 +192,8 @@
 (define factorials
   (cons-stream 1 (mul-streams factorials (integers-starting-from 1))))
 (stream-values factorials 10)
+
+; 练习 3.55
+(define partial-sums
+  (cons-stream 1 (add-streams partial-sums (integers-starting-from 2))))
+(stream-values partial-sums 10)
