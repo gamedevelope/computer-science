@@ -186,3 +186,9 @@
 ; 练习 3.53
 (define s (cons-stream 1 (add-streams s s)))
 (stream-values s 10)
+
+; 练习 3.54
+(define (mul-streams s1 s2) (stream-map-v2 * s1 s2))
+(define factorials
+  (cons-stream 1 (mul-streams factorials (integers-starting-from 1))))
+(stream-values factorials 10)
