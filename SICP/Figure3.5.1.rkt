@@ -197,3 +197,26 @@
 (define partial-sums
   (cons-stream 1 (add-streams partial-sums (integers-starting-from 2))))
 (stream-values partial-sums 10)
+
+; 练习 3.56
+(define (merge s1 s2)
+  (cond ((stream-null? s1) s2)
+        ((stream-null? s2) s1)
+        (else
+         (let ((s1car (stream-car s1))
+               (s2car (stream-car s2)))
+           (cond ((< s1car s2car)
+                  (cons-stream s1car
+                               (merge (stream-cdr s1) s2)))
+                 ((> s1car s2car)
+                  (cons-stream s2car
+                               (merge s1 (stream-cdr s2))))
+                 (else
+                  (cons-stream s1car
+                               (merge (stream-cdr s1)
+                                      (stream-cdr s2)))))))))
+(define s-3.56
+  (cons-stream 1 (merge (scale-stream s-3.56 2)
+                        (merge (scale-stream s-3.56 3)
+                               (scale-stream s-3.56 5)))))
+(stream-values s-3.56 10)
