@@ -220,3 +220,14 @@
                         (merge (scale-stream s-3.56 3)
                                (scale-stream s-3.56 5)))))
 (stream-values s-3.56 10)
+
+; 练习 3.58
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den)
+           den
+           radix)))
+(stream-values (expand 1 7 10) 30)
+(stream-values (expand 3 8 10) 30)
+(stream-values (expand 1 3 10) 30)
