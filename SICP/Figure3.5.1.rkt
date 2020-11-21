@@ -194,9 +194,9 @@
 (stream-values factorials 10)
 
 ; 练习 3.55
-(define partial-sums
-  (cons-stream 1 (add-streams partial-sums (integers-starting-from 2))))
-(stream-values partial-sums 10)
+(define (partial-sums s)
+  (cons-stream (stream-car s) (add-streams (stream-cdr s) (partial-sums s))))
+(stream-values (partial-sums integers) 10)
 
 ; 练习 3.56
 (define (merge s1 s2)
@@ -231,3 +231,32 @@
 (stream-values (expand 1 7 10) 30)
 (stream-values (expand 3 8 10) 30)
 (stream-values (expand 1 3 10) 30)
+
+; 练习 3.59
+
+; 3.5.3 流计算模式的使用
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 1.0
+                 (stream-map (lambda (guess)
+                               (sqrt-improve guess x))
+                             guesses)))
+  guesses)
+
+(stream-values (sqrt-stream 2) 10)
+
+(define (pi-summands n)
+  (cons-stream (/ 1.0 n)
+               (stream-map-v2 - (pi-summands (+ n 2)))))
+(stream-values (pi-summands 1) 10)
+
+(define pi-stream
+  (scale-stream (partial-sums (pi-summands 1)) 4))
+
+(stream-values pi-stream 20)
