@@ -302,4 +302,24 @@
 (define (sqrt x tolerance)
   (stream-limit (sqrt-stream x) tolerance))
 
-(sqrt 2 0.1)
+(sqrt 2 0.0001)
+
+; 练习 3.65
+; 计算 ln 2
+; 0.69314718056
+(define (e-summands n)
+  (cons-stream (/ 1.0 n)
+               (stream-map-v2 - (e-summands (+ n 1)))))
+
+(stream-values (e-summands 1) 10)
+(stream-values (partial-sums (e-summands 1)) 10)
+(stream-values (euler-transform (partial-sums (e-summands 1))) 30)
+(define e1 (euler-transform (partial-sums (e-summands 1))))
+(define e2 (euler-transform e1))
+(define e3 (euler-transform e2))
+(stream-values (euler-transform e3) 10)
+;(define pi-stream
+;  (scale-stream (partial-sums (pi-summands 1)) 4))
+;
+;(stream-values pi-stream 20)
+
