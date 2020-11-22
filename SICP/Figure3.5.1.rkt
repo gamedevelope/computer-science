@@ -281,9 +281,25 @@
 
 (stream-values (sqrt-stream 2) 10)
 
+; 练习 3.63
+; 重复计算了 sqrt-stream x
+; 如果采用 (lambda () <exp>)实现, 两个版本效率差别很大
 (define (sqrt-stream x)
   (cons-stream 1.0
                (stream-map (lambda (guess)
                              (sqrt-improve guess x))
                            (sqrt-stream x))))
 (stream-values (sqrt-stream 2) 10)
+
+; 练习 3.64
+(define (stream-limit s tolerance)
+  (let ((v1 (stream-car s))
+        (v2 (stream-car (stream-cdr s))))
+    (if (< (abs (- v1 v2)) tolerance)
+        v2
+        (stream-limit (stream-cdr s) tolerance))))
+
+(define (sqrt x tolerance)
+  (stream-limit (sqrt-stream x) tolerance))
+
+(sqrt 2 0.1)
