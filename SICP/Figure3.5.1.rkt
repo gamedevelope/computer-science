@@ -238,19 +238,6 @@
 (define (average x y)
   (/ (+ x y) 2))
 
-(define (sqrt-improve guess x)
-  (average guess (/ x guess)))
-
-(define (sqrt-stream x)
-  (define guesses
-    (cons-stream 1.0
-                 (stream-map (lambda (guess)
-                               (sqrt-improve guess x))
-                             guesses)))
-  guesses)
-
-(stream-values (sqrt-stream 2) 10)
-
 ; 计算 pi
 (define (pi-summands n)
   (cons-stream (/ 1.0 n)
@@ -280,3 +267,23 @@
   (stream-map stream-car (make-tableau transform s)))
 
 (stream-values (accelerated-sequence euler-transform pi-stream) 10)
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 1.0
+                 (stream-map (lambda (guess)
+                               (sqrt-improve guess x))
+                             guesses)))
+  guesses)
+
+(stream-values (sqrt-stream 2) 10)
+
+(define (sqrt-stream x)
+  (cons-stream 1.0
+               (stream-map (lambda (guess)
+                             (sqrt-improve guess x))
+                           (sqrt-stream x))))
+(stream-values (sqrt-stream 2) 10)
