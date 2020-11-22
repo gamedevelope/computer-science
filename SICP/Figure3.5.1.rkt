@@ -313,8 +313,8 @@
 
 (stream-values (e-summands 1) 10)
 (stream-values (partial-sums (e-summands 1)) 10)
-(stream-values (euler-transform (partial-sums (e-summands 1))) 30)
-(define e1 (euler-transform (partial-sums (e-summands 1))))
+(define e0 (euler-transform (partial-sums (e-summands 1))))
+(define e1 (euler-transform e0))
 (define e2 (euler-transform e1))
 (define e3 (euler-transform e2))
 (stream-values (euler-transform e3) 10)
