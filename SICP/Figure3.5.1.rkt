@@ -338,4 +338,8 @@
                    (stream-cdr t))
     (pairs (stream-cdr s) (stream-cdr t)))))
 
-(stream-values (pairs integers integers) 10)
+(stream-values (pairs integers integers) 20)
+
+; 练习 3.66
+; (1, 100) 之前有 197 个 (1,n)之前有2n-3 个 (n > 1)
+; (100, 100) 之前有
