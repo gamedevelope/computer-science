@@ -343,3 +343,11 @@
 ; 练习 3.66
 ; (1, 100) 之前有 197 个 (1,n)之前有2n-3 个 (n > 1)
 ; (100, 100) 之前有
+
+; 将流作为信号
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (add-streams (scale-stream integrand dt)
+                              int)))
+  int)
