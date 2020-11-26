@@ -351,3 +351,6 @@
                  (add-streams (scale-stream integrand dt)
                               int)))
   int)
+
+; 练习 3.67
+; 绿灯提交
