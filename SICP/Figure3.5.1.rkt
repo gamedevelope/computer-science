@@ -354,3 +354,12 @@
 
 ; 练习 3.67
 ; 绿灯提交
+
+; 练习 3.68
+(define (pairs s t)
+  (interleave
+   (stream-map (lambda (x) (list (stream-car s) x))
+               t)
+   (pairs (stream-cdr s) (stream-cdr t))))
+
+(stream-values (pairs integers integers) 20)
