@@ -353,15 +353,16 @@
   int)
 
 ; 练习 3.67
-; 绿灯提交
 
 (define (pairs-3.67 s t)
   (cons-stream
    (list (stream-car s) (stream-car t))
    (interleave
     (interleave
+     ; 第一行
      (stream-map-v2 (lambda (x) (list (stream-car s) x))
                     (stream-cdr t))
+     ; 第一列
      (stream-map-v2 (lambda (x) (list x (stream-car t)))
                     (stream-cdr s)))
     (pairs-3.67 (stream-cdr s) (stream-cdr t)))))
@@ -377,3 +378,7 @@
 ;   (pairs (stream-cdr s) (stream-cdr t))))
 ;
 ;(stream-values (pairs integers integers) 20)
+
+; 练习 3.69
+(define (triples s t u)
+  )
