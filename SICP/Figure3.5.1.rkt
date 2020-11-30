@@ -339,6 +339,15 @@
     (pairs (stream-cdr s) (stream-cdr t)))))
 
 (stream-values (pairs integers integers) 20)
+(define plist (stream-values (pairs integers integers) 20))
+
+(define (square-pairs p)
+  (if (null? p)
+      '()
+      (let ((fp (car p)))
+        (cons (+ (square (car fp)) (square (cadr fp)))
+              (square-pairs (cdr p))))))
+(square-pairs plist)
 
 ; 练习 3.66
 ; (1, 100) 之前有 197 个 (1,n)之前有2n-3 个 (n > 1)
@@ -380,5 +389,6 @@
 ;(stream-values (pairs integers integers) 20)
 
 ; 练习 3.69
-(define (triples s t u)
-  )
+(define s (mul-streams integers integers))
+(define t (mul-streams integers integers))
+(define u (mul-streams integers integers))
