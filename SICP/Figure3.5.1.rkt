@@ -389,6 +389,26 @@
 ;(stream-values (pairs integers integers) 20)
 
 ; 练习 3.69
-(define s (mul-streams integers integers))
-(define t (mul-streams integers integers))
-(define u (mul-streams integers integers))
+(define (sum-square a b)
+  (+ (square a) (square b)))
+
+(define (triples s t u)
+  (define (check sp sq)
+    (let ((p (stream-car sp))
+          (k (stream-car sq)))
+      (let ((i (car p))
+            (j (cadr p)))
+        (display (list i j k))
+        (let ((v1 (sum-square i j))
+              (v2 (square k)))
+          (cond ((= v1 v2)
+                 (cons-stream (list i j k)
+                              (check (stream-cdr sp) sq)))
+                ((< v1 v2)
+                 (check (stream-cdr sp) sq))
+                (else
+                 (check sp (stream-cdr sq))))))))
+  (let ((p (pairs s t)))
+    (check p u)))
+
+(stream-values (triples integers integers integers) 10)
