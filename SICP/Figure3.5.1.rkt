@@ -299,10 +299,10 @@
         v2
         (stream-limit (stream-cdr s) tolerance))))
 
-(define (sqrt x tolerance)
+(define (sqrt-3.64 x tolerance)
   (stream-limit (sqrt-stream x) tolerance))
 
-(sqrt 2 0.0001)
+(sqrt-3.64 2 0.0001)
 
 ; 练习 3.65
 ; 计算 ln 2
@@ -398,18 +398,15 @@
     (let ((i (car p))
           (j (cadr p)))
       (let ((v1 (sum-square i j))
-            (v2 (square k)))
-        (cond ((= v1 v2)
-               (begin
-                 (display (list i j k))
-                 (cons-stream (list i j k)
-                              (check (stream-cdr sp) sq))))
-              ((< v1 v2)
-               (begin (display (list "<" i j k))
-                      (check (stream-cdr sp) sq)))
+            (v2 (square k))
+            (v3 (sqrt (sum-square i j))))
+        (cond ((integer? v3)
+               (cons-stream (list i j v3)
+                            (check (stream-cdr sp) sq)))
+              ((< v2 v3)
+               (check (stream-cdr sp) sq))
               (else
-               (begin (display (list ">" i j k))
-                      (check sp (stream-cdr sq)))))))))
+               (check sp (stream-cdr sq))))))))
 
 (define (triples s t u)
   (let ((p (pairs s t)))
