@@ -413,3 +413,10 @@
     (check p u)))
 
 (stream-values (check (pairs integers integers) integers) 5)
+
+; 练习 3.70
+(define (weight))
+
+(define (merge-weighted s t)
+  )
+
