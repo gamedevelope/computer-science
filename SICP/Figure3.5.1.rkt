@@ -415,22 +415,6 @@
 (stream-values (check (pairs integers integers) integers) 5)
 
 ; 练习 3.70
-(define (merge s1 s2)
-  (cond ((stream-null? s1) s2)
-        ((stream-null? s2) s1)
-        (else
-         (let ((s1car (stream-car s1))
-               (s2car (stream-car s2)))
-           (cond ((< s1car s2car)
-                  (cons-stream s1car
-                               (merge (stream-cdr s1) s2)))
-                 ((> s1car s2car)
-                  (cons-stream s2car
-                               (merge s1 (stream-cdr s2))))
-                 (else
-                  (cons-stream s1car
-                               (merge (stream-cdr s1)
-                                      (stream-cdr s2)))))))))
 (define (weight a b)
   (+ a b))
 
@@ -439,17 +423,10 @@
         ((stream-numm? s2) s1)
         (else
          (let ((s1v1 (stream-car s1))
-               (s1v2 (stream-car (stream-cdr s1)))
-               (s2v1 (stream-car s2))
-               (s2v2 (stream-car (stream-cdr s2))))
-           (cond ((< (weight s1v1 s1v2) (weight s2v1 s2v2))
-                  (cons-stream s1v1
-                               (merge-weighted (stream-cdr s1) s2)))
-                 ((< (weight s2v1 s2v2) (weight s1v1 s1v2))
-                  (cons-stream s2v1
-                               (merge-weighted s1 (stream-cdr s2))))
-                 (else
-                  (cons-stream s1v1
-                               (merge-weighted (stream-cdr s1)
-                                               (stream-cdr s2)))))))))
-
+               (s2v1 (stream-car s2)))
+           (let ((w1 (weight (car s1v1) (cadr s1v1)))
+                 (w2 (weight (car s2v1) (cadr s2v1))))
+             (cond ((<= w1 w2)
+                    (cons-stream s1v1 (merge-weighted (stream-cdr s1) s2)))
+                   (else
+                    (cons-stream s2v1 (merge-weighted s1 (stream-cdr s2))))))))))
