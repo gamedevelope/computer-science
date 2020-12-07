@@ -420,13 +420,34 @@
 
 (define (merge-weighted s1 s2 weight)
   (cond ((stream-null? s1) s2)
-        ((stream-numm? s2) s1)
+        ((stream-null? s2) s1)
         (else
          (let ((s1v1 (stream-car s1))
                (s2v1 (stream-car s2)))
            (let ((w1 (weight (car s1v1) (cadr s1v1)))
                  (w2 (weight (car s2v1) (cadr s2v1))))
              (cond ((<= w1 w2)
-                    (cons-stream s1v1 (merge-weighted (stream-cdr s1) s2)))
+                    (cons-stream s1v1 (merge-weighted (stream-cdr s1) s2 weight)))
                    (else
-                    (cons-stream s2v1 (merge-weighted s1 (stream-cdr s2))))))))))
+                    (cons-stream s2v1 (merge-weighted s1 (stream-cdr s2) weight)))))))))
+
+(define (interleave s1 s2 weight)
+  (if (stream-null? s1)
+      s2
+      (merge-weighted (stream-car s1)
+                      (interleave s2 (stream-cdr s1) weight)
+                      weight)))
+
+(define (pairs s t)
+  (cons-stream
+   (list (stream-car s) (stream-car t))
+   (interleave
+    (stream-map-v2 (lambda (x) (list (stream-car s) x))
+                   (stream-cdr t))
+    (pairs (stream-cdr s) (stream-cdr t))
+    weight)))
+
+(define s (pairs integers integers))
+(stream-values s 30)
+
+(quit)
