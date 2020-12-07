@@ -431,17 +431,10 @@
                    (else
                     (cons-stream s2v1 (merge-weighted s1 (stream-cdr s2) weight)))))))))
 
-(define (interleave s1 s2 weight)
-  (if (stream-null? s1)
-      s2
-      (merge-weighted (stream-car s1)
-                      (interleave s2 (stream-cdr s1) weight)
-                      weight)))
-
 (define (pairs s t)
   (cons-stream
    (list (stream-car s) (stream-car t))
-   (interleave
+   (merge-weighted
     (stream-map-v2 (lambda (x) (list (stream-car s) x))
                    (stream-cdr t))
     (pairs (stream-cdr s) (stream-cdr t))
