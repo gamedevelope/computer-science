@@ -219,7 +219,7 @@
   (cons-stream 1 (merge (scale-stream s-3.56 2)
                         (merge (scale-stream s-3.56 3)
                                (scale-stream s-3.56 5)))))
-(stream-values s-3.56 10)
+(stream-values (stream-cdr s-3.56) 10)
 
 ; 练习 3.58
 (define (expand num den radix)
@@ -431,16 +431,35 @@
                    (else
                     (cons-stream s2v1 (merge-weighted s1 (stream-cdr s2) weight)))))))))
 
-(define (pairs s t)
+(define (pairs s t weight)
   (cons-stream
    (list (stream-car s) (stream-car t))
    (merge-weighted
     (stream-map-v2 (lambda (x) (list (stream-car s) x))
                    (stream-cdr t))
-    (pairs (stream-cdr s) (stream-cdr t))
+    (pairs (stream-cdr s) (stream-cdr t) weight)
     weight)))
 
-(define s (pairs integers integers))
+(define s (pairs integers integers weight))
 (stream-values s 30)
 
-(quit)
+; 练习 3.71
+(define (weight i j)
+  (+ (* 2 i)
+     (* 3 j)
+     (* 5 i j)))
+(define s (pairs (stream-cdr s-3.56) (stream-cdr s-3.56) weight))
+(stream-values s 10)
+
+(define (sum-weight v)
+  (let ((i (car v))
+        (j (cadr v)))
+    (weight i j)))
+
+(define (calc-stream s)
+  (cons-stream (sum-weight (stream-car s))
+               (calc-stream (stream-cdr s))))
+
+(stream-values (calc-stream s) 10)
+
+(exit)
