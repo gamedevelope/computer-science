@@ -473,17 +473,16 @@
     (sum-weight i j)))
 
 (define s0 (pairs integers integers sum-weight))
-(stream-values s0 10)
 (define s1 (stream-map (lambda (x) (cube x)) s0))
 
 (define (fs stream)
   (cond ((stream-null? stream) the-empty-stream)
-        ((= (stream-car stream)
-            (stream-car (stream-cdr stream)))
-         (cons-stream
-          (stream-car stream)
-          (fs (stream-cdr stream))))
         (else
-         (fs (stream-cdr stream)))))
+         (let ((s (stream-cdr stream)))
+           (let ((v1 (stream-car stream))
+                 (v2 (stream-car s)))
+             (if (= v1 v2)
+                 (cons-stream v1 (fs s))
+                 (fs s)))))))
 (stream-values (fs s1) 10)
 (exit)
