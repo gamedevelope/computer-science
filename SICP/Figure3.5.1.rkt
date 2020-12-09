@@ -443,7 +443,7 @@
 (define s (pairs integers integers weight))
 (stream-values s 30)
 
-; 练习 3.71
+; 练习 3.70
 (define (weight i j)
   (+ (* 2 i)
      (* 3 j)
@@ -462,4 +462,28 @@
 
 (stream-values (calc-stream s) 10)
 
+; 练习 3.71
+(define (sum-weight i j)
+  (+ (* i i i)
+     (* j j j)))
+
+(define (cube v)
+  (let ((i (car v))
+        (j (cadr v)))
+    (sum-weight i j)))
+
+(define s0 (pairs integers integers sum-weight))
+(stream-values s0 10)
+(define s1 (stream-map (lambda (x) (cube x)) s0))
+
+(define (fs stream)
+  (cond ((stream-null? stream) the-empty-stream)
+        ((= (stream-car stream)
+            (stream-car (stream-cdr stream)))
+         (cons-stream
+          (stream-car stream)
+          (fs (stream-cdr stream))))
+        (else
+         (fs (stream-cdr stream)))))
+(stream-values (fs s1) 10)
 (exit)
