@@ -485,4 +485,6 @@
                  (cons-stream v1 (fs s))
                  (fs s)))))))
 (stream-values (fs s1) 10)
+
+; 练习 3.72
 (exit)
