@@ -487,5 +487,33 @@
 (stream-values (fs s1) 10)
 
 ; 练习 3.72
-(define)
+(define (weight i j)
+  (+ (* i i)
+     (* j j)))
+
+(define (f v)
+  (let ((i (car v))
+        (j (cadr v)))
+    (+ (* i i) (* j j))))
+
+(define s0 (pairs integers integers weight))
+
+(define (fs s)
+  (cond ((stream-null? s) the-empty-stream)
+        (else
+         (let ((s1 (stream-cdr s)))
+           (let ((s2 (stream-cdr s1)))
+             (let ((v0 (stream-car s))
+                   (v1 (stream-car s1))
+                   (v2 (stream-car s2)))
+               (cond ((and (= (f v0) (f v1))
+                           (= (f v0) (f v2)))
+                      (cons-stream (list v0 v1 v2)
+                                   (fs (stream-cdr s2))))
+                     (else
+                      (fs (stream-cdr s2))))))))))
+(define s1 (fs s0))
+(stream-car s1)
+(stream-car (stream-cdr s1))
+(stream-values s1 5)
 (exit)
