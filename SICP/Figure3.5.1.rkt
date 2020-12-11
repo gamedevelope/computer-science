@@ -487,4 +487,5 @@
 (stream-values (fs s1) 10)
 
 ; 练习 3.72
+(define)
 (exit)
