@@ -516,4 +516,13 @@
 (stream-car s1)
 (stream-car (stream-cdr s1))
 (stream-values s1 5)
+
+; 将流作为信号
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (add-streams (scale-stream integrand dt)
+                              int)))
+  int)
+
 (exit)
