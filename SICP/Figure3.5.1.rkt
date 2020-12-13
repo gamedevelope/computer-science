@@ -525,4 +525,9 @@
                               int)))
   int)
 
+(define (rc R C dt)
+  (integral (/ 1 C) R dt))
+(define rc1 (rc 5 1 05))
+(stream-values rc1 10)
+
 (exit)
