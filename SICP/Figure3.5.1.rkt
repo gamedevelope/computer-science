@@ -533,4 +533,13 @@
 ;(define rc1 (rc 5 1 0.5))
 ;(stream-values rc1 10)
 
+; 练习 3.74
+(define (make-zero-crossings input-stream last-value)
+  (cons-stream
+   (sign-change-detector (stream-car input-stream) last-value)
+   (make-zero-crossings (stream-cdr input-stram)
+                        (stream-cdr input-stream))))
+
+(define zero-crossings (make-zero-crossings sense-date 0))
+
 (exit)
