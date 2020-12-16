@@ -537,9 +537,19 @@
 (define (make-zero-crossings input-stream last-value)
   (cons-stream
    (sign-change-detector (stream-car input-stream) last-value)
-   (make-zero-crossings (stream-cdr input-stram)
-                        (stream-cdr input-stream))))
+   (make-zero-crossings (stream-cdr input-stream)
+                        (stream-car input-stream))))
 
-(define zero-crossings (make-zero-crossings sense-date 0))
+(define nums
+  (cons-stream 1
+               (stream-map (lambda (x) (* -1 x)) nums)))
+(stream-values nums 10)
+(define (sign-change-detector i j)
+  (cond ((and (> i 0) (< j 0)) -1)
+        ((and (< i 0) (> j 0)) 1)
+        (else 0)))
+
+(define zero-crossings (make-zero-crossings nums 0))
+(stream-values zero-crossings 10)
 
 (exit)
