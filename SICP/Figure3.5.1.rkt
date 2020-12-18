@@ -550,11 +550,19 @@
                (stream-map (lambda (x) (* -1 x)) nums)))
 (stream-values nums 10)
 (define (sign-change-detector i j)
-  (cond ((and (> i 0) (< j 0)) -1)
-        ((and (< i 0) (> j 0)) 1)
+  (cond ((and (> i 0) (< j 0)) 1)
+        ((and (< i 0) (> j 0)) -1)
         (else 0)))
 
 (define zero-crossings (make-zero-crossings nums 0))
+(stream-values zero-crossings 10)
+
+(define zero-crossings
+  (stream-map-v2 sign-change-detector
+                 nums
+                 (cons-stream (stream-car nums)
+                              nums)))
+
 (stream-values zero-crossings 10)
 
 (exit)
