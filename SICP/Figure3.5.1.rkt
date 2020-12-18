@@ -525,13 +525,18 @@
                               int)))
   int)
 
-(define s (integral ones 1 2))
+; 练习 3.73
+(define s (integral (scale-stream ones 1) 100 1))
 (stream-values s 10)
 
-;(define (rc R C dt)
-;  (integral (/ 1 C) R dt))
-;(define rc1 (rc 5 1 0.5))
-;(stream-values rc1 10)
+(define (rc R C dt)
+  (define (int is v)
+    (add-streams (integral is v (* (/ 1 C) dt))
+                 (scale-stream is R)))
+  int)
+
+(define rc1 (rc 5 1 0.5))
+(stream-values (rc1 ones 100) 10)
 
 ; 练习 3.74
 (define (make-zero-crossings input-stream last-value)
