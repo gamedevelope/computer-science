@@ -565,4 +565,21 @@
 
 (stream-values zero-crossings 10)
 
+; 练习 3.75
+(define (make-zero-crossings input-stream last-value)
+  (let ((avpt (/ (+ (stream-car input-stream) last-value) 2)))
+    (cons-stream (sign-change-detector avpt last-value)
+                 (make-zero-crossings (stream-cdr input-stream)
+                                      avpt))))
+; 改正后
+(define (make-zero-crossings input-stream prev-avpt last-value)
+  (let ((avpt (/ (+ (stream-car input-stream) last-value) 2)))
+    (cons-stream (sign-change-detector avpt prev-avpt)
+                 (make-zero-crossings (stream-cdr input-stream)
+                                      avpt
+                                      (stream-car input-stream)))))
+(stream-values nums 10)
+(define zero-crossings
+  (make-zero-crossings nums 0 0))
+(stream-values zero-crossings 10)
 (exit)
