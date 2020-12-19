@@ -582,4 +582,22 @@
 (define zero-crossings
   (make-zero-crossings nums 0 0))
 (stream-values zero-crossings 10)
+
+; 练习 3.76
+(define (smooth s)
+  (if (stream-null? s)
+      the-empty-stream
+      (let ((s1 (stream-cdr s)))
+        (if (stream-null? s1)
+            the-empty-stream
+            (let ((v1 (stream-car s))
+                  (v2 (stream-car (stream-cdr s))))
+              (cons-stream (/ (+ v1 v2) 2)
+                           (smooth (stream-cdr s))))))))
+
+(stream-values (smooth integers) 10)
+(define s (cons-stream 1
+                       (cons-stream 2
+                                    (cons-stream 3 the-empty-stream))))
+(stream-values (smooth s) 2)
 (exit)
