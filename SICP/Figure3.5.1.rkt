@@ -643,4 +643,54 @@
   y)
 
 (stream-ref (solve (lambda (y) y) 1 0.001) 1000)
+
+; 3.5.5 函数式程序的模块化和对象的模块化
+
+(define random-init 12345678)
+(define (rand-update x)
+  (+ 1 (remainder (* x 0x5DEECE66DL)
+                  10001)))
+
+(define rand
+  (let ((x random-init))
+    (lambda ()
+      (set! x (rand-update x))
+      x)))
+(rand)
+(rand)
+(rand)
+
+(define random-numbers
+  (cons-stream random-init
+               (stream-map rand-update random-numbers)))
+(stream-values random-numbers 10)
+
+(define (map-successive-pairs f s)
+  (let ((v1 (stream-car s))
+        (v2 (stream-car (stream-cdr s))))
+    (display (list v1 v2))
+    (cons-stream
+     (f v1 v2)
+     (map-successive-pairs f (stream-cdr (stream-cdr s))))))
+
+(define cesaro-stream
+  (map-successive-pairs (lambda (r1 r2) (= (gcd r1 r2) 1))
+                        random-numbers))
+
+(define (monte-carlo experiment-stream passed failed)
+  (display (list "passed : " passed " failed:" failed))
+  (newline)
+  (define (next passed failed)
+    (cons-stream
+     (/ passed (+ passed failed))
+     (monte-carlo
+      (stream-cdr experiment-stream) passed failed)))
+  (if (stream-cdr experiment-stream)
+      (next (+ passed 1) failed)
+      (next passed (+ failed 1))))
+
+(define pi
+  (stream-map (lambda (p) (sqrt (/ 6 p)))
+              (monte-carlo cesaro-stream 0 0)))
+(stream-ref pi 10)
 (exit)
