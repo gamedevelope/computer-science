@@ -648,8 +648,7 @@
 
 (define random-init 12345678)
 (define (rand-update x)
-  (+ 1 (remainder (* x 0x5DEECE66DL)
-                  10001)))
+  (+ (random 1000000) 1))
 
 (define rand
   (let ((x random-init))
@@ -668,7 +667,6 @@
 (define (map-successive-pairs f s)
   (let ((v1 (stream-car s))
         (v2 (stream-car (stream-cdr s))))
-    (display (list v1 v2))
     (cons-stream
      (f v1 v2)
      (map-successive-pairs f (stream-cdr (stream-cdr s))))))
@@ -678,19 +676,17 @@
                         random-numbers))
 
 (define (monte-carlo experiment-stream passed failed)
-  (display (list "passed : " passed " failed:" failed))
-  (newline)
   (define (next passed failed)
     (cons-stream
      (/ passed (+ passed failed))
      (monte-carlo
       (stream-cdr experiment-stream) passed failed)))
-  (if (stream-cdr experiment-stream)
+  (if (stream-car experiment-stream)
       (next (+ passed 1) failed)
       (next passed (+ failed 1))))
 
 (define pi
   (stream-map (lambda (p) (sqrt (/ 6 p)))
               (monte-carlo cesaro-stream 0 0)))
-(stream-ref pi 10)
+(stream-ref pi 10000)
 (exit)
