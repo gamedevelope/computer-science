@@ -214,6 +214,9 @@
       (make-lambda (cdadr exp)
                    (cddr exp))))
 
+(define (make-lambda parameters body)
+  (cons 'lambda (cons parameters body)))
+
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))
@@ -243,6 +246,17 @@
     (define-variable! 'true true initial-env)
     (define-variable! 'false false initial-env)
     initial-env))
+(define (primitive-procedure-names)
+  (map car primitive-procedures))
+(define primitive-procedures
+  (list (list 'car car)
+        (list 'cdr cdr)
+        (list 'cons cons)
+        (list 'null? null?)))
+(define (primitive-procedure-objects)
+  (map (lambda (proc) (list 'primitive (cadr proc)))
+       primitive-procedures))
+  
 (define input-prompt ";;; M-Eval input:")
 (define output-prompt ";;; M-Eval value:")
 (define (driver-loop)
@@ -252,6 +266,16 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+(define (user-print object)
+  (if (compound-procedure? object)
+      (display (list 'compound-procedure
+                     (procedure-parameters object)
+                     (procedure-body object)
+                     '<procedure-env>))
+      (display object)))
+
+(define (announce-output string)
+  (newline) (display string) (newline))
 (define (prompt-for-input string)
   (newline) (newline) (display string) (newline))
 (define the-global-environment (setup-environment))
