@@ -233,6 +233,11 @@
       '()
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
+; 总是从右往左求值的版本
+;(define (list-of-values exps env)
+;  (if (no-operands? exps)
+;      '()
+;      ))
 (define (quoted? exp)
   (tagged-list? exp 'quote))
 (define (text-of-quotation exp) (cadr exp))
