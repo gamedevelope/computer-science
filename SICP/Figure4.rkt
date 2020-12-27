@@ -90,11 +90,6 @@
 (define (application? exp) (pair? exp))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
-;(define (list-of-values exps env)
-;  (if (no-operands? exps)
-;      '()
-;      (cons (eval (first-operand exps) env)
-;            (list-of-values (rest-operands exps) env))))
 (define (no-operands? ops) (null? ops))
 (define (first-operand ops) (car ops))
 (define (rest-operands ops) (cdr ops))
@@ -141,11 +136,6 @@
 (define (primitive-implementation proc) (cadr proc))
 (define (make-frame variables values)
   (cons variables values))
-;(define (list-of-values exps env)
-;  (if (no-operands? exps)
-;      '()
-;      (cons (eval (first-operand exps) env)
-;            (list-of-values (rest-operands exps) env))))
 
 (define (eval-if exp env)
   (if (true? (eval (if-predicate exp) env))
@@ -234,11 +224,24 @@
       '()
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
-; 总是从右往左求值的版本
+
+; 练习 4.1
+; 总是从左向右求值的版本
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+      '()
+      (let ((fv (eval (first-operand exps) env)))
+        (cons fv
+              (list-of-values (rest-operands exps) env)))))
+
+; 总是从右向左求值的版本
 ;(define (list-of-values exps env)
+;  (cond ((no-operands? exps) '())
+;        ((null? (rest-operands exps))
+;         
 ;  (if (no-operands? exps)
 ;      '()
-;      ))
+
 (define (quoted? exp)
   (tagged-list? exp 'quote))
 (define (text-of-quotation exp) (cadr exp))
