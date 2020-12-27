@@ -8,9 +8,10 @@
 (display (tagged-list? (list 'if) 'if))
 
 (define (eval exp env)
-  (cond ((self-evaluating? exp) exp)
+  (display exp)
+  (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
-        ((quoted? exp) (text-of-quotation exp))
+        ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -251,10 +252,12 @@
     (define-variable! 'true true initial-env)
     (define-variable! 'false false initial-env)
     initial-env))
+
 (define (primitive-procedure-names)
   (map car primitive-procedures))
 (define primitive-procedures
-  (list (list 'car car)
+  (list (list '+ +)
+        (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)))
@@ -280,8 +283,15 @@
       (display object)))
 
 (define (announce-output string)
-  (newline) (display string) (newline))
+  (newline)
+  (display string)
+  (newline))
+
 (define (prompt-for-input string)
-  (newline) (newline) (display string) (newline))
+  (newline)
+  (newline)
+  (display string)
+  (newline))
+
 (define the-global-environment (setup-environment))
 (driver-loop)
