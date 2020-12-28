@@ -12,6 +12,7 @@
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
+        
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -227,12 +228,12 @@
 
 ; 练习 4.1
 ; 总是从左向右求值的版本
-(define (list-of-values exps env)
-  (if (no-operands? exps)
-      '()
-      (let ((fv (eval (first-operand exps) env)))
-        (cons fv
-              (list-of-values (rest-operands exps) env)))))
+;(define (list-of-values exps env)
+;  (if (no-operands? exps)
+;      '()
+;      (let ((fv (eval (first-operand exps) env)))
+;        (cons fv
+;              (list-of-values (rest-operands exps) env)))))
 
 ; 总是从右向左求值的版本
 ;(define (list-of-values exps env)
