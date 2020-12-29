@@ -12,7 +12,9 @@
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
-        
+        ((application? exp)
+         (apply (eval (operator (operands exp)) env)
+                (list-of-values (operands (operands exp)) env)))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -23,9 +25,6 @@
         ((begin? exp)
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
-        ((application? exp)
-         (apply (eval (operator exp) env)
-                (list-of-values (operands exp) env)))
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
@@ -88,7 +87,8 @@
 (define (last-exp? seq) (null? (cdr seq)))
 (define (first-exp seq) (car seq))
 (define (rest-exps seq) (cdr seq))
-(define (application? exp) (pair? exp))
+(define (application? exp)
+  (tagged-list? exp 'call))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
 (define (no-operands? ops) (null? ops))
