@@ -8,7 +8,6 @@
 (display (tagged-list? (list 'if) 'if))
 
 (define (eval exp env)
-  (display exp)
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
@@ -299,5 +298,3 @@
 
 (define the-global-environment (setup-environment))
 (driver-loop)
-
-; 
