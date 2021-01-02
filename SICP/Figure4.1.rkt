@@ -9,6 +9,7 @@
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
         (else
+         (display (car exp))
          ((get 'eval (car exp)) exp env))))
 
 (define (tagged-list? exp tag)
@@ -171,6 +172,11 @@
               (else (scan (cdr vars) (cdr vals)))))
       (scan (frame-variables frame) (frame-values frame))))
 
+(define (install-quote)
+  (define (text-of-quotation exp env) (cadr exp))
+  (put 'eval 'quote text-of-quotation))
+(install-quote)
+
 (define (install-definition)
   (define (eval-definition exp env)
     (define-variable! (definition-variable exp)
@@ -191,6 +197,33 @@
   (put 'eval 'define eval-definition))
 (install-definition)
 
+(define (install-assignment)
+  (define (eval-assignment exp env)
+  (set-variable-value! (assignment-variable exp)
+                       (eval (assignment-value exp) env)
+                       env)
+  'ok)
+
+(define (set-variable-value! var val env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop (enclosing-environment env)))
+            ((eq? var (car vars)) (set-car! vals val))
+            (else (scan (cdr vars) (cdr vals)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable: SET!" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values frame)))))
+  (env-loop env))
+
+  (define (assignment-variable exp) (cadr exp))
+  (define (assignment-value exp) (caddr exp))
+  (put 'eval 'set! eval-assignment))
+
+(install-assignment)
+
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
 
@@ -210,28 +243,6 @@
       '()
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
-
-; 练习 4.1
-; 总是从左向右求值的版本
-;(define (list-of-values exps env)
-;  (if (no-operands? exps)
-;      '()
-;      (let ((fv (eval (first-operand exps) env)))
-;        (cons fv
-;              (list-of-values (rest-operands exps) env)))))
-
-; 总是从右向左求值的版本
-;(define (list-of-values exps env)
-;  (cond ((no-operands? exps) '())
-;        ((null? (rest-operands exps))
-;         
-;  (if (no-operands? exps)
-;      '()
-
-(define (quoted? exp)
-  (tagged-list? exp 'quote))
-(define (text-of-quotation exp) (cadr exp))
-
 
 (define (setup-environment)
   (let ((initial-env
