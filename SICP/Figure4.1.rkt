@@ -224,6 +224,20 @@
 
 (install-assignment)
 
+(define (install-if)
+  (define (eval-if exp env)
+  (if (true? (eval (if-predicate exp) env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))
+  (define (if-predicate exp) (cadr exp))
+  (define (if-consequent exp) (caddr exp))
+  (define (if-alternative exp)
+    (if (not (null? (cdddr exp)))
+        (cadddr exp)
+        'false))
+  (put 'eval 'if eval-if))
+(install-if)
+
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
 
