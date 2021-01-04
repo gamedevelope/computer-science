@@ -31,9 +31,6 @@
                 (frame-values frame)))))
   (env-loop env))
 
-(define (assignment? exp) (tagged-list? exp 'set!))
-(define (definition? exp) (tagged-list? exp 'define))
-(define (if? exp) (tagged-list? exp 'if))
 (define (lambda? exp) (tagged-list? exp 'lambda))
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
@@ -132,6 +129,18 @@
   (if (not (null? (cdddr exp)))
       (cadddr exp)
       'false))
+
+(define (install-lambda)
+  (define (make-procedure parameters body env)
+    (list 'procedure parameters body env))
+  (define (lambda-parameters exp) (cadr exp))
+  (define (lambda-body exp) (cddr exp))
+  (define (eval-lambda exp env)
+    (make-procedure (lambda-parameters exp)
+                    (lambda-body exp)
+                    env))
+  (put 'eval 'lambda eval-lambda))
+(install-lambda)
 
 (define (true? x) (not (eq? x false)))
 (define (false? x) (eq? x false))
