@@ -7,10 +7,12 @@
 
 (define (eval exp env)
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
-        ((variable? exp) (lookup-variable-value exp env))
+        ((symbol? exp) (lookup-variable-value exp env))
         (else
-         (display (car exp))
-         ((get 'eval (car exp)) exp env))))
+         (let ((proc (get 'eval (car exp))))
+           (if proc
+               (proc exp env)
+               (error "Unbound procedure " (car exp)))))))
 
 (define (tagged-list? exp tag)
   (if (pair? exp)
@@ -197,7 +199,10 @@
     (if (symbol? (cadr exp))
         (cadr exp)
         (caadr exp)))
-
+  
+  (define (make-lambda parameters body)
+    (cons 'lambda (cons parameters body)))
+  
   (define (definition-value exp)
     (if (symbol? (cadr exp))
         (caddr exp)
@@ -247,8 +252,7 @@
   (put 'eval 'if eval-if))
 (install-if)
 
-(define (make-lambda parameters body)
-  (cons 'lambda (cons parameters body)))
+
 
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
@@ -260,7 +264,6 @@
         ((string? exp) true)
         (else false)))
 
-(define (variable? exp) (symbol? exp))
 (define (list-of-values exps env)
   (if (no-operands? exps)
       '()
