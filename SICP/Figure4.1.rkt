@@ -2,6 +2,11 @@
 
 (#%require "FigureCommon.scm")
 
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      false))
+
 (define (self-evaluating? exp)
   (or (number? exp) (string? exp)))
 
@@ -13,11 +18,6 @@
            (if proc
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
-
-(define (tagged-list? exp tag)
-  (if (pair? exp)
-      (eq? (car exp) tag)
-      false))
 
 (define (lookup-variable-value var env)
   (define (env-loop env)
@@ -33,11 +33,6 @@
                 (frame-values frame)))))
   (env-loop env))
 
-(define (lambda? exp) (tagged-list? exp 'lambda))
-(define (make-procedure parameters body env)
-  (list 'procedure parameters body env))
-(define (lambda-parameters exp) (cadr exp))
-(define (lambda-body exp) (cddr exp))
 (define (begin? exp) (tagged-list? exp 'begin))
 (define (begin-actions exp) (cdr exp))
 (define (cond? exp) (tagged-list? exp 'cond))
@@ -56,6 +51,7 @@
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
 (define (cond-clauses exp) (cdr exp))
+
 (define (sequence->exp seq)
   (cond ((null? seq) seq)
         ((last-exp? seq) (first-exp seq))
