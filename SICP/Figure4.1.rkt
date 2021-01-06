@@ -266,8 +266,6 @@
   (put 'eval 'if eval-if))
 (install-if)
 
-
-
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))
@@ -286,6 +284,7 @@
 
 (define (primitive-procedure-names)
   (map car primitive-procedures))
+
 (define primitive-procedures
   (list (list '+ +)
         (list 'car car)
