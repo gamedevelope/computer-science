@@ -7,10 +7,25 @@
       (eq? (car exp) tag)
       false))
 
-(define (self-evaluating? exp)
-  (or (number? exp) (string? exp)))
 
 (define (eval exp env)
+  (define (self-evaluating? exp)
+    (or (number? exp) (string? exp)))
+
+  (define (lookup-variable-value var env)
+    (define (env-loop env)
+      (define (scan vars vals)
+        (cond ((null? vars)
+               (env-loop (enclosing-environment env)))
+              ((eq? var (car vars)) (car vals))
+              (else (scan (cdr vars) (cdr vals)))))
+      (if (eq? env the-empty-environment)
+          (error "Unbound variable" var)
+          (let ((frame (first-frame env)))
+            (scan (frame-variables frame)
+                  (frame-values frame)))))
+    (env-loop env))
+
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((symbol? exp) (lookup-variable-value exp env))
         (else
@@ -18,20 +33,6 @@
            (if proc
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
-
-(define (lookup-variable-value var env)
-  (define (env-loop env)
-    (define (scan vars vals)
-      (cond ((null? vars)
-             (env-loop (enclosing-environment env)))
-            ((eq? var (car vars)) (car vals))
-            (else (scan (cdr vars) (cdr vals)))))
-    (if (eq? env the-empty-environment)
-        (error "Unbound variable" var)
-        (let ((frame (first-frame env)))
-          (scan (frame-variables frame)
-                (frame-values frame)))))
-  (env-loop env))
 
 (define (install-begin)
   (define (begin-actions exp) (cdr exp))
@@ -99,29 +100,37 @@
 (define (frame-values frame) (cdr frame))
 
 (define (apply procedure arguments)
-  (cond
-    ; 基本过程
-    ((primitive-procedure? procedure)
-     (apply-primitive-procedure procedure arguments))
-    ; 复合过程
-    ((compound-procedure? procedure)
-     (eval-sequence
-      (procedure-body procedure)
-      (extend-environment
-       (procedure-parameters procedure)
-       arguments
-       (procedure-environment procedure))))
-    (else
-     (error
-      "Unknown procedure type -- APPLY" procedure))))
-(define (primitive-procedure? proc)
-  (tagged-list? proc 'primitive))
-(define (apply-primitive-procedure proc args)
-  (apply-in-underlying-scheme
-   (primitive-implementation proc) args))
+  (let ((proc (get 'apply (car procedure))))
+    (if proc
+        (proc procedure arguments)
+        (error "Unknown procedure type -- APPLY" procedure))))
+
+(define (install-apply-primitive-procedure)
+  (define apply-in-underlying-scheme apply)
+  (define (primitive-implementation proc) (cadr proc))
+  (define (apply-primitive-procedure proc args)
+    (apply-in-underlying-scheme
+     (primitive-implementation proc) args))
+  (put 'apply 'procedure apply-primitive-procedure))
+(install-apply-primitive-procedure)
+
+(define (install-apply-compound-procedure)
+  (define (apply-compound-procedure procedure arguments)
+    (eval-sequence
+     (procedure-body procedure)
+     (extend-environment
+      (procedure-parameters procedure)
+      arguments
+      (procedure-environment procedure))))
+  (put 'apply 'procedure apply-compound-procedure))
+(install-apply-compound-procedure)
+
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
 (define (extend-environment vars vals base-env)
+  (define (make-frame variables values)
+    (cons variables values))
+  
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
@@ -130,21 +139,6 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
-(define apply-in-underlying-scheme apply)
-(define (primitive-implementation proc) (cadr proc))
-(define (make-frame variables values)
-  (cons variables values))
-
-(define (eval-if exp env)
-  (if (true? (eval (if-predicate exp) env))
-      (eval (if-consequent exp) env)
-      (eval (if-alternative exp) env)))
-(define (if-predicate exp) (cadr exp))
-(define (if-consequent exp) (caddr exp))
-(define (if-alternative exp)
-  (if (not (null? (cdddr exp)))
-      (cadddr exp)
-      'false))
 
 (define (install-lambda)
   (define (make-procedure parameters body env)
@@ -282,28 +276,30 @@
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
 
-(define (primitive-procedure-names)
-  (map car primitive-procedures))
-
-(define primitive-procedures
-  (list (list '+ +)
-        (list 'car car)
-        (list 'cdr cdr)
-        (list 'cons cons)
-        (list 'null? null?)))
-(define (primitive-procedure-objects)
-  (map (lambda (proc) (list 'primitive (cadr proc)))
-       primitive-procedures))
 
 (define (setup-environment)
-    (let ((initial-env
-           (extend-environment (primitive-procedure-names)
-                               (primitive-procedure-objects)
-                               the-empty-environment)))
-      (define-variable! 'true true initial-env)
-      (define-variable! 'false false initial-env)
-      initial-env))
-  (define the-global-environment (setup-environment))
+  (define primitive-procedures
+    (list (list '+ +)
+          (list 'car car)
+          (list 'cdr cdr)
+          (list 'cons cons)
+          (list 'null? null?)))
+  
+  (define (primitive-procedure-names)
+    (map car primitive-procedures))
+
+  (define (primitive-procedure-objects)
+    (map (lambda (proc) (list 'primitive (cadr proc)))
+         primitive-procedures))
+  
+  (let ((initial-env
+         (extend-environment (primitive-procedure-names)
+                             (primitive-procedure-objects)
+                             the-empty-environment)))
+    (define-variable! 'true true initial-env)
+    (define-variable! 'false false initial-env)
+    initial-env))
+(define the-global-environment (setup-environment))
 
 (define (driver-loop)
   (define input-prompt ";;; M-Eval input:")
