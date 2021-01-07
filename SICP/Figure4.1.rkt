@@ -7,7 +7,6 @@
       (eq? (car exp) tag)
       false))
 
-
 (define (eval exp env)
   (define (self-evaluating? exp)
     (or (number? exp) (string? exp)))
@@ -85,14 +84,10 @@
   (put 'eval 'cond eval-cond))
 (install-cond)
 
-
 (define (last-exp? seq) (null? (cdr seq)))
 (define (first-exp seq) (car seq))
 (define (rest-exps seq) (cdr seq))
 
-(define (no-operands? ops) (null? ops))
-(define (first-operand ops) (car ops))
-(define (rest-operands ops) (cdr ops))
 (define (enclosing-environment env) (cdr env))
 (define the-empty-environment '())
 (define (first-frame env) (car env))
@@ -271,6 +266,10 @@
         (else false)))
 
 (define (list-of-values exps env)
+  (define (no-operands? ops) (null? ops))
+  (define (first-operand ops) (car ops))
+  (define (rest-operands ops) (cdr ops))
+  
   (if (no-operands? exps)
       '()
       (cons (eval (first-operand exps) env)
