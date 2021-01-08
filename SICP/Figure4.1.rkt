@@ -278,8 +278,7 @@
 
 (define (setup-environment)
   (define primitive-procedures
-    (list (list '+ +)
-          (list 'car car)
+    (list (list 'car car)
           (list 'cdr cdr)
           (list 'cons cons)
           (list 'null? null?)))
