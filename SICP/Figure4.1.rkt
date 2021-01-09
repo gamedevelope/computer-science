@@ -7,6 +7,7 @@
       (eq? (car exp) tag)
       false))
 
+;; 求值方法
 (define (eval exp env)
   (define (self-evaluating? exp)
     (or (number? exp) (string? exp)))
@@ -33,6 +34,7 @@
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
 
+;; begin
 (define (install-begin)
   (define (begin-actions exp) (cdr exp))
   (define (eval-begin exp env)
@@ -40,6 +42,7 @@
   (put 'eval 'begin eval-begin))
 (install-begin)
 
+;; call 函数调用
 (define (install-call)
   (define (operator exp) (car exp))
   (define (operands exp) (cdr exp))
