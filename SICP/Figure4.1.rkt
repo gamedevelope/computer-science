@@ -30,6 +30,7 @@
         ((symbol? exp) (lookup-variable-value exp env))
         (else
          (let ((proc (get 'eval (car exp))))
+           (display proc)
            (if proc
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
@@ -123,8 +124,7 @@
   (put 'apply 'procedure apply-compound-procedure))
 (install-apply-compound-procedure)
 
-(define (compound-procedure? p)
-  (tagged-list? p 'procedure))
+
 (define (extend-environment vars vals base-env)
   (define (make-frame variables values)
     (cons variables values))
@@ -150,35 +150,10 @@
   (put 'eval 'lambda eval-lambda))
 (install-lambda)
 
-(define (true? x) (not (eq? x false)))
-(define (false? x) (eq? x false))
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
         (else (eval (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
-
-(define (eval-assignment exp env)
-  (set-variable-value! (assignment-variable exp)
-                       (eval (assignment-value exp) env)
-                       env)
-  'ok)
-
-(define (set-variable-value! var val env)
-  (define (env-loop env)
-    (define (scan vars vals)
-      (cond ((null? vars)
-             (env-loop (enclosing-environment env)))
-            ((eq? var (car vars)) (set-car! vals val))
-            (else (scan (cdr vars) (cdr vals)))))
-    (if (eq? env the-empty-environment)
-        (error "Unbound variable: SET!" var)
-        (let ((frame (first-frame env)))
-          (scan (frame-variables frame)
-                (frame-values frame)))))
-  (env-loop env))
-
-(define (assignment-variable exp) (cadr exp))
-(define (assignment-value exp) (caddr exp))
 
 (define (define-variable! var val env)
   (let ((frame (first-frame env)))
@@ -245,6 +220,7 @@
 (install-assignment)
 
 (define (install-if)
+  (define (true? x) (not (eq? x false)))
   (define (eval-if exp env)
     (if (true? (eval (if-predicate exp) env))
         (eval (if-consequent exp) env)
@@ -261,12 +237,6 @@
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))
-
-
-(define (self-evaluationg? exp)
-  (cond ((number? exp) true)
-        ((string? exp) true)
-        (else false)))
 
 (define (list-of-values exps env)
   (define (no-operands? ops) (null? ops))
@@ -316,6 +286,9 @@
     (newline)
     (display string)
     (newline))
+
+  (define (compound-procedure? p)
+    (tagged-list? p 'procedure))
   
   (define (user-print object)
     (if (compound-procedure? object)
