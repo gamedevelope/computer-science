@@ -304,4 +304,6 @@
       (user-print output)))
   (driver-loop))
 
-(driver-loop)
+(define code '(define f (lambda (x) (+ x 1))))
+(eval code the-global-environment)
+; (driver-loop)
