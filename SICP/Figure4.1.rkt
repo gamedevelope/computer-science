@@ -306,4 +306,5 @@
 
 (define code '(define f (lambda (x) (+ x 1))))
 (eval code the-global-environment)
+(eval '(call f 1) the-global-environment)
 ; (driver-loop)
