@@ -34,6 +34,9 @@
            (if proc
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
+(put 'eval '+ (lambda (exp env)
+                (apply '+ (cdr exp))))
+(put 'apply '+ +)
 
 ;; begin
 (define (install-begin)
@@ -49,6 +52,7 @@
   (define (operands exp) (cdr exp))
   
   (define (call exp env)
+    (display env)
     (apply (eval (operator (operands exp)) env)
            (list-of-values (operands (operands exp)) env)))
   (put 'eval 'call call))
@@ -140,7 +144,12 @@
 
 (define (install-lambda)
   (define (make-procedure parameters body env)
-    (list 'procedure parameters body env))
+    (let ((lbd (list 'procedure parameters body env)))
+      (newline)
+      (display lbd)
+      (newline)
+      lbd))
+  ;    (list 'procedure parameters body env))
   (define (lambda-parameters exp) (cadr exp))
   (define (lambda-body exp) (cddr exp))
   (define (eval-lambda exp env)
@@ -307,4 +316,5 @@
 (define code '(define f (lambda (x) (+ x 1))))
 (eval code the-global-environment)
 (eval '(call f 1) the-global-environment)
+(display the-global-environment)
 ; (driver-loop)
