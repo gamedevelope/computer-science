@@ -243,6 +243,22 @@
   (put 'eval 'if eval-if))
 (install-if)
 
+(define (install-and)
+  (define (eval-and exps env)
+    (cond ((last-exp? exps) (eval (first-exp exps) env))
+          (else (eval (first-exp exps) env)
+                (eval-sequence (rest-exps exps) env))))
+  (put 'eval 'and eval-and))
+(install-and)
+
+(define (install-or)
+  (define (eval-and exps env)
+    (cond ((last-exp? exps) (eval (first-exp exps) env))
+          (else (eval (first-exp exps) env)
+                (eval-sequence (rest-exps exps) env))))
+  (put 'eval 'or eval-or))
+(install-or)
+
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))
