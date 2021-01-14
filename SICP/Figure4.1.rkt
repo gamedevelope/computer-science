@@ -27,7 +27,7 @@
     (env-loop env))
 
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
-        ((symbol? exp) (lookup-variable-value exp env))
+        ((symbol? exp) (begin (display exp) (lookup-variable-value exp env)))
         (else
          (let ((proc (get 'eval (car exp))))
            (display proc)
@@ -245,17 +245,25 @@
 
 (define (install-and)
   (define (eval-and exps env)
-    (cond ((last-exp? exps) (eval (first-exp exps) env))
-          (else (eval (first-exp exps) env)
-                (eval-sequence (rest-exps exps) env))))
+    (define (proc exps env)
+      (cond ((last-exp? exps) (eval (first-exp exps) env))
+            (else (let ((v (eval (first-exp exps) env)))
+                    (if (eq? v false)
+                        false
+                        (proc (rest-exps exps) env))))))
+    (proc (cdr exps) env))
   (put 'eval 'and eval-and))
 (install-and)
 
 (define (install-or)
-  (define (eval-and exps env)
-    (cond ((last-exp? exps) (eval (first-exp exps) env))
-          (else (eval (first-exp exps) env)
-                (eval-sequence (rest-exps exps) env))))
+  (define (eval-or exps env)
+    (define (proc exps env)
+      (cond ((last-exp? exps) (eval (first-exp exps) env))
+            (else (let ((v (eval (first-exp exps) env)))
+                    (if (eq? v true)
+                        v
+                        (proc (rest-exps exps) env))))))
+    (proc (cdr exps) env))
   (put 'eval 'or eval-or))
 (install-or)
 
@@ -330,7 +338,10 @@
   (driver-loop))
 
 (define code '(define f (lambda (x) (+ x 1))))
-(eval code the-global-environment)
-(eval '(call f 1) the-global-environment)
 (display the-global-environment)
+(driver-loop)
+
+;(eval code the-global-environment)
+;(eval '(call f 1) the-global-environment)
+;(display the-global-environment)
 ; (driver-loop)
