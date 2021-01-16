@@ -116,7 +116,7 @@
   (define (apply-primitive-procedure proc args)
     (apply-in-underlying-scheme
      (primitive-implementation proc) args))
-  (put 'apply 'procedure apply-primitive-procedure))
+  (put 'apply 'primitive apply-primitive-procedure))
 (install-apply-primitive-procedure)
 
 (define (install-apply-compound-procedure)
@@ -143,6 +143,7 @@
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
 
+;;; lambda
 (define (install-lambda)
   (define (make-procedure parameters body env)
     (let ((lbd (list 'procedure parameters body env)))
@@ -164,43 +165,6 @@
   (cond ((last-exp? exps) (eval (first-exp exps) env))
         (else (eval (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
-
-(define (define-variable! var val env)
-  (let ((frame (first-frame env)))
-    (define (scan vars vals)
-      (cond ((null? vars)
-             (add-binding-to-frame! var val frame))
-            ((eq? var (car vars)) (set-car! vals val))
-            (else (scan (cdr vars) (cdr vals)))))
-    (scan (frame-variables frame) (frame-values frame))))
-
-(define (install-quote)
-  (define (text-of-quotation exp env) (cadr exp))
-  (put 'eval 'quote text-of-quotation))
-(install-quote)
-
-(define (install-definition)
-  (define (eval-definition exp env)
-    (define-variable! (definition-variable exp)
-      (eval (definition-value exp) env)
-      env)
-    'ok)
-  
-  (define (definition-variable exp)
-    (if (symbol? (cadr exp))
-        (cadr exp)
-        (caadr exp)))
-  
-  (define (make-lambda parameters body)
-    (cons 'lambda (cons parameters body)))
-  
-  (define (definition-value exp)
-    (if (symbol? (cadr exp))
-        (caddr exp)
-        (make-lambda (cdadr exp)
-                     (cddr exp))))
-  (put 'eval 'define eval-definition))
-(install-definition)
 
 (define (install-assignment)
   (define (eval-assignment exp env)
@@ -226,7 +190,6 @@
   (define (assignment-variable exp) (cadr exp))
   (define (assignment-value exp) (caddr exp))
   (put 'eval 'set! eval-assignment))
-
 (install-assignment)
 
 (define (install-if)
@@ -282,6 +245,42 @@
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
 
+(define (install-quote)
+  (define (text-of-quotation exp env) (cadr exp))
+  (put 'eval 'quote text-of-quotation))
+(install-quote)
+
+(define (define-variable! var val env)
+  (let ((frame (first-frame env)))
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (add-binding-to-frame! var val frame))
+            ((eq? var (car vars)) (set-car! vals val))
+            (else (scan (cdr vars) (cdr vals)))))
+    (scan (frame-variables frame) (frame-values frame))))
+
+(define (install-definition)
+  (define (eval-definition exp env)
+    (define-variable! (definition-variable exp)
+      (eval (definition-value exp) env)
+      env)
+    'ok)
+  
+  (define (definition-variable exp)
+    (if (symbol? (cadr exp))
+        (cadr exp)
+        (caadr exp)))
+  
+  (define (make-lambda parameters body)
+    (cons 'lambda (cons parameters body)))
+  
+  (define (definition-value exp)
+    (if (symbol? (cadr exp))
+        (caddr exp)
+        (make-lambda (cdadr exp)
+                     (cddr exp))))
+  (put 'eval 'define eval-definition))
+(install-definition)
 
 (define (setup-environment)
   (define primitive-procedures
@@ -289,10 +288,12 @@
           (list 'cdr cdr)
           (list 'cons cons)
           (list 'null? null?)))
-  
+
+  ;;; 基本过程名
   (define (primitive-procedure-names)
     (map car primitive-procedures))
-
+  
+  ;;; 基本过程列表
   (define (primitive-procedure-objects)
     (map (lambda (proc) (list 'primitive (cadr proc)))
          primitive-procedures))
