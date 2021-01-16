@@ -30,13 +30,15 @@
         ((symbol? exp) (begin (display exp) (lookup-variable-value exp env)))
         (else
          (let ((proc (get 'eval (car exp))))
-           (display proc)
            (if proc
                (proc exp env)
                (error "Unbound procedure " (car exp)))))))
+
 (put 'eval '+ (lambda (exp env)
-                (apply '+ (cdr exp))))
-(put 'apply '+ +)
+                (apply '+ exp)))
+
+(put 'apply '+ (lambda (exp env)
+                 (apply + (cdr exp))))
 
 ;; begin
 (define (install-begin)
@@ -52,7 +54,7 @@
   (define (operands exp) (cdr exp))
   
   (define (call exp env)
-    (display env)
+;    (display env)
     (apply (eval (operator (operands exp)) env)
            (list-of-values (operands (operands exp)) env)))
   (put 'eval 'call call))
@@ -103,7 +105,7 @@
 (define (frame-values frame) (cdr frame))
 
 (define (apply procedure arguments)
-  (let ((proc (get 'apply (car procedure))))
+  (let ((proc (get 'apply procedure)))
     (if proc
         (proc procedure arguments)
         (error "Unknown procedure type -- APPLY" procedure))))
@@ -127,7 +129,6 @@
       (procedure-environment procedure))))
   (put 'apply 'procedure apply-compound-procedure))
 (install-apply-compound-procedure)
-
 
 (define (extend-environment vars vals base-env)
   (define (make-frame variables values)
@@ -338,9 +339,5 @@
   (driver-loop))
 
 (display the-global-environment)
-(driver-loop)
-
-;(eval code the-global-environment)
-(eval '(call f 1) the-global-environment)
-(display the-global-environment)
-; (driver-loop)
+(eval '(+ 1 2 3) the-global-environment)
+;(driver-loop)

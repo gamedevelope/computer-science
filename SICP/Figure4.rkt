@@ -87,7 +87,8 @@
 (define (first-exp seq) (car seq))
 (define (rest-exps seq) (cdr seq))
 (define (application? exp)
-  (tagged-list? exp 'call))
+  (pair? exp))
+;  (tagged-list? exp 'call))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
 (define (no-operands? ops) (null? ops))
@@ -101,6 +102,7 @@
 (define (procedure-paramters p) (cadr p))
 
 (define (apply procedure arguments)
+  (display (list "apply" procedure))
   (cond
     ; 基本过程
     ((primitive-procedure? procedure)
