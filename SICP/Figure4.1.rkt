@@ -26,16 +26,23 @@
                   (frame-values frame)))))
     (env-loop env))
 
-  (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
-        ((symbol? exp) (begin (display exp) (lookup-variable-value exp env)))
-        (else
-         (let ((proc (get 'eval (car exp))))
-           (if proc
-               (proc exp env)
-               (error "Unbound procedure " (car exp)))))))
+  (cond
+    ;;; 数字、字符串 -- 直接返回本身
+    ((self-evaluating? exp)
+     (begin (display (list "self-evaluating" exp))
+            exp))
+    ;;; 变量 -- 从环境中查找对应的值
+    ((symbol? exp) (begin (display exp) (lookup-variable-value exp env)))
+    ;;; 过程 -- 求这个过程的值
+    (else
+     (let ((proc (get 'eval (car exp))))
+       (display (list "proc" proc))
+       (if proc
+           (proc exp env)
+           (error "Unbound procedure " (car exp)))))))
 
 (put 'eval '+ (lambda (exp env)
-                (apply '+ exp)))
+                (apply + exp)))
 
 (put 'apply '+ (lambda (exp env)
                  (apply + (cdr exp))))
@@ -105,7 +112,7 @@
 (define (frame-values frame) (cdr frame))
 
 (define (apply procedure arguments)
-  (let ((proc (get 'apply procedure)))
+  (let ((proc (get 'apply 'procedure)))
     (if proc
         (proc procedure arguments)
         (error "Unknown procedure type -- APPLY" procedure))))
@@ -340,5 +347,7 @@
   (driver-loop))
 
 (display the-global-environment)
+(eval '(define a 1) the-global-environment)
+(eval 'a the-global-environment)
 (eval '(+ 1 2 3) the-global-environment)
 ;(driver-loop)

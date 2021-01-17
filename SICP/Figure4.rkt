@@ -5,8 +5,6 @@
       (eq? (car exp) tag)
       false))
 
-(display (tagged-list? (list 'if) 'if))
-
 (define (eval exp env)
   (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
         ((variable? exp) (lookup-variable-value exp env))
@@ -22,8 +20,11 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (apply (eval (operator (operands exp)) env)
-                (list-of-values (operands (operands exp)) env)))
+         (display (operator exp))
+         (eval (operator exp) env))
+        ;         (display (list "application" exp))
+        ;         (apply (eval (operator exp) env)
+        ;                (list-of-values (operands exp) env)))
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
@@ -102,7 +103,6 @@
 (define (procedure-paramters p) (cadr p))
 
 (define (apply procedure arguments)
-  (display (list "apply" procedure))
   (cond
     ; 基本过程
     ((primitive-procedure? procedure)
@@ -126,8 +126,6 @@
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
 (define (extend-environment vars vals base-env)
-  (display vars)
-  (display vals)
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
@@ -260,16 +258,17 @@
     (define-variable! 'false false initial-env)
     initial-env))
 
-(define (primitive-procedure-names)
-  (map car primitive-procedures))
 (define primitive-procedures
   (list (list '+ +)
         (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)))
+(define (primitive-procedure-names)
+  (map car primitive-procedures))
 (define (primitive-procedure-objects)
-  (map (lambda (proc) (list 'primitive (cadr proc)))
+  (map (lambda (proc)
+         (list 'primitive (cadr proc)))
        primitive-procedures))
   
 (define input-prompt ";;; M-Eval input:")
@@ -277,7 +276,6 @@
 (define (driver-loop)
   (prompt-for-input input-prompt)
   (let ((input (read)))
-    (display input)
     (let ((output (eval input the-global-environment)))
       (announce-output output-prompt)
       (user-print output)))
@@ -302,4 +300,5 @@
   (newline))
 
 (define the-global-environment (setup-environment))
-(driver-loop)
+(eval '(cons 1 2) the-global-environment)
+;(driver-loop)
