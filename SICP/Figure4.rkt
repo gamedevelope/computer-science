@@ -1,6 +1,12 @@
 #lang sicp
+(#%require "FigureCommon.scm")
 
 (define (tagged-list? exp tag)
+  (newline)
+  (display (list "exp is " exp))
+  (newline)
+  (display (list "tag is " tag))
+  (newline)
   (if (pair? exp)
       (eq? (car exp) tag)
       false))
@@ -20,11 +26,11 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (display (operator exp))
-         (eval (operator exp) env))
+;         (display (operator exp))
+;         (eval (operator exp) env))
         ;         (display (list "application" exp))
-        ;         (apply (eval (operator exp) env)
-        ;                (list-of-values (operands exp) env)))
+         (apply (eval (operator exp) env)
+                (list-of-values (operands exp) env)))
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
@@ -103,6 +109,7 @@
 (define (procedure-paramters p) (cadr p))
 
 (define (apply procedure arguments)
+  (display (list "check procedure" (primitive-procedure? procedure) procedure arguments))
   (cond
     ; 基本过程
     ((primitive-procedure? procedure)
@@ -134,7 +141,7 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
-(define apply-in-underlying-scheme apply)
+
 (define (primitive-implementation proc) (cadr proc))
 (define (make-frame variables values)
   (cons variables values))
@@ -301,4 +308,5 @@
 
 (define the-global-environment (setup-environment))
 (eval '(cons 1 2) the-global-environment)
+(eval '(+ 1 2) the-global-environment)
 ;(driver-loop)

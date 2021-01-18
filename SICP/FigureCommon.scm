@@ -1,7 +1,8 @@
 #lang sicp
 
 (#%provide put
-           get)
+           get
+           apply-in-underlying-scheme)
 
 (define (make-table)
   (let ((local-table (list '*table*)))
@@ -36,3 +37,4 @@
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
+(define apply-in-underlying-scheme apply)
