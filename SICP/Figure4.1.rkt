@@ -25,27 +25,22 @@
             (scan (frame-variables frame)
                   (frame-values frame)))))
     (env-loop env))
-
+  
   (cond
     ;;; 数字、字符串 -- 直接返回本身
-    ((self-evaluating? exp)
-     (begin (display (list "self-evaluating" exp))
-            exp))
+    ((self-evaluating? exp) exp)
     ;;; 变量 -- 从环境中查找对应的值
-    ((symbol? exp) (begin (display exp) (lookup-variable-value exp env)))
+    ((symbol? exp) (lookup-variable-value exp env))
     ;;; 过程 -- 求这个过程的值
     (else
      (let ((proc (get 'eval (car exp))))
-       (display (list "proc" proc))
        (if proc
            (proc exp env)
-           (error "Unbound procedure " (car exp)))))))
-
-(put 'eval '+ (lambda (exp env)
-                (apply + exp)))
-
-(put 'apply '+ (lambda (exp env)
-                 (apply + (cdr exp))))
+           (let ((p (eval (operator exp) env))
+                 (vals (list-of-values (operands exp) env)))
+             (apply p vals)))))))
+;                    (list-of-values (operands exp) env))))))))
+;           (error "Unbound procedure " (car exp)))))))
 
 ;; begin
 (define (install-begin)
@@ -55,11 +50,11 @@
   (put 'eval 'begin eval-begin))
 (install-begin)
 
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+
 ;; call 函数调用
 (define (install-call)
-  (define (operator exp) (car exp))
-  (define (operands exp) (cdr exp))
-  
   (define (call exp env)
 ;    (display env)
     (apply (eval (operator (operands exp)) env)
@@ -112,13 +107,12 @@
 (define (frame-values frame) (cdr frame))
 
 (define (apply procedure arguments)
-  (let ((proc (get 'apply 'procedure)))
+  (let ((proc (get 'apply (car procedure))))
     (if proc
         (proc procedure arguments)
         (error "Unknown procedure type -- APPLY" procedure))))
 
 (define (install-apply-primitive-procedure)
-  (define apply-in-underlying-scheme apply)
   (define (primitive-implementation proc) (cadr proc))
   (define (apply-primitive-procedure proc args)
     (apply-in-underlying-scheme
@@ -154,9 +148,6 @@
 (define (install-lambda)
   (define (make-procedure parameters body env)
     (let ((lbd (list 'procedure parameters body env)))
-      (newline)
-      (display lbd)
-      (newline)
       lbd))
   ;    (list 'procedure parameters body env))
   (define (lambda-parameters exp) (cadr exp))
@@ -294,8 +285,13 @@
     (list (list 'car car)
           (list 'cdr cdr)
           (list 'cons cons)
-          (list 'null? null?)))
-
+          (list 'null? null?)
+          (list '+ +)
+          (list '- -)
+          (list '* *)
+          (list '/ /)
+          (list 'list list)))
+  
   ;;; 基本过程名
   (define (primitive-procedure-names)
     (map car primitive-procedures))
@@ -346,8 +342,12 @@
       (user-print output)))
   (driver-loop))
 
-(display the-global-environment)
-(eval '(define a 1) the-global-environment)
-(eval 'a the-global-environment)
+;(display the-global-environment)
 (eval '(+ 1 2 3) the-global-environment)
-;(driver-loop)
+(eval '(cons 1 2) the-global-environment)
+(eval '(* 1 2 3) the-global-environment)
+(eval '(- 1 2 3) the-global-environment)
+(eval '(car (list 1 2 3)) the-global-environment)
+(eval '(car (cdr '(1 2 3))) the-global-environment)
+
+(driver-loop)
