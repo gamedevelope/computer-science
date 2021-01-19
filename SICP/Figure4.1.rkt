@@ -12,6 +12,7 @@
   (define (self-evaluating? exp)
     (or (number? exp) (string? exp)))
 
+  ;;; 查找基本过程、变量等
   (define (lookup-variable-value var env)
     (define (env-loop env)
       (define (scan vars vals)
@@ -290,6 +291,8 @@
           (list '- -)
           (list '* *)
           (list '/ /)
+          (list '= =)
+          (list '<= <=)
           (list 'list list)))
   
   ;;; 基本过程名
@@ -349,5 +352,8 @@
 (eval '(- 1 2 3) the-global-environment)
 (eval '(car (list 1 2 3)) the-global-environment)
 (eval '(car (cdr '(1 2 3))) the-global-environment)
-
+(eval '(define (f x)
+         (if (<= x 2)
+             1
+             (+ (f (- x 1)) (f (- x 2))))) the-global-environment)
 (driver-loop)
