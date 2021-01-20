@@ -293,6 +293,8 @@
           (list '/ /)
           (list '= =)
           (list '<= <=)
+          (list '>= >=)
+          (list 'map map)
           (list 'list list)))
   
   ;;; 基本过程名
@@ -356,4 +358,5 @@
          (if (<= x 2)
              1
              (+ (f (- x 1)) (f (- x 2))))) the-global-environment)
+(eval 'map the-global-environment)
 (driver-loop)
