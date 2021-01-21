@@ -42,3 +42,9 @@
          [(*) (multC (parse (second s1)) (parse (third s1)))]
          [else (error 'parse "invalid list input")]))]
     [else (error 'parse "invalid input")]))
+
+(define (interp [a : ArithC]) : number
+  (type-case ArithC a
+    [numC (n) n]
+    [plusC (l r) (+ l r)]
+    [multC (l r) (* l r)]))

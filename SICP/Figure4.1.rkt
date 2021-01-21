@@ -278,6 +278,10 @@
         (caddr exp)
         (make-lambda (cdadr exp)
                      (cddr exp))))
+  
+  (define (eval-let defintions body)
+    (display 'eval-let))
+  (put 'eval 'let eval-let)
   (put 'eval 'define eval-definition))
 (install-definition)
 
