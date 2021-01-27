@@ -1,6 +1,7 @@
 #lang sicp
 
 (#%provide eval
+           let*->nested-lets
            genv)
 
 (#%require "FigureCommon.scm")
@@ -293,6 +294,17 @@
                  (map (lambda (x) (eval (cadr x) env)) definitions))))))
   (put 'eval 'let eval-let))
 (install-let)
+
+;;; 比较复杂的一次转换
+(define (let*->nested-lets exp)
+  (if (<= (length (cadr exp)) 1)
+      (append (list 'let (cadr exp)) (cddr exp))
+      (append (list 'let (list (caadr exp)))
+              (list (let*->nested-lets (append (list 'let* (cdadr exp)) (cddr exp)))))))
+;  (list 'let (list (caadr exp))
+;        (let*->nested-lets (list 'let* (list (cdadr exp) (cddr exp))))))
+;  (car exp))
+;  '(+ 1 2))
 
 (define (setup-environment)
   (define primitive-procedures
