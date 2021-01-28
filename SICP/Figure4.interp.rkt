@@ -297,14 +297,15 @@
 
 ;;; 比较复杂的一次转换
 (define (let*->nested-lets exp)
-  (if (<= (length (cadr exp)) 1)
-      (append (list 'let (cadr exp)) (cddr exp))
-      (append (list 'let (list (caadr exp)))
-              (list (let*->nested-lets (append (list 'let* (cdadr exp)) (cddr exp)))))))
-;  (list 'let (list (caadr exp))
-;        (let*->nested-lets (list 'let* (list (cdadr exp) (cddr exp))))))
-;  (car exp))
-;  '(+ 1 2))
+  (cond ((not (pair? exp)) exp)
+        ((eq? 'let* (car exp))
+         (if (<= (length (cadr exp)) 1)
+             (append (list 'let (cadr exp)) (let*->nested-lets (cddr exp)))
+             (append (list 'let (list (let*->nested-lets (caadr exp))))
+                     (list (let*->nested-lets (append (list 'let* (cdadr exp)) (let*->nested-lets (cddr exp))))))))
+        (else
+         (cons (let*->nested-lets (car exp))
+               (let*->nested-lets (cdr exp))))))
 
 (define (setup-environment)
   (define primitive-procedures
