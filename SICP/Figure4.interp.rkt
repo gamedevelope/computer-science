@@ -1,7 +1,6 @@
 #lang sicp
 
 (#%provide eval
-           let*->nested-lets
            genv)
 
 (#%require "FigureCommon.scm")
@@ -295,17 +294,24 @@
   (put 'eval 'let eval-let))
 (install-let)
 
-;;; 比较复杂的一次转换
-(define (let*->nested-lets exp)
-  (cond ((not (pair? exp)) exp)
-        ((eq? 'let* (car exp))
-         (if (<= (length (cadr exp)) 1)
-             (append (list 'let (cadr exp)) (let*->nested-lets (cddr exp)))
-             (append (list 'let (list (let*->nested-lets (caadr exp))))
-                     (list (let*->nested-lets (append (list 'let* (cdadr exp)) (let*->nested-lets (cddr exp))))))))
-        (else
-         (cons (let*->nested-lets (car exp))
-               (let*->nested-lets (cdr exp))))))
+;;; 定义 let*
+;;; 写法有些繁琐
+;;; TODO 简化
+(define (install-let*->nested-lets)
+  (define (let*->nested-lets exp)
+    (cond ((not (pair? exp)) exp)
+          ((eq? 'let* (car exp))
+           (if (<= (length (cadr exp)) 1)
+               (append (list 'let (cadr exp)) (let*->nested-lets (cddr exp)))
+               (append (list 'let (list (let*->nested-lets (caadr exp))))
+                       (list (let*->nested-lets (append (list 'let* (cdadr exp)) (let*->nested-lets (cddr exp))))))))
+          (else
+           (cons (let*->nested-lets (car exp))
+                 (let*->nested-lets (cdr exp))))))
+  (define (eval-let* exp env)
+    (eval (let*->nested-lets exp) env))
+  (put 'eval 'let* eval-let*))
+(install-let*->nested-lets)
 
 (define (setup-environment)
   (define primitive-procedures
