@@ -90,3 +90,9 @@
            100)
          (foob)) genv)
 (eval '(fooa) genv)
+(eval '(let fib ((a 5))
+         (if (< a 1)
+             1
+             (+ a (fib (- a 1))))) genv)
+(eval '(let g ((a 1))
+         (+ a (fib 5))) genv)
