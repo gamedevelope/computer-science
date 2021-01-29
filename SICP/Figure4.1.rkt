@@ -85,3 +85,8 @@
 
 (define c3 '(let ((a (let* ((b 1)) b))) a))
 (eval c3 genv)
+(eval '(define (fooa)
+         (define (foob)
+           100)
+         (foob)) genv)
+(eval '(fooa) genv)
