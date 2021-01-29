@@ -96,3 +96,8 @@
              (+ a (fib (- a 1))))) genv)
 (eval '(let g ((a 1))
          (+ a (fib 5))) genv)
+
+(let ((y '(1 3 5 7 9)))
+  (do ((x y (cdr x))
+       (sum 0 (+ sum (car x))))
+    ((null? x) sum)))
