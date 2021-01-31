@@ -376,6 +376,20 @@
 ;;;               (next vec (+ i 1)))))
 ;;;  (next (make-vector 5) 0))
 
+;;;(do ((x 100)
+;;;     (y 2 (+ y 1)))
+;;;  ((> x y) x)
+;;;  y)
+;;; 转换后
+;;;(let ((x 100)
+;;;      (y 2))
+;;;  (define (__iter y)
+;;;    (if (> x y)
+;;;        x
+;;;        (begin
+;;;          y
+;;;          (__iter (+ y 1)))))
+;;;  (__iter y))
 (define (install-do)
   (define (eval-do exp env)
     (display '()))
@@ -449,3 +463,29 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+
+(define code '(do ((x 100)
+                   (y 2 (+ y 1)))
+                ((> x y) x)
+                y))
+
+(define (do->let exp)
+  (define (parse-params exp initialization iterator)
+    (if (null? exp)
+        (cons initialization iterator)
+        (let ((first (car exp))
+              (rest (cdr exp)))
+          (if (= (length first) 2)
+              (parse-params rest (append initialization (list first)) iterator)
+              (parse-params rest
+                     (append initialization (list (list (car first) (cadr first))))
+                     (append iterator (list (list (car first) (caddr first)))))))))
+  (define (parse-cause exp)
+    (cons 'if (caddr exp)))
+  (define (make-func exp)
+    (cons 'begin (cdddr exp)))
+  (display (parse-cause exp))
+  (display (make-func exp))
+  (cons 'let (parse-params (cadr exp) '() '())))
+
+(do->let code)
