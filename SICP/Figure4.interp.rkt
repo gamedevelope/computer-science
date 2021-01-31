@@ -335,6 +335,53 @@
 ;;;       (sum 0 (+ sum (car x))))
 ;;;      ((null? x) sum)))     =>  25
 
+;;;(let ((x '(1 3 5 7 9)))
+;;;  (do ((x x (cdr x))
+;;;       (sum 1 (+ sum (car x)))
+;;;       (s 1 (* s sum)))
+;;;    ((null? x) s)))
+;;; 转换后
+;;;(let ((x '(1 3 5 7 9)))
+;;;  (define (next x sum s)
+;;;    (if (null? x)
+;;;        s
+;;;        (next (cdr x) (+ sum (car x)) (* s sum))))
+;;;  (next x 1 1))
+
+;;;
+;;;(do ((x 0 (+ x 1))
+;;;     (f (lambda (x) x)
+;;;        (lambda (x) (f (+ x x)))))
+;;;  ((> x 9) (f x)))
+;;; 转换后
+;;;(let ((x 0)
+;;;      (f (lambda (x) x)))
+;;;  (define (next x f)
+;;;    (if (> x 9)
+;;;        (f x)
+;;;        (next (+ x 1) (lambda (x) (f (+ x x))))))
+;;;  (next x f))
+
+;;;
+;;;(do ((vec (make-vector 5))
+;;;     (i 0 (+ i 1)))
+;;;  ((= i 5) vec)
+;;;  (vector-set! vec i i))
+;;; 转换后
+;;;(let ()
+;;;  (define (next vec i)
+;;;    (if (= i 5)
+;;;        vec
+;;;        (begin (vector-set! vec i i)
+;;;               (next vec (+ i 1)))))
+;;;  (next (make-vector 5) 0))
+
+(define (install-do)
+  (define (eval-do exp env)
+    (display '()))
+  (put 'eval 'do eval-do))
+(install-do)
+
 (define (setup-environment)
   (define primitive-procedures
     (list (list 'car car)
