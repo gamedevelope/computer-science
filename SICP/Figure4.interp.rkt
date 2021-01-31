@@ -391,8 +391,36 @@
 ;;;          (__iter (+ y 1)))))
 ;;;  (__iter y))
 (define (install-do)
+  (define (do->let exp)
+  (define (parse-params exp initialization iterator)
+    (if (null? exp)
+        (cons initialization iterator)
+        (let ((first (car exp))
+              (rest (cdr exp)))
+          (if (= (length first) 2)
+              (parse-params rest (append initialization (list first)) iterator)
+              (parse-params rest
+                     (append initialization (list (list (car first) (cadr first))))
+                     (append iterator (list (list (car first) (caddr first)))))))))
+  (define (parse-cause exp else)
+    (cons 'if (append (caddr exp) (list else))))
+  
+  (define (make-func exp iter)
+    (cons 'begin (append (cdddr exp) (list iter))))
+  
+  (let ((params (parse-params (cadr exp) '() '())))
+    (let ((initialization (car params))
+          (iterator (cdr params)))
+      (list 'let
+            initialization
+            (list 'define
+                  (cons '__iter (map car iterator))
+                  (parse-cause exp (make-func exp (cons '__iter (map cadr iterator)))))
+            (cons '__iter (map car iterator))))))
+  
   (define (eval-do exp env)
-    (display '()))
+    (eval (do->let exp) env))
+  
   (put 'eval 'do eval-do))
 (install-do)
 
@@ -411,6 +439,8 @@
           (list '<= <=)
           (list '> >)
           (list '>= >=)
+          (list 'make-vector make-vector)
+          (list 'vector-set! vector-set!)
           (list 'display display)
           (list 'list list)))
   
@@ -463,29 +493,3 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
-
-(define code '(do ((x 100)
-                   (y 2 (+ y 1)))
-                ((> x y) x)
-                y))
-
-(define (do->let exp)
-  (define (parse-params exp initialization iterator)
-    (if (null? exp)
-        (cons initialization iterator)
-        (let ((first (car exp))
-              (rest (cdr exp)))
-          (if (= (length first) 2)
-              (parse-params rest (append initialization (list first)) iterator)
-              (parse-params rest
-                     (append initialization (list (list (car first) (cadr first))))
-                     (append iterator (list (list (car first) (caddr first)))))))))
-  (define (parse-cause exp)
-    (cons 'if (caddr exp)))
-  (define (make-func exp)
-    (cons 'begin (cdddr exp)))
-  (display (parse-cause exp))
-  (display (make-func exp))
-  (cons 'let (parse-params (cadr exp) '() '())))
-
-(do->let code)

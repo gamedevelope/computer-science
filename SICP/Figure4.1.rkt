@@ -101,3 +101,20 @@
   (do ((x y (cdr x))
        (sum 0 (+ sum (car x))))
     ((null? x) sum)))
+
+
+(define code '(do ((x 100)
+                   (y 2 (+ y 1)))
+                ((> x y) x)
+                y))
+
+(eval '(let ((x '(1 3 5 7 9)))
+         (do ((x x (cdr x))
+              (sum 1 (+ sum (car x)))
+              (s 1 (* s sum)))
+           ((null? x) s))) genv)
+
+(eval '(do ((vec (make-vector 5))
+            (i 0 (+ i 1)))
+         ((= i 5) vec)
+         (vector-set! vec i i)) genv)
