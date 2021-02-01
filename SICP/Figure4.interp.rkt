@@ -16,19 +16,19 @@
     (or (number? exp) (string? exp)))
 
   ;;; 查找基本过程、变量等
-  (define (lookup-variable-value var env)
-    (define (env-loop env)
-      (define (scan vars vals)
-        (cond ((null? vars)
-               (env-loop (enclosing-environment env)))
-              ((eq? var (car vars)) (car vals))
-              (else (scan (cdr vars) (cdr vals)))))
-      (if (eq? env the-empty-environment)
-          (error "Unbound variable" var)
-          (let ((frame (first-frame env)))
-            (scan (frame-variables frame)
-                  (frame-values frame)))))
-    (env-loop env))
+  ;  (define (lookup-variable-value var env)
+  ;    (define (env-loop env)
+  ;      (define (scan vars vals)
+  ;        (cond ((null? vars)
+  ;               (env-loop (enclosing-environment env)))
+  ;              ((eq? var (car vars)) (car vals))
+  ;              (else (scan (cdr vars) (cdr vals)))))
+  ;      (if (eq? env the-empty-environment)
+  ;          (error "Unbound variable" var)
+  ;          (let ((frame (first-frame env)))
+  ;            (scan (frame-variables frame)
+  ;                  (frame-values frame)))))
+  ;    (env-loop env))
   
   (cond
     ;;; 数字、字符串 -- 直接返回本身
@@ -43,8 +43,6 @@
            (let ((p (eval (operator exp) env))
                  (vals (list-of-values (operands exp) env)))
              (apply p vals)))))))
-;                    (list-of-values (operands exp) env))))))))
-;           (error "Unbound procedure " (car exp)))))))
 
 ;; begin
 (define (install-begin)
@@ -137,8 +135,14 @@
 (install-apply-compound-procedure)
 
 (define (extend-environment vars vals base-env)
+  ;  (define (make-frame variables values)
+  ;    (cons variables values))
+  ; 练习 4.11 改成 name-value pair
   (define (make-frame variables values)
-    (cons variables values))
+    (if (null? variables)
+        '()
+        (cons (cons (car variables) (list (car values)))
+              (make-frame (cdr variables) (cdr values)))))
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
@@ -173,20 +177,8 @@
                          env)
     'ok)
 
-  (define (set-variable-value! var val env)
-    (define (env-loop env)
-      (define (scan vars vals)
-        (cond ((null? vars)
-               (env-loop (enclosing-environment env)))
-              ((eq? var (car vars)) (set-car! vals val))
-              (else (scan (cdr vars) (cdr vals)))))
-      (if (eq? env the-empty-environment)
-          (error "Unbound variable: SET!" var)
-          (let ((frame (first-frame env)))
-            (scan (frame-variables frame)
-                  (frame-values frame)))))
-    (env-loop env))
-
+  
+  
   (define (assignment-variable exp) (cadr exp))
   (define (assignment-value exp) (caddr exp))
   (put 'eval 'set! eval-assignment))
@@ -231,9 +223,7 @@
   (put 'eval 'or eval-or))
 (install-or)
 
-(define (add-binding-to-frame! var val frame)
-  (set-car! frame (cons var (car frame)))
-  (set-cdr! frame (cons val (cdr frame))))
+
 
 (define (list-of-values exps env)
   (define (no-operands? ops) (null? ops))
@@ -250,14 +240,47 @@
   (put 'eval 'quote text-of-quotation))
 (install-quote)
 
+; 练习 4.11 修改 env 的数据结构
+; 练习 4.12 将 define-variable! set-variable-value! lookup-variable-value
+; 合成一个结构
 (define (define-variable! var val env)
+  (define (add-binding-to-frame! var val frame)
+    (set! frame (cons (cons var val) frame)))
+  
   (let ((frame (first-frame env)))
-    (define (scan vars vals)
-      (cond ((null? vars)
+    (define (scan frame)
+      (cond ((null? frame)
              (add-binding-to-frame! var val frame))
-            ((eq? var (car vars)) (set-car! vals val))
-            (else (scan (cdr vars) (cdr vals)))))
-    (scan (frame-variables frame) (frame-values frame))))
+            ((eq? var (caar frame)) (set-cdr! (car frame) val))
+            (else
+             (scan (cdr frame)))))
+    (scan frame)))
+
+(define (set-variable-value! var val env)
+  (define (env-loop env)
+    (define (scan frame)
+      (cond ((null? frame)
+             (env-loop (enclosing-environment env)))
+            ((eq? var (caar frame)) (set-car! (car frame) val))
+            (else (scan (cdr frame)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable: SET!" var)
+        (let ((frame (first-frame env)))
+          (scan frame))))
+  (env-loop env))
+
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (define (scan frame)
+      (cond ((null? frame)
+             (env-loop (enclosing-environment env)))
+            ((eq? var (caar frame)) (cadr frame))
+            (else (scan (cdr frame)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan frame))))
+  (env-loop env))
 
 (define (install-definition)
   (define (eval-definition exp env)
@@ -493,3 +516,5 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+genv
+(eval '(+ 1 2) genv)

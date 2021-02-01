@@ -1,10 +1,7 @@
 #lang racket
-(do ((a 1)
-     (b 2 (+ b 1)))
-  ((> b 10) (+ a b))
-  (begin (set! a (+ a 1))
-         (set! a (* a 10))))
 
-(do ((a 1)
-     (b 2))
-  ((> b 1) b))
+(do ((x 100)
+     (f (lambda (x) (+ x 1))))
+  ((> x 1)
+   (do ((y 10))
+     ((> y 1) (+ x y)))))

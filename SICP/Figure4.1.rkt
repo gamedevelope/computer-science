@@ -2,6 +2,7 @@
 (#%require "Figure4.interp.rkt")
 
 (display genv)
+
 (eval '(+ 1 2 3) genv)
 (eval '(cons 1 2) genv)
 (eval '(* 1 2 3) genv)
@@ -118,3 +119,14 @@
             (i 0 (+ i 1)))
          ((= i 5) vec)
          (vector-set! vec i i)) genv)
+
+(eval '(do ((x 100)
+            (f (lambda (x) (+ x 1))))
+         ((> x 1)
+          (do ((y 10))
+            ((> y 1) (+ x y))))) genv)
+
+;(eval '(map car (list (cons 1 2) (cons 3 4))) genv)
+; 练习 
+(eval '(cons 1 2) genv)
+;(eval '(display (lambda (x) (+ x 1))) genv)
