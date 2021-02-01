@@ -1,5 +1,5 @@
 #lang sicp
-(#%require "Figure4.interp.rkt")
+(#%require "Figure.Interp.V2.rkt")
 
 (eval '(define hello 1) genv)
 (eval 'hello genv)
@@ -10,7 +10,6 @@
 (newline)
 (eval '(define (inc x)
          (+ x 1)) genv)
-genv
 (eval '(inc 100) genv)
 
 (eval '(+ 1 2 3) genv)
@@ -32,6 +31,8 @@ genv
              (cons (proc (car args))
                    (map proc (cdr args)))))
       genv)
+genv
+(eval '(car (list 1 2 3)) genv)
 (eval 'map genv)
 
 (eval '(map inc (list 1 2 3)) genv)
@@ -78,6 +79,13 @@ genv
          (define (g x)
            (* x 2))
          (f (g (+ x y)))) genv)
+(eval '(define (s x y)
+         (define (f x)
+           (+ x 1))
+         (+ (f x) y)) genv)
+genv
+(eval '(s 111 2) genv)
+
 (eval '(sum 1 2) genv)
 (display "处理 let*")
 (newline)
@@ -103,6 +111,8 @@ genv
            100)
          (foob)) genv)
 (eval '(fooa) genv)
+genv
+
 (eval '(let fib ((a 5))
          (if (< a 1)
              1
@@ -142,4 +152,3 @@ genv
 ; 练习 
 (eval '(cons 1 2) genv)
 ;(eval '(display (lambda (x) (+ x 1))) genv)
-
