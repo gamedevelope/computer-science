@@ -42,6 +42,11 @@
            (proc exp env)
            (let ((p (eval (operator exp) env))
                  (vals (list-of-values (operands exp) env)))
+             (display p)
+             (newline)
+             (newline)
+             (newline)
+             
              (apply p vals)))))))
 
 ;; begin
@@ -141,7 +146,7 @@
   (define (make-frame variables values)
     (if (null? variables)
         '()
-        (cons (cons (car variables) (list (car values)))
+        (cons (cons (car variables) (car values))
               (make-frame (cdr variables) (cdr values)))))
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
@@ -245,16 +250,24 @@
 ; 合成一个结构
 (define (define-variable! var val env)
   (define (add-binding-to-frame! var val frame)
-    (set! frame (cons (cons var val) frame)))
+    (display var)
+    (display val)
+    (newline)
+    (newline)
+    (newline)
+    (newline)
+    (set-cdr! frame
+              (cons (list var val)
+                    (cdr frame))))
   
   (let ((frame (first-frame env)))
-    (define (scan frame)
-      (cond ((null? frame)
+    (define (scan vals)
+      (cond ((null? vals)
              (add-binding-to-frame! var val frame))
-            ((eq? var (caar frame)) (set-cdr! (car frame) val))
+            ((eq? var (car vals)) (set-cdr! (car vals) val))
             (else
-             (scan (cdr frame)))))
-    (scan frame)))
+             (scan (cdr vals)))))
+    (scan (car frame))))
 
 (define (set-variable-value! var val env)
   (define (env-loop env)
@@ -274,7 +287,7 @@
     (define (scan frame)
       (cond ((null? frame)
              (env-loop (enclosing-environment env)))
-            ((eq? var (caar frame)) (cadr frame))
+            ((eq? var (caar frame)) (cadar frame))
             (else (scan (cdr frame)))))
     (if (eq? env the-empty-environment)
         (error "Unbound variable" var)
@@ -516,5 +529,6 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
-genv
-(eval '(+ 1 2) genv)
+
+(eval 'true genv)
+(eval '+ genv)

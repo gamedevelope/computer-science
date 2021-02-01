@@ -1,7 +1,17 @@
 #lang sicp
 (#%require "Figure4.interp.rkt")
 
-(display genv)
+(eval '(define hello 1) genv)
+(eval 'hello genv)
+(eval '(+ 1 2 3 4) genv)
+(newline)
+(newline)
+(newline)
+(newline)
+(eval '(define (inc x)
+         (+ x 1)) genv)
+genv
+(eval '(inc 100) genv)
 
 (eval '(+ 1 2 3) genv)
 (eval '(cons 1 2) genv)
@@ -14,6 +24,8 @@
              1
              (+ (f (- x 1)) (f (- x 2))))) genv)
 (eval '(list 1 2 3) genv)
+
+
 (eval '(define (map proc args)
          (if (null? args)
              '()
@@ -21,7 +33,7 @@
                    (map proc (cdr args)))))
       genv)
 (eval 'map genv)
-(eval '(define (inc x) (+ x 1)) genv)
+
 (eval '(map inc (list 1 2 3)) genv)
 (newline)
 (eval '((lambda ()
@@ -130,3 +142,4 @@
 ; 练习 
 (eval '(cons 1 2) genv)
 ;(eval '(display (lambda (x) (+ x 1))) genv)
+
