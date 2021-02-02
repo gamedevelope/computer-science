@@ -18,37 +18,37 @@
 ; 练习 4.12 将 define-variable! set-variable-value! lookup-variable-value
 ; 合成一个结构
 (define (define-variable! var val env)
-  (define (add-binding-to-frame! var val frame)
-    (set-cdr! frame
-              (cons (cons var val)
-                    (cdr frame))))
-  
-  (let ((frame (first-frame env)))
-    (define (scan vals)
-      (cond ((null? vals)
-             (add-binding-to-frame! var val frame))
-            ((eq? var (car vals)) (set-cdr! (car vals) val))
-            (else (scan (cdr vals)))))
-    (scan frame)))
-
-(define (env-loop var val f env)
-    (define (scan frame)
-      (cond ((null? frame)
-             (env-loop var val f (enclosing-environment env)))
-            ((eq? var (caar frame)) (f frame))
-            (else (scan (cdr frame)))))
-    (if (eq? env the-empty-environment)
-        (error "Unbound variable: SET!" var)
-        (let ((frame (first-frame env)))
-          (scan frame))))
-
-(define (set-variable-value! var val env)
   (define (f frame)
     (set-cdr! (car frame) val))
-  (env-loop var val f env))
+  
+  (define (g frame ...)
+    (set-cdr! (first-frame env)
+              (cons (cons var val)
+                    (cdr (first-frame env)))))
+  (env-loop var val f g env))
+
+(define (env-loop var val action next env)
+  (define (scan frame)
+    (cond ((null? frame)
+           (next frame (enclosing-environment env)))
+          ((eq? var (caar frame)) (action frame))
+          (else (scan (cdr frame)))))
+  (if (eq? env the-empty-environment)
+      (error "Unbound variable: SET!" var)
+      (let ((frame (first-frame env)))
+        (scan frame))))
+
+(define (set-variable-value! var val env)
+  (define (action frame)
+    (set-cdr! (car frame) val))
+  (define (next frame env)
+    (env-loop var val action next env))
+  (env-loop var val action next env))
 
 (define (lookup-variable-value var env)
-  (env-loop var false cdar env))
+  (define (next frame env)
+    (env-loop var false cdar next env))
+  (env-loop var false cdar next env))
 
 ;; 求值方法
 (define (eval exp env)
