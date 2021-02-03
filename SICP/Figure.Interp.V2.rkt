@@ -17,6 +17,16 @@
 ; 练习 4.11 修改 env 的数据结构
 ; 练习 4.12 将 define-variable! set-variable-value! lookup-variable-value
 ; 合成一个结构
+(define (env-loop var action next env message)
+  (define (scan frame)
+    (cond ((null? frame)
+           (next frame (enclosing-environment env)))
+          ((eq? var (caar frame)) (action frame))
+          (else (scan (cdr frame)))))
+  (if (eq? env the-empty-environment)
+      (error message var)
+      (scan (first-frame env))))
+
 (define (define-variable! var val env)
   (define message "Unbound variable")
   (define (action frame)
@@ -28,15 +38,20 @@
                     (cdr (first-frame env)))))
   (env-loop var action next env message))
 
-(define (env-loop var action next env message)
-  (define (scan frame)
-    (cond ((null? frame)
-           (next frame (enclosing-environment env)))
-          ((eq? var (caar frame)) (action frame))
-          (else (scan (cdr frame)))))
-  (if (eq? env the-empty-environment)
-      (error message var)
-      (scan (first-frame env))))
+(define (make-unbound! var env)
+  (define message "Unbound variable")
+  (define (action frame)
+    (let ((next (cdr frame)))
+      (if (null? next)
+          (set-car! (car frame) '())
+          ;; 将当前指针的值设为 next 指针的值，并删除next指针
+          (begin
+            (set-car! (car frame) (caar next))
+            (set-car! (cdr frame) (cadr next))
+            (set-cdr! frame (cdr next))))))
+  (define (next frame ...)
+    (error message var))
+  (env-loop var action next env message))
 
 (define (set-variable-value! var val env)
   (define message "Unbound variable: SET!")
@@ -269,6 +284,11 @@
         (caddr exp)
         (make-lambda (cdadr exp)
                      (cddr exp))))
+
+  (define (eval-unbound exp env)
+    (make-unbound! (definition-variable exp) env))
+  
+  (put 'eval 'undefine eval-unbound)
   (put 'eval 'define eval-definition))
 (install-definition)
 
@@ -488,3 +508,9 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+
+(eval '(define x 100) genv)
+genv
+(eval '(undefine x) genv)
+genv
+(eval '(undefine x) genv)
