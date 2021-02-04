@@ -65,7 +65,10 @@
   (define message "Unbound variable:")
   (define (next frame env)
     (env-loop var cdar next env message))
-  (env-loop var cdar next env message))
+  (let ((val (env-loop var cdar next env message)))
+    (if (eq? val '*unassigned*)
+        (error "Unassigned value" var)
+        val)))
 
 ;; 求值方法
 (define (eval exp env)
@@ -508,9 +511,3 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
-
-(eval '(define x 100) genv)
-genv
-(eval '(undefine x) genv)
-genv
-(eval '(undefine x) genv)
