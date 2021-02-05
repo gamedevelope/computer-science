@@ -511,3 +511,12 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+
+(define (scan-out-defines exp)
+  (cond ((null? exp) '())
+        ((and (list? (car exp)) (eq? 'define (caar exp)))
+         (scan-out-defines (cdr exp)))
+        (else
+         (cons (car exp)
+               (scan-out-defines (cdr exp))))))
+         
