@@ -519,4 +519,25 @@
         (else
          (cons (car exp)
                (scan-out-defines (cdr exp))))))
-         
+
+(scan-out-defines '((define (a x)
+                      (+ x 1))
+                    (define (b x)
+                      (+ x 1))
+                    (let ((a 1)
+                          (b 2))
+                      (+ a b))))
+
+(eval '(define (x n)
+         (define (even? n)
+           (if (= n 0)
+               true
+               (odd? (- n 1))))
+         (define (odd? n)
+           (if (= n 0)
+               false
+               (even? (- n 1))))
+         (if (even? n)
+             1
+             2)) genv)
+(eval '(x 10) genv)
