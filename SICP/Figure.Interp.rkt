@@ -9,3 +9,5 @@
                  (* k (ft ft (- k 1)))))))
         10) genv)
 
+(eval '(define x 100) genv)
+(eval '(set! x 2000) genv)
