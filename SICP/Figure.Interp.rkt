@@ -11,3 +11,4 @@
 
 (eval '(define x 100) genv)
 (eval '(set! x 2000) genv)
+(eval '(display "hello") genv)
