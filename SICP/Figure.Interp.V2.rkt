@@ -512,6 +512,19 @@
       (user-print output)))
   (driver-loop))
 
+;;; 将内部定义转换为 let 形式
+;;;(lambda <vars>
+;;;  (define u <el>)
+;;;  (define v <e2>)
+;;;  <e3>)
+;;;
+;;;(lambda <vars>
+;;;  (let ((u '*unassigned*)
+;;;        (v '*unassigned*))
+;;;    (set! u <e1>)
+;;;    (set! v <e2>)
+;;;    <e3>))
+
 (define (scan-out-defines exp)
   (cond ((null? exp) '())
         ((and (list? (car exp)) (eq? 'define (caar exp)))
@@ -520,13 +533,13 @@
          (cons (car exp)
                (scan-out-defines (cdr exp))))))
 
-(scan-out-defines '((define (a x)
+(scan-out-defines '((define (f x)
                       (+ x 1))
-                    (define (b x)
+                    (define (g x)
                       (+ x 1))
                     (let ((a 1)
                           (b 2))
-                      (+ a b))))
+                      (+ (f a) (g b)))))
 
 (eval '(define (x n)
          (define (even? n)
