@@ -554,3 +554,6 @@
              1
              2)) genv)
 (eval '(x 10) genv)
+(eval '(define ff (lambda
+                      (x)
+                    (+ x 1))) genv)
