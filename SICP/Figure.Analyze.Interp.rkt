@@ -2,3 +2,12 @@
 (define (eval exp env)
   ((analyze exp) env))
 
+(define (analyze exp)
+  (cond ((self-evaluation? exp)
+         (analyze-self-evaluating exp))
+        ((quoted? exp) (analyzed-quoted exp))
+        ((variable? exp) (analyzed-variable exp))
+        ((assignment? exp) (analyzed-assignment exp))
+        ((definition? exp) (analyzed-definition exp))
+        ((if? exp) (analyze-if exp))
+        ((lambda? exp) (analyze-lambda exp))))
