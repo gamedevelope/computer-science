@@ -543,22 +543,44 @@
   (list 'set! (produre-name exp)
         (produre->lambda exp)))
 
+(define (map-filter-defines f lst)
+  (if (null? lst)
+      '()
+      (if (and (pair? (car lst)) (f (car lst)))
+          (cons (car lst) (map-filter-defines f (cdr lst)))
+          (map-filter-defines f (cdr lst)))))
+
+(define (map-produre->lambda exp)
+  (map (lambda (x)
+         (list (produre-name x)
+               '*unassigned*))
+       exp))
+
 (produre-lambda-set '(define (ffff x) (+ x 1)))
 
 (define (scan-out-defines exp)
   (cond ((null? exp) '())
-        ((and (list? (car exp)) (eq? 'define (caar exp)))
-         (scan-out-defines (cdr exp)))
         (else
-         (cons (car exp)
-               (scan-out-defines (cdr exp))))))
+         (let ((funcs (map-filter-defines
+                              (lambda (x) (eq? (car x) 'define))
+                              exp)))
+          (if (null? funcs)
+              exp
+              funcs)))))
+;              (map-produre->lambda funcs))))))
+        ;        ((and (list? (car exp)) (eq? 'define (caar exp)))
+        ;         (scan-out-defines (cdr exp)))
+        ;        (else
+        ;         (cons (car exp)
+;               (scan-out-defines (cdr exp))))))
 
-(scan-out-defines '((define (f x)
+(define code '((define (f x)
                       (+ x 1))
                     (define (g x)
                       (+ x 1))
                     (display 'a)
                     (display 'b)
+                    100
                     (let ((a 1)
                           (b 2))
                       (define (f1)
@@ -566,20 +588,5 @@
                       (define (f2)
                         200)
                       (+ (f a) (g b)))))
-
-(eval '(define (x n)
-         (define (even? n)
-           (if (= n 0)
-               true
-               (odd? (- n 1))))
-         (define (odd? n)
-           (if (= n 0)
-               false
-               (even? (- n 1))))
-         (if (even? n)
-             1
-             2)) genv)
-(eval '(x 10) genv)
-(eval '(define ff (lambda
-                      (x)
-                    (+ x 1))) genv)
+(scan-out-defines code)
+;(scan-out-defines code)
