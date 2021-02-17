@@ -525,6 +525,26 @@
 ;;;    (set! v <e2>)
 ;;;    <e3>))
 
+(define (produre-name exp)
+  (caadr exp))
+
+(define (produre-params exp)
+  (cdadr exp))
+
+(define (produre-body exp)
+  (cddr exp))
+
+(define (produre->lambda exp)
+  (append (list 'lambda
+              (produre-params exp))
+          (produre-body exp)))
+
+(define (produre-lambda-set exp)
+  (list 'set! (produre-name exp)
+        (produre->lambda exp)))
+
+(produre-lambda-set '(define (ffff x) (+ x 1)))
+
 (define (scan-out-defines exp)
   (cond ((null? exp) '())
         ((and (list? (car exp)) (eq? 'define (caar exp)))
@@ -537,8 +557,14 @@
                       (+ x 1))
                     (define (g x)
                       (+ x 1))
+                    (display 'a)
+                    (display 'b)
                     (let ((a 1)
                           (b 2))
+                      (define (f1)
+                        100)
+                      (define (f2)
+                        200)
                       (+ (f a) (g b)))))
 
 (eval '(define (x n)
