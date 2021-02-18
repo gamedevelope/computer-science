@@ -498,5 +498,3 @@
          (define (f x)
            (+ x 1))
          (+ (f x) y)) genv)
-genv
-(eval '(s 111 2) genv)

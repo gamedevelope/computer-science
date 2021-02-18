@@ -184,7 +184,9 @@
 ;;; lambda
 (define (install-lambda)
   (define (make-procedure parameters body env)
-    (list 'procedure parameters body env))
+    (list 'procedure parameters
+          (scan-out-defines body)
+          env))
   (define (lambda-parameters exp) (cadr exp))
   (define (lambda-body exp) (cddr exp))
   (define (eval-lambda exp env)
@@ -512,6 +514,7 @@
       (user-print output)))
   (driver-loop))
 
+;;; 练习 4.16
 ;;; 将内部定义转换为 let 形式
 ;;;(lambda <vars>
 ;;;  (define u <el>)
@@ -553,7 +556,7 @@
 (define (map-produre->lambda exp)
   (map (lambda (x)
          (list (produre-name x)
-               '*unassigned*))
+               ''*unassigned*))
        exp))
 
 (produre-lambda-set '(define (ffff x) (+ x 1)))
@@ -562,31 +565,15 @@
   (cond ((null? exp) '())
         (else
          (let ((funcs (map-filter-defines
-                              (lambda (x) (eq? (car x) 'define))
-                              exp)))
-          (if (null? funcs)
-              exp
-              funcs)))))
-;              (map-produre->lambda funcs))))))
-        ;        ((and (list? (car exp)) (eq? 'define (caar exp)))
-        ;         (scan-out-defines (cdr exp)))
-        ;        (else
-        ;         (cons (car exp)
-;               (scan-out-defines (cdr exp))))))
-
-(define code '((define (f x)
-                      (+ x 1))
-                    (define (g x)
-                      (+ x 1))
-                    (display 'a)
-                    (display 'b)
-                    100
-                    (let ((a 1)
-                          (b 2))
-                      (define (f1)
-                        100)
-                      (define (f2)
-                        200)
-                      (+ (f a) (g b)))))
-(scan-out-defines code)
-;(scan-out-defines code)
+                       (lambda (x) (eq? (car x) 'define))
+                       exp))
+               (body (map-filter-defines
+                      (lambda (x) (not (eq? (car x) 'define)))
+                      exp)))
+           (if (null? funcs)
+               exp
+               (list (append
+                (append (list 'let
+                              (map-produre->lambda funcs))
+                        (map produre-lambda-set funcs))
+                body)))))))
