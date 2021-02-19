@@ -577,3 +577,10 @@
                               (map-produre->lambda funcs))
                         (map produre-lambda-set funcs))
                 body)))))))
+
+(eval '(define (f x)
+         (define a 5)
+         (+ 1 a)) genv)
+
+(eval '(let ((a 1))
+         (f 10)) genv)
