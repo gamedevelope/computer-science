@@ -529,18 +529,26 @@
 ;;;    <e3>))
 
 (define (produre-name exp)
-  (caadr exp))
+  (if (symbol? (cadr exp))
+      (cadr exp)
+      (caadr exp)))
 
 (define (produre-params exp)
-  (cdadr exp))
+  (if (pair? (cadr exp))
+      (cdadr exp)
+      '()))
+
+(produre-params '(define a 100))
 
 (define (produre-body exp)
   (cddr exp))
 
 (define (produre->lambda exp)
-  (append (list 'lambda
-              (produre-params exp))
-          (produre-body exp)))
+  (if (symbol? (cadr exp))
+      (caddr exp)
+      (append (append (list 'lambda)
+                      (produre-params exp))
+              (produre-body exp))))
 
 (define (produre-lambda-set exp)
   (list 'set! (produre-name exp)
@@ -555,8 +563,10 @@
 
 (define (map-produre->lambda exp)
   (map (lambda (x)
-         (list (produre-name x)
-               ''*unassigned*))
+         (if (symbol? (cadr x))
+             (list (cadr x) ''*unassigned*)
+             (list (produre-name x)
+                   ''*unassigned*)))
        exp))
 
 (produre-lambda-set '(define (ffff x) (+ x 1)))
@@ -580,7 +590,7 @@
 
 (eval '(define (f x)
          (define a 5)
-         (+ 1 a)) genv)
+         (+ x a)) genv)
 
 (eval '(let ((a 1))
          (f 10)) genv)
