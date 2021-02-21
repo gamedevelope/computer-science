@@ -306,7 +306,8 @@
               (body (cddr exp)))
           (let ((lbd (append (list 'lambda (map car definitions)) body)))
             (let ((lbdval ((get 'eval 'lambda) lbd env)))
-              (apply ((get 'eval 'lambda) lbd env)
+              (display lbdval)
+              (apply lbdval
                      (map (lambda (x) (eval (cadr x) env)) definitions)))))
         ;;; 命名 let
         (let ((funcname (cadr exp))
@@ -566,11 +567,14 @@
 (define (map-produre->lambda exp)
   (map (lambda (x)
          (if (symbol? (cadr x))
-             (list (cadr x) ''*unassigned*)
-             (list (produre-name x)
-                   ''*unassigned*)))
+             (let ((v (caddr x)))
+               (if (or (number? v) (symbol? v))
+                   (list (cadr x) v)
+                   (list (cadr x) '*unassigned*)))
+             (list (produre-name x) '*unassigned*)))
        exp))
 
+(map-produre->lambda '((define x 100)))
 (produre-lambda-set '(define (ffff x) (+ x 1)))
 
 (define (scan-out-defines exp)
@@ -590,10 +594,19 @@
                         (map produre-lambda-set funcs))
                 body)))))))
 
+(eval '(let ((b *unassigned*) (a 5))
+         (set! b (+ a 1))
+         (set! a 5)
+         (+ a b)) genv)
+
 (eval '(define (f x)
+         (define b (+ a x))
          (define a 5)
-         (define (b x) (* x x))
-         (+ x (b a))) genv)
+         (+ a b)) genv)
 
 (eval '(let ((a 1))
+         (define (f x)
+           (define b (+ a x))
+           (define a 5)
+           (+ a b))
          (f 10)) genv)
