@@ -606,15 +606,16 @@
          (f 10)) genv)
 
 ;;; 练习 4.20
-(define (f x)
-  (letrec ((even?
-            (lambda (n)
-              (if (= n 0)
-                  true
-                  (odd? (- n 1)))))
-           (odd?
-            (lambda (n)
-              (if (= n 0)
-                  false
-                  (even? (- n 1))))))
-    (even? x)))
+(eval '(define (f x)
+         (letrec ((even?
+                   (lambda (n)
+                     (if (= n 0)
+                         true
+                         (odd? (- n 1)))))
+                  (odd?
+                   (lambda (n)
+                     (if (= n 0)
+                         false
+                         (even? (- n 1))))))
+           (even? x))) genv)
+(eval '(f 10) genv)
