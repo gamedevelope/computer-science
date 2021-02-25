@@ -338,6 +338,15 @@
   (put 'eval 'let* eval-let*))
 (install-let*->nested-lets)
 
+;;; 定义 letrec
+(define (install-letrec)
+  (define (letrec exp)
+    (cons 'let (cdr exp)))
+  (define (eval-letrec exp env)
+    (eval (letrec exp) env))
+  (put 'eval 'letrec eval-letrec))
+(install-letrec)
+
 ;;; 定义 do
 ;;; do 的语法
 ;;;(do ((vec (make-vector 5))
@@ -618,4 +627,6 @@
                          false
                          (even? (- n 1))))))
            (even? x))) genv)
-(eval '(f 10) genv)
+;(eval '(f 10) genv)
+
+(eval '(letrec () 100) genv)
