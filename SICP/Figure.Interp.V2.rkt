@@ -607,7 +607,7 @@
          (define a 5)
          (+ a b)) genv)
 
-(eval '(let ((a 1))
+(eval '(let ((a 1))le
          (define (f x)
            (define b (+ a x))
            (define a 5)
@@ -630,3 +630,12 @@
 ;(eval '(f 10) genv)
 
 (eval '(letrec () 100) genv)
+
+((lambda (n)
+   ((lambda (fact)
+      (fact fact n))
+    (lambda (ft k)
+      (if (= k 1)
+          1
+          (* k (ft ft (- k 1)))))))
+ 10)
