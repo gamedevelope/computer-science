@@ -639,3 +639,9 @@
           1
           (* k (ft ft (- k 1)))))))
  10)
+
+((lambda (ft k)
+   (if (= k 1)
+       1
+       (* k (ft ft (- k 1)))))
+ (lambda (fact) (fact fact 3)) 2)
