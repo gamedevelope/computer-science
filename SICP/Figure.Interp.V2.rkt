@@ -631,6 +631,7 @@
 
 (eval '(letrec () 100) genv)
 
+;; 练习 4.21
 ((lambda (n)
    ((lambda (fact)
       (fact fact n))
@@ -640,8 +641,13 @@
           (* k (ft ft (- k 1)))))))
  10)
 
-((lambda (ft k)
-   (if (= k 1)
-       1
-       (* k (ft ft (- k 1)))))
- (lambda (fact) (fact fact 3)) 2)
+;; 练习 4.21a
+((lambda (n)
+   ((lambda (fib)
+      (fib fib n))
+    (lambda (fib k)
+      (if (<= k 2)
+          1
+          (+ (fib fib (- k 2)) (fib fib (- k 1)))))))
+ 6)
+    
