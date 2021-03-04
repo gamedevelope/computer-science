@@ -1,4 +1,5 @@
 #lang sicp
+;;; 惰性求值
 (define (eval exp env)
   ((analyze exp) env))
 
@@ -54,3 +55,4 @@
   (let ((vars (lambda-paramenters exp))
         (bproc (analyze-sequence (lambda-body exp))))
     (lambda (env) (make-procedure vars bproc env))))
+
