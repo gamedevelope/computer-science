@@ -4,7 +4,7 @@
   ((analyze exp) env))
 
 (define (analyze exp)
-  (cond ((self-evaluation? exp)
+  (cond ((self-evaluating? exp)
          (analyze-self-evaluating exp))
         ((quoted? exp) (analyzed-quoted exp))
         ((variable? exp) (analyzed-variable exp))
@@ -18,24 +18,48 @@
         (else
          (error "Unknown expression type -- ANALYZE" exp))))
 
+(define (self-evaluating? exp)
+  (or (number? exp) (string? exp)))
+
+(define (quoted? exp)
+  false)
+
 (define (analyze-self-evaluating exp)
   (lambda (env) exp))
 
-(define (analyze-quoted exp)
+(define (variable? exp)
+  (symbol? exp))
+
+(define (assignment? exp)
+  (equal? 'set! (car exp)))
+
+(define (if? exp)
+  (equal? 'if (car exp)))
+
+(define (lambda? exp)
+  (equal? 'lambda (car exp)))
+
+(define (begin? exp)
+  (equal? 'begin (car exp)))
+
+(define (definition? exp)
+  (equal? 'defiine (car exp)))
+
+(define (analyzed-quoted exp)
   (let ((qval (text-of-quotation exp)))
     (lambda (env) qval)))
 
-(define (analyze-variable exp)
+(define (analyzed-variable exp)
   (lambda (env) (lookup-variable-value exp env)))
 
-(define (analyze-assignment exp)
+(define (analyzed-assignment exp)
   (let ((var (assignment-variable exp))
         (vproc (analyze (assignment-value exp))))
     (lambda (env)
       (set-variable-value! var (vproc env) env)
       'ok)))
 
-(define (analyze-definition exp)
+(define (analyzed-definition exp)
   (let ((var (definition-variable exp))
         (vproc (analyze (definition-value exp))))
     (lambda (env)
