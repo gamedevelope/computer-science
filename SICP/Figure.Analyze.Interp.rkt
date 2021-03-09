@@ -51,6 +51,9 @@
 (define (definition? exp)
   (equal? 'defiine (car exp)))
 
+(define (application? exp)
+  false)
+
 (define (analyze-quoted exp)
   (let ((qval (text-of-quotation exp)))
     (lambda (env) qval)))
@@ -99,6 +102,8 @@
     (if (null? procs)
         (error "Empty sequence -- ANALYZE"))
     (loop (car procs) (cdr procs))))
+
+(define (cond->if exp) (expand-clauses (cond-clauses exp)))
 
 (define (analyze-application exp)
   (let ((fproc (analyze (operator exp)))
