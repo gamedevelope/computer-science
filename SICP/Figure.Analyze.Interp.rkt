@@ -6,6 +6,7 @@
 (define (eval exp env)
   ((analyze exp) env))
 
+;;; 
 (define (analyze exp)
   (cond ((self-evaluating? exp)
          (analyze-self-evaluating exp))
@@ -21,9 +22,11 @@
         (else
          (error "Unknown expression type -- ANALYZE" exp))))
 
+;;; 原生值
 (define (self-evaluating? exp)
   (or (number? exp) (string? exp)))
 
+;;; TODO
 (define (quoted? exp)
   false)
 
@@ -279,6 +282,8 @@
          (error
           "Unknown procedure type -- EXECUTE-APPLICATION"
           proc))))
+
+;;; 
 (define (setup-environment)
   (define primitive-procedures
     (list (list 'car car)
