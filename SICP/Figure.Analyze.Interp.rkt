@@ -58,7 +58,7 @@
   (equal? 'defiine (car exp)))
 
 (define (application? exp)
-  false)
+  (pair? exp))
 
 (define (analyze-quoted exp)
   (let ((qval (text-of-quotation exp)))
@@ -321,3 +321,5 @@
     (define-variable! 'false false initial-env)
     initial-env))
 (define genv (setup-environment))
+
+(eval '(+ 1 1) genv)
