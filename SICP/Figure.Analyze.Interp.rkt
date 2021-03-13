@@ -323,3 +323,4 @@
 (define genv (setup-environment))
 
 (eval '(+ 1 1) genv)
+(eval '((lambda (x y) (* x y)) 10 11) genv)
