@@ -324,3 +324,4 @@
 
 (eval '(+ 1 1) genv)
 (eval '((lambda (x y) (* x y)) 10 11) genv)
+(eval '(let () (+ 1 2)) genv)
