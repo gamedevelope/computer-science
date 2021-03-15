@@ -15,6 +15,7 @@
         ((assignment? exp) (analyze-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
+        ((let? exp) (analyze-let exp))
         ((lambda? exp) (analyze-lambda exp))
         ((begin? exp) (analyze-sequence (begin-actions exp)))
         ((cond? exp) (analyze (cond->if exp)))
@@ -41,6 +42,9 @@
 
 (define (if? exp)
   (equal? 'if (car exp)))
+
+(define (let? exp)
+  (equal? 'let (car exp)))
 
 (define (lambda? exp)
   (equal? 'lambda (car exp)))
@@ -158,6 +162,11 @@
       (if (true? (pproc env))
           (cproc env)
           (aproc env)))))
+
+;;; TODO 求值 let
+(define (analyze-let exp)
+  (lambda (env) 100))
+
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
 
