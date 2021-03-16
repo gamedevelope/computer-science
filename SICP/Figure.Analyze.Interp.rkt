@@ -165,7 +165,25 @@
 
 ;;; TODO 求值 let
 (define (analyze-let exp)
-  (lambda (env) 100))
+  (lambda (env)
+    (define (eval-let exp)
+      (if (list? (cadr exp))
+          ;;; 普通 let
+          (let ((definitions (cadr exp))
+                (body (cddr exp)))
+            (let ((lbd (append (list 'lambda (map car definitions)) body)))
+              (let ((lbdval (analyze-lambda lbd)))
+                (apply-in-underlying-scheme lbdval
+                       (map (lambda (x) (eval (cadr x) env)) definitions)))))
+          ;;; 命名 let
+          (let ((funcname (cadr exp))
+                (definitions (caddr exp))
+                (body (cdddr exp)))
+            (let ((func (append (list 'define (cons funcname (map car definitions))) body)))
+              (let ((funcval (analyze-definition func)))
+                (let ((e (cons funcname (map (lambda (x) (eval (cadr x))) definitions))))
+                  (eval e)))))))
+    (eval-let exp)))
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
@@ -333,4 +351,4 @@
 
 (eval '(+ 1 1) genv)
 (eval '((lambda (x y) (* x y)) 10 11) genv)
-(eval '(let () (+ 1 2)) genv)
+(eval '(let ((a 1) (b 2)) (+ a b)) genv)
