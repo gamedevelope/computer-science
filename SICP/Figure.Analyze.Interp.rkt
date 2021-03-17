@@ -355,3 +355,7 @@
 (eval '(let ((a 10))
          (let ((b 20))
            (* a b))) genv)
+(eval '(let ((a (list 1 2 3 4 5)))
+         (cdr a)) genv)
+(eval '(let ((f (lambda (x) (* x x x))))
+         (f 11)) genv)
