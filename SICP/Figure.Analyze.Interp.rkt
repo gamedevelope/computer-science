@@ -172,9 +172,9 @@
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
             (let ((lbd (append (list 'lambda (map car definitions)) body)))
-              (let ((lbdval (analyze-lambda lbd)))
-                (apply-in-underlying-scheme lbdval
-                       (map (lambda (x) (eval (cadr x) env)) definitions)))))
+              (let ((lbdval ((analyze-lambda lbd) env)))
+                (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
+                  (execute-application lbdval mp)))))
           ;;; 命名 let
           (let ((funcname (cadr exp))
                 (definitions (caddr exp))
@@ -350,5 +350,8 @@
 (define genv (setup-environment))
 
 (eval '(+ 1 1) genv)
-(eval '((lambda (x y) (* x y)) 10 11) genv)
+;(eval '((lambda (x y) (* x y)) 10 11) genv)
 (eval '(let ((a 1) (b 2)) (+ a b)) genv)
+(eval '(let ((a 10))
+         (let ((b 20))
+           (* a b))) genv)
