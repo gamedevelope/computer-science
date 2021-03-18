@@ -200,19 +200,31 @@
         (bproc (analyze-sequence (lambda-body exp))))
     (lambda (env) (make-procedure vars bproc env))))
 
-(define (analyze-sequence exps)
-  (define (sequentially proc1 proc2)
-    (lambda (env) (proc1 env) (proc2 env)))
+;(define (analyze-sequence exps)
+;  (define (sequentially proc1 proc2)
+;    (lambda (env) (proc1 env) (proc2 env)))
+;
+;  (define (loop first-proc rest-procs)
+;    (if (null? rest-procs)
+;        first-proc
+;        (loop (sequentially first-proc (car rest-procs))
+;              (cdr rest-procs))))
+;  (let ((procs (map analyze exps)))
+;    (if (null? procs)
+;        (error "Empty sequence -- ANALYZE"))
+;    (loop (car procs) (cdr procs))))
 
-  (define (loop first-proc rest-procs)
-    (if (null? rest-procs)
-        first-proc
-        (loop (sequentially first-proc (car rest-procs))
-              (cdr rest-procs))))
+;;; 练习 4.23
+(define (analyze-sequence exps)
+  (define (execute-sequence procs env)
+    (cond ((null? (cdr procs)) ((car procs) env))
+          (else
+           ((car procs) env)
+           (execute-sequence (cdr procs) env))))
   (let ((procs (map analyze exps)))
     (if (null? procs)
         (error "Empty sequence -- ANALYZE"))
-    (loop (car procs) (cdr procs))))
+    (lambda (env) (execute-sequence procs env))))
 
 (define (expand-clauses clauses)
     (define (make-if predicate consequent alternative)
@@ -359,3 +371,6 @@
          (cdr a)) genv)
 (eval '(let ((f (lambda (x) (* x x x))))
          (f 11)) genv)
+(eval '(let ()
+         (display 1)
+         (display 2)) genv)
