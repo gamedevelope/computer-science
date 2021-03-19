@@ -673,3 +673,12 @@
             (if (= n 0)
                 false
                 (ev? ev? od? (- n 1)))))) genv)
+(eval '(define (fib n)
+         (if (<= n 2)
+             1
+             (+ (fib (- n 1)) (fib (- n 2))))) genv)
+
+(define t1 (runtime))
+(eval '(fib 25) genv)
+(define t2 (runtime))
+(display (list "时间差 " (- t2 t1)))

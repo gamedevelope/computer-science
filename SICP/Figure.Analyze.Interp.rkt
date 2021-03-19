@@ -59,7 +59,7 @@
   (equal? 'cond (car exp)))
 
 (define (definition? exp)
-  (equal? 'defiine (car exp)))
+  (equal? 'define (car exp)))
 
 (define (application? exp)
   (pair? exp))
@@ -143,6 +143,7 @@
     (lambda (env)
       (define-variable! var (vproc env) env)
       'ok)))
+
 (define (assignment-variable exp) (cadr exp))
 (define (assignment-value exp) (caddr exp))
 (define (if-predicate exp) (cadr exp))
@@ -374,3 +375,13 @@
 (eval '(let ()
          (display 1)
          (display 2)) genv)
+
+(eval '(define (fib n)
+         (if (<= n 2)
+             1
+             (+ (fib (- n 1)) (fib (- n 2))))) genv)
+
+(define t1 (runtime))
+(eval '(fib 25) genv)
+(define t2 (runtime))
+(display (list "时间差 " (- t2 t1)))
