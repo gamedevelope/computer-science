@@ -381,7 +381,19 @@
              1
              (+ (fib (- n 1)) (fib (- n 2))))) genv)
 
-(define t1 (runtime))
-(eval '(fib 25) genv)
-(define t2 (runtime))
-(display (list "时间差 " (- t2 t1)))
+;;; 练习 4.24
+;(define t1 (runtime))
+;(eval '(fib 25) genv)
+;(define t2 (runtime))
+;(display (list "时间差 " (- t2 t1)))
+
+(eval '(if (< 1 2) 1 (/ 1 0)) genv)
+(eval '(define (unless condition usual-value exceptional-value)
+         (if condition exceptional-value usual-value)) genv)
+;;; 练习 4.25
+;;; 在正则序语言中会死循环
+(eval '(define (factorial n)
+         (unless (= n 1)
+           (* n (factorial (- n 1)))
+           1)) genv)
+
