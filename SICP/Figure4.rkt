@@ -2,17 +2,12 @@
 (#%require "FigureCommon.scm")
 
 (define (tagged-list? exp tag)
-  (newline)
-  (display (list "exp is " exp))
-  (newline)
-  (display (list "tag is " tag))
-  (newline)
   (if (pair? exp)
       (eq? (car exp) tag)
       false))
 
 (define (eval exp env)
-  (cond ((self-evaluating? exp) (begin (display 'self-evaluating) exp))
+  (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
         ((assignment? exp) (eval-assignment exp env))
@@ -109,7 +104,6 @@
 (define (procedure-paramters p) (cadr p))
 
 (define (apply procedure arguments)
-  (display (list "check procedure" (primitive-procedure? procedure) procedure arguments))
   (cond
     ; 基本过程
     ((primitive-procedure? procedure)
