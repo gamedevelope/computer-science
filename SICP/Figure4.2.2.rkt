@@ -342,7 +342,7 @@
 (define genv (setup-environment))
 (eval '(cons 1 2) genv)
 (eval '(+ 1 2) genv)
-;(driver-loop)
+(driver-loop)
 
 (eval '(define (try a b)
          (if (= a 0) 1 b)) genv)
