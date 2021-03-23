@@ -151,7 +151,7 @@
       (procedure-body procedure)
       (extend-environment
        (procedure-parameters procedure)
-       (list-of-arg-values
+       (list-of-delayed-args
         arguments env)
        (procedure-environment procedure))))
     (else
@@ -297,7 +297,8 @@
     initial-env))
 
 (define primitive-procedures
-  (list (list '+ +)
+  (list (list '= =)
+        (list '+ +)
         (list '/ /)
         (list 'car car)
         (list 'cdr cdr)
@@ -342,7 +343,7 @@
 (define genv (setup-environment))
 (eval '(cons 1 2) genv)
 (eval '(+ 1 2) genv)
-(driver-loop)
+;(driver-loop)
 
 (eval '(define (try a b)
          (if (= a 0) 1 b)) genv)
