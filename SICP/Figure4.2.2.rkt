@@ -9,7 +9,7 @@
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
-        ((quoted? exp) (begin (display 'quoted) (text-of-quotation exp)))
+        ((quoted? exp) (text-of-quotation exp))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -135,9 +135,6 @@
 (define (procedure-paramters p) (cadr p))
 
 (define (apply procedure arguments env)
-  (newline)
-  (display procedure)
-  (newline)
   (cond
     ; 基本过程
     ((primitive-procedure? procedure)
@@ -343,8 +340,16 @@
 (define genv (setup-environment))
 (eval '(cons 1 2) genv)
 (eval '(+ 1 2) genv)
-;(driver-loop)
+
+;;; 练习 4.27
+(eval '(define count 0) genv)
+(eval '(define (id x)
+         (set! count (+ count 1))
+         x) genv)
+
+(driver-loop)
 
 (eval '(define (try a b)
          (if (= a 0) 1 b)) genv)
 (eval '(try 0 (/ 1 0)) genv)
+
