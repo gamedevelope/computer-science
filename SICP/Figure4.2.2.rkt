@@ -296,6 +296,8 @@
 (define primitive-procedures
   (list (list '= =)
         (list '+ +)
+        (list '- -)
+        (list '* *)
         (list '/ /)
         (list 'car car)
         (list 'cdr cdr)
@@ -352,4 +354,11 @@
 (eval '(define (try a b)
          (if (= a 0) 1 b)) genv)
 (eval '(try 0 (/ 1 0)) genv)
+
+;;; 练习 4.28
+(eval '(define (square x) (* x x)) genv)
+(eval '(square (id 10)) genv)
+;;; 没有记忆功能时 count 为 2
+;;; 有记忆功能时 count 为 1
+(eval 'count genv)
 
