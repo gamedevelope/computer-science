@@ -209,6 +209,13 @@
         (else (eval (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
 
+;;; 练习 4.30
+;;; 对 sequence 中每一项都进行实际求值
+;(define (eval-sequence exps env)
+;  (cond ((last-exp? exps) (eval (first-exp exps) env))
+;        (else (actual-value (first-exp exps) env)
+;              (eval-sequence (rest-exps exps) env))))
+
 (define (eval-assignment exp env)
   (set-variable-value! (assignment-variable exp)
                        (eval (assignment-value exp) env)
@@ -231,7 +238,7 @@
 
 (define (assignment-variable exp) (cadr exp))
 (define (assignment-value exp) (caddr exp))
-            
+
 
 (define (eval-definition exp env)
   (define-variable! (definition-variable exp)
@@ -299,10 +306,14 @@
         (list '- -)
         (list '* *)
         (list '/ /)
+        (list 'display display)
         (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
-        (list 'null? null?)))
+        (list 'null? null?)
+        (list 'list list)
+        )
+  )
 (define (primitive-procedure-names)
   (map car primitive-procedures))
 (define (primitive-procedure-objects)
@@ -349,7 +360,7 @@
          (set! count (+ count 1))
          x) genv)
 
-(driver-loop)
+;(driver-loop)
 
 (eval '(define (try a b)
          (if (= a 0) 1 b)) genv)
@@ -362,3 +373,9 @@
 ;;; 有记忆功能时 count 为 1
 (eval 'count genv)
 
+(eval '(define (for-each proc items)
+         (if (null? items)
+             'done
+             (begin (proc (car items))
+                    (for-each proc (cdr items))))) genv)
+(eval '(for-each (lambda (x) (display x)) (list 1 2 3 4 5)) genv)
