@@ -379,3 +379,4 @@
              (begin (proc (car items))
                     (for-each proc (cdr items))))) genv)
 (eval '(for-each (lambda (x) (display x)) (list 1 2 3 4 5)) genv)
+;;; 练习 4.30
