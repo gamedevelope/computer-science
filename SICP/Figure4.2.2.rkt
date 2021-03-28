@@ -204,17 +204,17 @@
 
 (define (true? x) (not (eq? x false)))
 (define (false? x) (eq? x false))
-(define (eval-sequence exps env)
-  (cond ((last-exp? exps) (eval (first-exp exps) env))
-        (else (eval (first-exp exps) env)
-              (eval-sequence (rest-exps exps) env))))
+;(define (eval-sequence exps env)
+;  (cond ((last-exp? exps) (eval (first-exp exps) env))
+;        (else (eval (first-exp exps) env)
+;              (eval-sequence (rest-exps exps) env))))
 
 ;;; 练习 4.30
 ;;; 对 sequence 中每一项都进行实际求值
-;(define (eval-sequence exps env)
-;  (cond ((last-exp? exps) (eval (first-exp exps) env))
-;        (else (actual-value (first-exp exps) env)
-;              (eval-sequence (rest-exps exps) env))))
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (eval (first-exp exps) env))
+        (else (actual-value (first-exp exps) env)
+              (eval-sequence (rest-exps exps) env))))
 
 (define (eval-assignment exp env)
   (set-variable-value! (assignment-variable exp)
@@ -380,3 +380,14 @@
                     (for-each proc (cdr items))))) genv)
 (eval '(for-each (lambda (x) (display x)) (list 1 2 3 4 5)) genv)
 ;;; 练习 4.30
+(eval '(define (p1 x)
+         (set! x (cons x '(2)))
+         x) genv)
+(eval '(define (p2 x)
+         (define (p e)
+           e
+           x)
+         (p (set! x (cons x '(2))))) genv)
+(eval '(begin
+        (p1 1)
+        (p2 1)) genv)
