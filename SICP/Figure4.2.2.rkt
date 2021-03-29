@@ -391,3 +391,11 @@
 (eval '(begin
         (p1 1)
         (p2 1)) genv)
+
+;;; 4.2.3 将流作为惰性的表
+(eval '(define (cons x y)
+         (lambda (m) (m x y))) genv)
+(eval '(define (car x)
+         (z (lambda (p q) p))) genv)
+(eval '(define (cdr x)
+         (z (lambda (p q) q))) genv)
