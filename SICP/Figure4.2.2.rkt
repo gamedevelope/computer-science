@@ -426,5 +426,5 @@
 
 (eval '(define ones (cons 1 ones)) genv)
 (eval '(define (integers (cons 1 (add-lists ones integers)))) genv)
-
-(force-it (eval '(list-ref integers 10) genv))
+(eval '(list-ref integers 1) genv)
+(force-it (eval '(list-ref integers 1) genv))
