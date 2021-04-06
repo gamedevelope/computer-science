@@ -429,3 +429,16 @@
                               (add-lists ones integers))) genv)
 (force-it (eval '(list-ref ones 1) genv))
 (force-it (eval '(list-ref integers 10) genv))
+
+(eval '(define (integral integrand initial-value dt)
+         (define int
+           (cons initial-value
+                 (add-lists (scale-list integrand dt)
+                            int)))
+         int) genv)
+(eval '(define (solve f y0 dt)
+         (define y (integral dy y0 dt))
+         (define dy (map f y))
+         y) genv)
+(eval '(list-ref (solve (lambda (x) x) 1 0.001) 1000) genv)
+
