@@ -323,32 +323,32 @@
   
 (define input-prompt ";;; L-Eval input:")
 (define output-prompt ";;; L-Eval value:")
-(define (driver-loop)
-  (prompt-for-input input-prompt)
-  (let ((input (read)))
-    (let ((output
-           (actual-value input genv)))
-      (announce-output output-prompt)
-      (user-print output)))
-  (driver-loop))
-(define (user-print object)
-  (if (compound-procedure? object)
-      (display (list 'compound-procedure
-                     (procedure-parameters object)
-                     (procedure-body object)
-                     '<procedure-env>))
-      (display object)))
+;(define (driver-loop)
+;  (prompt-for-input input-prompt)
+;  (let ((input (read)))
+;    (let ((output
+;           (actual-value input genv)))
+;      (announce-output output-prompt)
+;      (user-print output)))
+;  (driver-loop))
+;(define (user-print object)
+;  (if (compound-procedure? object)
+;      (display (list 'compound-procedure
+;                     (procedure-parameters object)
+;                     (procedure-body object)
+;                     '<procedure-env>))
+;      (display object)))
 
-(define (announce-output string)
-  (newline)
-  (display string)
-  (newline))
-
-(define (prompt-for-input string)
-  (newline)
-  (newline)
-  (display string)
-  (newline))
+;(define (announce-output string)
+;  (newline)
+;  (display string)
+;  (newline))
+;
+;(define (prompt-for-input string)
+;  (newline)
+;  (newline)
+;  (display string)
+;  (newline))
 
 (define genv (setup-environment))
 (eval '(cons 1 2) genv)
@@ -378,7 +378,7 @@
              'done
              (begin (proc (car items))
                     (for-each proc (cdr items))))) genv)
-(eval '(for-each (lambda (x) (display x)) (list 1 2 3 4 5)) genv)
+;(eval '(for-each (lambda (x) (display x)) (list 1 2 3 4 5)) genv)
 ;;; 练习 4.30
 (eval '(define (p1 x)
          (set! x (cons x '(2)))
@@ -440,5 +440,5 @@
          (define y (integral dy y0 dt))
          (define dy (map f y))
          y) genv)
-(eval '(list-ref (solve (lambda (x) x) 1 0.001) 1000) genv)
+(force-it (eval '(list-ref (solve (lambda (x) x) 1 0.001) 1000) genv))
 
