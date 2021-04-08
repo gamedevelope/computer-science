@@ -430,6 +430,7 @@
 (force-it (eval '(list-ref ones 1) genv))
 (force-it (eval '(list-ref integers 10) genv))
 
+;;; 练习 4.32
 (eval '(define (integral integrand initial-value dt)
          (define int
            (cons initial-value
@@ -442,3 +443,9 @@
          y) genv)
 (force-it (eval '(list-ref (solve (lambda (x) x) 1 0.001) 1000) genv))
 
+;;; 练习 4.33
+(eval '1 genv)
+(eval '(car '(a b c)) genv)
+
+
+;;; 练习 4.34
