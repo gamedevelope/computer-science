@@ -64,14 +64,7 @@
 (define (application? exp)
   (pair? exp))
 
-(define (analyze-quoted exp)
-  (let ((qval (text-of-quotation exp)))
-    (lambda (env) qval)))
-
 (define (text-of-quotation exp) (cadr exp))
-
-(define (analyze-variable exp)
-  (lambda (env) (lookup-variable-value exp env)))
 
 (define (lookup-variable-value var env)
     (define (env-loop env)
@@ -137,12 +130,12 @@
       (set-variable-value! var (vproc env) env)
       'ok)))
 
-(define (analyze-definition exp)
-  (let ((var (definition-variable exp))
-        (vproc (analyze (definition-value exp))))
-    (lambda (env)
-      (define-variable! var (vproc env) env)
-      'ok)))
+;(define (analyze-definition exp)
+;  (let ((var (definition-variable exp))
+;        (vproc (analyze (definition-value exp))))
+;    (lambda (env)
+;      (define-variable! var (vproc env) env)
+;      'ok)))
 
 (define (assignment-variable exp) (cadr exp))
 (define (assignment-value exp) (caddr exp))
@@ -155,20 +148,78 @@
 
 (define (true? x) (not (eq? x false)))
 
-(define (analyze-if exp)
-  (let ((pproc (analyze (if-predicate exp)))
-        (cproc (analyze (if-consequent exp)))
-        (aproc (analyze (if-alternative exp))))
-    (lambda (env)
-      (if (true? (pproc env))
-          (cproc env)
-          (aproc env)))))
+;(define (analyze-if exp)
+;  (let ((pproc (analyze (if-predicate exp)))
+;        (cproc (analyze (if-consequent exp)))
+;        (aproc (analyze (if-alternative exp))))
+;    (lambda (env)
+;      (if (true? (pproc env))
+;          (cproc env)
+;          (aproc env)))))
 
 ;;;SECTION 4.1.2
 (define (amb? exp) (tagged-list? exp 'amb))
 (define (amb-choices exp) (cdr exp))
 (define (ambeval exp env succeed fail)
   ((analyze exp) env succeed fail))
+(define (analyze-self-valuating exp)
+  (lambda (env succeed fail)
+    (succeed exp fail)))
+(define (analyze-quoted exp)
+  (let ((qval (text-of-quotation exp)))
+    (lambda (env succeed fail)
+      (succeed qval fail))))
+
+(define (analyze-variable exp)
+  (lambda (env succeed fail)
+    (succeed (lookup-variable-value exp env)
+             fail)))
+
+(define (analyze-lambda exp)
+  (let ((vars (lambda-parameters exp))
+        (bproc (analyze-sequence (lambda-body exp))))
+    (lambda (env succeed fail)
+      (succeed (make-procedure vars bproc env)
+               fail))))
+
+(define (analyze-if exp)
+  (let ((pproc (analyze (if-predicate exp)))
+        (cproc (analyze (if-consequent exp)))
+        (aproc (analyze (if-alternative exp))))
+    (lambda (env succeed fail)
+      (pproc env
+             (lambda (pred-value fail2)
+               (if (true? pred-value)
+                   (cproc env succeed fail2)
+                   (aproc env succeed fail2)))
+             fail))))
+
+(define (analyze-sequence exps)
+  (define (sequentially a b)
+    (lambda (env succeed fail)
+      (a env
+         (lambda (a-value fail2)
+           (b env succeed fail2))
+         fail)))
+  (define (loop first-proc rest-procs)
+    (if (null? rest-procs)
+        first-proc
+        (loop (sequentially first-proc (car rest-procs))
+              (cdr rest-procs))))
+  (let ((procs (map analyze exps)))
+    (if (null? procs)
+        (error "Empty sequence -- ANALYZE"))
+    (loop (car procs) (cdr procs))))
+
+(define (analyze-definition exp)
+  (let ((var (definition-variable exp))
+        (vproc (analyze (definition-value exp))))
+    (lambda (env succeed fail)
+      (vproc env
+             (lambda (val fail2)
+               (define-variable! var val env)
+               (succeed 'ok fail2))
+             fail))))
 
 ;;; TODO 求值 let
 (define (analyze-let exp)
@@ -202,10 +253,10 @@
                     (lambda-body exp)
                     env))
 
-(define (analyze-lambda exp)
-  (let ((vars (lambda-parameters exp))
-        (bproc (analyze-sequence (lambda-body exp))))
-    (lambda (env) (make-procedure vars bproc env))))
+;(define (analyze-lambda exp)
+;  (let ((vars (lambda-parameters exp))
+;        (bproc (analyze-sequence (lambda-body exp))))
+;    (lambda (env) (make-procedure vars bproc env))))
 
 ;(define (analyze-sequence exps)
 ;  (define (sequentially proc1 proc2)
@@ -222,16 +273,16 @@
 ;    (loop (car procs) (cdr procs))))
 
 ;;; 练习 4.23
-(define (analyze-sequence exps)
-  (define (execute-sequence procs env)
-    (cond ((null? (cdr procs)) ((car procs) env))
-          (else
-           ((car procs) env)
-           (execute-sequence (cdr procs) env))))
-  (let ((procs (map analyze exps)))
-    (if (null? procs)
-        (error "Empty sequence -- ANALYZE"))
-    (lambda (env) (execute-sequence procs env))))
+;(define (analyze-sequence exps)
+;  (define (execute-sequence procs env)
+;    (cond ((null? (cdr procs)) ((car procs) env))
+;          (else
+;           ((car procs) env)
+;           (execute-sequence (cdr procs) env))))
+;  (let ((procs (map analyze exps)))
+;    (if (null? procs)
+;        (error "Empty sequence -- ANALYZE"))
+;    (lambda (env) (execute-sequence procs env))))
 
 (define (expand-clauses clauses)
     (define (make-if predicate consequent alternative)
