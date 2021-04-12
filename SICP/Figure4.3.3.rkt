@@ -16,6 +16,7 @@
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
         ((let? exp) (analyze-let exp))
+        ((amb? exp) (analyze-amb exp))
         ((lambda? exp) (analyze-lambda exp))
         ((begin? exp) (analyze-sequence (begin-actions exp)))
         ((cond? exp) (analyze (cond->if exp)))
@@ -32,7 +33,8 @@
   false)
 
 (define (analyze-self-evaluating exp)
-  (lambda (env) exp))
+  (lambda (env succeed fail)
+    (succeed exp fail)))
 
 (define (variable? exp)
   (symbol? exp))
@@ -123,12 +125,12 @@
 (define (frame-variables frame) (car frame))
 (define (frame-values frame) (cdr frame))
 
-(define (analyze-assignment exp)
-  (let ((var (assignment-variable exp))
-        (vproc (analyze (assignment-value exp))))
-    (lambda (env)
-      (set-variable-value! var (vproc env) env)
-      'ok)))
+;(define (analyze-assignment exp)
+;  (let ((var (assignment-variable exp))
+;        (vproc (analyze (assignment-value exp))))
+;    (lambda (env)
+;      (set-variable-value! var (vproc env) env)
+;      'ok)))
 
 ;(define (analyze-definition exp)
 ;  (let ((var (definition-variable exp))
@@ -220,6 +222,117 @@
                (define-variable! var val env)
                (succeed 'ok fail2))
              fail))))
+
+(define (analyze-assignment exp)
+  (let ((var (assignment-variable exp))
+        (vproc (analyze (assignment-value exp))))
+    (lambda (env succeed fail)
+      (vproc env
+             (lambda (val fail2)
+               (let ((old-value
+                      (lookup-variable-value var env)))
+                 (set-variable-value! var val env)
+                 (succeed 'ok
+                          (lambda ()
+                            (set-variable-value! var
+                                                 old-value
+                                                 env)
+                            (fail2)))))
+             fail))))
+
+(define (analyze-application exp)
+  (let ((fproc (analyze (operator exp)))
+        (aprocs (map analyze (operands exp))))
+    (lambda (env succeed fail)
+      (fproc env
+             (lambda (proc fail2)
+               (get-args aprocs
+                         env
+                         (lambda (args fail3)
+                           (execute-application
+                            proc args succeed fail3))
+                         fail2))
+             fail))))
+
+(define (get-args aprocs env succeed fail)
+  (if (null? aprocs)
+      (succeed '() fail)
+      ((car aprocs)
+       env
+       (lambda (arg fail2)
+         (get-args (cdr aprocs)
+                   env
+                   (lambda (args fail3)
+                     (succeed (cons arg args) fail3))
+                   fail2))
+       fail)))
+
+(define (execute-application proc args succeed fail)
+  (cond ((primitive-procedure? proc)
+         (succeed (apply-primitive-procedure proc args)
+                  fail))
+        ((compound-procedure? proc)
+         ((procedure-body proc)
+          (extend-environment (procedure-parameters proc)
+                              args
+                              (procedure-environment proc))
+          succeed
+          fail))
+        (else
+         (error
+          "Unknown procedure type -- EXECUTE-APPLICATION"
+          proc))))
+
+(define (analyze-amb exp)
+  (let ((cprocs (map analyze (amb-choices exp))))
+    (lambda (env succeed fail)
+      (define (try-next choices)
+        (if (null? choices)
+            (fail)
+            ((car choices) env
+                           succeed
+                           (lambda ()
+                             (try-next (cdr choices))))))
+      (try-next cprocs))))
+
+(define input-prompt ";;; Amb-Eval input:")
+(define output-prompt ";;; Amb-Eval value:")
+(define (prompt-for-input string)
+  (newline)(newline)(display string)(newline))
+(define (announce-output string)
+  (newline)(display string)(newline))
+(define (user-print object)
+  (if (compound-procedure? object)
+      (display (list 'compound-procedure
+                     (procedure-parameters object)
+                     (procedure-body object)
+                     '<procedure-env>))
+      (display object)))
+
+(define (driver-loop)
+  (define (internal-loop try-again)
+    (prompt-for-input input-prompt)
+    (let ((input (read)))
+      (if (eq? input 'try-again)
+          (try-again)
+          (begin
+            (newline)
+            (display ";;; Starting a new problem ")
+            (ambeval input
+                     genv
+                     (lambda (val next-alternative)
+                       (announce-output output-prompt)
+                       (user-print val)
+                       (internal-loop next-alternative))
+                     (lambda ()
+                       (announce-output ";;; There are no more values of")
+                       (user-print input)
+                       (driver-loop)))))))
+  (internal-loop
+   (lambda ()
+     (newline)
+     (display ";;; There is no current problem")
+     (driver-loop))))
 
 ;;; TODO 求值 let
 (define (analyze-let exp)
@@ -316,32 +429,32 @@
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
-(define (analyze-application exp)
-  (let ((fproc (analyze (operator exp)))
-        (aprocs (map analyze (operands exp))))
-    (lambda (env)
-      (execute-application (fproc env)
-                           (map (lambda (aproc) (aproc env))
-                                aprocs)))))
-
-(define primitive-procedures
-    (list (list 'car car)
-          (list 'cdr cdr)
-          (list 'cons cons)
-          (list 'null? null?)
-          (list '+ +)
-          (list '- -)
-          (list '* *)
-          (list '/ /)
-          (list '= =)
-          (list '< <)
-          (list '<= <=)
-          (list '> >)
-          (list '>= >=)
-          (list 'make-vector make-vector)
-          (list 'vector-set! vector-set!)
-          (list 'display display)
-          (list 'list list)))
+;(define (analyze-application exp)
+;  (let ((fproc (analyze (operator exp)))
+;        (aprocs (map analyze (operands exp))))
+;    (lambda (env)
+;      (execute-application (fproc env)
+;                           (map (lambda (aproc) (aproc env))
+;                                aprocs)))))
+;
+;(define primitive-procedures
+;    (list (list 'car car)
+;          (list 'cdr cdr)
+;          (list 'cons cons)
+;          (list 'null? null?)
+;          (list '+ +)
+;          (list '- -)
+;          (list '* *)
+;          (list '/ /)
+;          (list '= =)
+;          (list '< <)
+;          (list '<= <=)
+;          (list '> >)
+;          (list '>= >=)
+;          (list 'make-vector make-vector)
+;          (list 'vector-set! vector-set!)
+;          (list 'display display)
+;          (list 'list list)))
 
 (define (tagged-list? exp tag)
   (if (pair? exp)
@@ -367,18 +480,18 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
-(define (execute-application proc args)
-  (cond ((primitive-procedure? proc)
-         (apply-primitive-procedure proc args))
-        ((compound-procedure? proc)
-         ((procedure-body proc)
-          (extend-environment (procedure-parameters proc)
-                              args
-                              (procedure-environment proc))))
-        (else
-         (error
-          "Unknown procedure type -- EXECUTE-APPLICATION"
-          proc))))
+;(define (execute-application proc args)
+;  (cond ((primitive-procedure? proc)
+;         (apply-primitive-procedure proc args))
+;        ((compound-procedure? proc)
+;         ((procedure-body proc)
+;          (extend-environment (procedure-parameters proc)
+;                              args
+;                              (procedure-environment proc))))
+;        (else
+;         (error
+;          "Unknown procedure type -- EXECUTE-APPLICATION"
+;          proc))))
 
 ;;; 
 (define (setup-environment)
@@ -418,3 +531,5 @@
     (define-variable! 'false false initial-env)
     initial-env))
 (define genv (setup-environment))
+
+(driver-loop)
