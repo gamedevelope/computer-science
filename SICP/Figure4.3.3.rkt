@@ -313,14 +313,14 @@
 
 ;;; TODO 求值 let
 (define (analyze-let exp)
-  (lambda (env)
-    (define (eval-let exp)
+  (lambda (env succeed fail)
+    (define (eval-let exp succeed fail)
       (if (list? (cadr exp))
           ;;; 普通 let
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
             (let ((lbd (append (list 'lambda (map car definitions)) body)))
-              (let ((lbdval ((analyze-lambda lbd) env)))
+              (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
                 (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
                   (execute-application lbdval mp)))))
           ;;; 命名 let
@@ -331,7 +331,7 @@
               (let ((funcval (analyze-definition func)))
                 (let ((e (cons funcname (map (lambda (x) (eval (cadr x))) definitions))))
                   (eval e)))))))
-    (eval-let exp)))
+    (eval-let exp succeed fail)))
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
