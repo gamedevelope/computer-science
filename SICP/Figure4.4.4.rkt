@@ -21,5 +21,17 @@
                  frame
                  (lambda (v f)
                    (contract-question-mark v))))
-             (qeval q (singletion-stream '())))))
-          (query-driver-loop))))
+             (qeval q (singletion-stream '()))))
+           (query-driver-loop)))))
+
+(define (instantiate exp frame unbound-var-handler)
+  (define (copy exp)
+    (cond ((var? exp)
+           (let ((binding (binding-in-frame exp frame)))
+             (if binding
+                 (copy (binding-value binding))
+                 (unbound-var-handler exp frame))))
+          ((pair? exp)
+           (cons (copy (car exp)) (copy (cdr exp))))
+          (else exp)))
+  (copy exp))
