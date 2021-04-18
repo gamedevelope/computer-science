@@ -426,7 +426,9 @@
           (list 'make-vector make-vector)
           (list 'vector-set! vector-set!)
           (list 'display display)
-          (list 'list list)))
+          (list 'list list)
+          (list 'require require)
+          (list 'an-element-of an-element-of)))
   
   ;;; 基本过程名
   (define (primitive-procedure-names)
