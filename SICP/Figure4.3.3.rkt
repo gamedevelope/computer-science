@@ -400,6 +400,12 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
+(define (require p)
+  (if (not p) (amb)))
+
+(define (an-element-of items)
+  (require (not (null? items)))
+  (amb (car items) (an-element-of (cdr items))))
 
 ;;; 
 (define (setup-environment)

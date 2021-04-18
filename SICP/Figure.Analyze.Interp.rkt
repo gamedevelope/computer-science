@@ -6,7 +6,7 @@
 (define (eval exp env)
   ((analyze exp) env))
 
-;;; 
+;;; 惰性求值解释器
 (define (analyze exp)
   (cond ((self-evaluating? exp)
          (analyze-self-evaluating exp))
@@ -267,25 +267,6 @@
                            (map (lambda (aproc) (aproc env))
                                 aprocs)))))
 
-(define primitive-procedures
-    (list (list 'car car)
-          (list 'cdr cdr)
-          (list 'cons cons)
-          (list 'null? null?)
-          (list '+ +)
-          (list '- -)
-          (list '* *)
-          (list '/ /)
-          (list '= =)
-          (list '< <)
-          (list '<= <=)
-          (list '> >)
-          (list '>= >=)
-          (list 'make-vector make-vector)
-          (list 'vector-set! vector-set!)
-          (list 'display display)
-          (list 'list list)))
-
 (define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
@@ -396,4 +377,9 @@
          (unless (= n 1)
            (* n (factorial (- n 1)))
            1)) genv)
+;(eval '(factorial 5) genv)
+
+;;; 练习 4.22 特殊形式的 let
+(eval '(let () (+ 1 2)) genv)
+(eval '(let () (+ (let () (* 100 100)) 2)) genv)
 
