@@ -407,6 +407,8 @@
   (require (not (null? items)))
   (amb (car items) (an-element-of (cdr items))))
 
+
+
 ;;; 
 (define (setup-environment)
   (define primitive-procedures
@@ -414,6 +416,9 @@
           (list 'cdr cdr)
           (list 'cons cons)
           (list 'null? null?)
+          ;          (list 'and and)
+          ;          (list 'or or)
+          (list 'not not)
           (list '+ +)
           (list '- -)
           (list '* *)
@@ -448,4 +453,10 @@
     initial-env))
 (define genv (setup-environment))
 
+;;; 练习 4.35
+(eval '(define (an-integer-between a b)
+         (require (not (> a b)))
+         (amb a (an-integer-between (+ a 1) b))) genv)
+
 (driver-loop)
+
