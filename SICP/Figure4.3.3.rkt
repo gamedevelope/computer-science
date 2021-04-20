@@ -286,32 +286,9 @@
                      '<procedure-env>))
       (display object)))
 
-(define (driver-loop)
-  (define (internal-loop try-again)
-    (prompt-for-input input-prompt)
-    (let ((input (read)))
-      (if (eq? input 'try-again)
-          (try-again)
-          (begin
-            (newline)
-            (display ";;; Starting a new problem ")
-            (ambeval input
-                     genv
-                     (lambda (val next-alternative)
-                       (announce-output output-prompt)
-                       (user-print val)
-                       (internal-loop next-alternative))
-                     (lambda ()
-                       (announce-output ";;; There are no more values of")
-                       (user-print input)
-                       (driver-loop)))))))
-  (internal-loop
-   (lambda ()
-     (newline)
-     (display ";;; There is no current problem")
-     (driver-loop))))
-
 ;;; TODO 求值 let
+;;; 需要定义出 let
+;;; 练习 4.35需要
 (define (analyze-let exp)
   (lambda (env succeed fail)
     (define (eval-let exp succeed fail)
@@ -407,8 +384,6 @@
   (require (not (null? items)))
   (amb (car items) (an-element-of (cdr items))))
 
-
-
 ;;; 
 (define (setup-environment)
   (define primitive-procedures
@@ -453,10 +428,37 @@
     initial-env))
 (define genv (setup-environment))
 
+;(eval '(define (an-element-of items)
+;         (require (not (null? items)))
+;         (amb (car items) (an-element-of (cdr items)))) genv)
 ;;; 练习 4.35
-(eval '(define (an-integer-between a b)
-         (require (not (> a b)))
-         (amb a (an-integer-between (+ a 1) b))) genv)
+; (define (an-integer-between a b)
+;         (require (not (> a b)))
+;         (amb a (an-integer-between (+ a 1) b)))
+
+(define (driver-loop)
+  (define (internal-loop try-again)
+    (prompt-for-input input-prompt)
+    (let ((input (read)))
+      (if (eq? input 'try-again)
+          (try-again)
+          (begin
+            (newline)
+            (display ";;; Starting a new problem ")
+            (ambeval input
+                     genv
+                     (lambda (val next-alternative)
+                       (announce-output output-prompt)
+                       (user-print val)
+                       (internal-loop next-alternative))
+                     (lambda ()
+                       (announce-output ";;; There are no more values of")
+                       (user-print input)
+                       (driver-loop)))))))
+  (internal-loop
+   (lambda ()
+     (newline)
+     (display ";;; There is no current problem")
+     (driver-loop))))
 
 (driver-loop)
-
