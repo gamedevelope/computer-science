@@ -428,13 +428,10 @@
     initial-env))
 (define genv (setup-environment))
 
-;(eval '(define (an-element-of items)
-;         (require (not (null? items)))
-;         (amb (car items) (an-element-of (cdr items)))) genv)
 ;;; 练习 4.35
-; (define (an-integer-between a b)
-;         (require (not (> a b)))
-;         (amb a (an-integer-between (+ a 1) b)))
+(define (an-integer-between a b)
+  (require (not (> a b)))
+  (amb a (an-integer-between (+ a 1) b)))
 
 (define (driver-loop)
   (define (internal-loop try-again)
