@@ -459,3 +459,14 @@
      (driver-loop))))
 
 (driver-loop)
+
+(define (aeo items)
+  (require (not (null? items)))
+  (amb (car items) (aeo (cdr items))))
+
+(define (two-sum s list1 list2)
+  (let ((a (aeo list1)))
+    (let ((b (aeo list2)))
+      (display (list a b)))))
+;      (require (= s (+ a b)))
+;      (list a b))))
