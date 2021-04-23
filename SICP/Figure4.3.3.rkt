@@ -391,6 +391,7 @@
           (list 'cdr cdr)
           (list 'cons cons)
           (list 'null? null?)
+          (list 'pair? pair?)
           ;          (list 'and and)
           ;          (list 'or or)
           (list 'not not)
@@ -407,7 +408,7 @@
           (list 'vector-set! vector-set!)
           (list 'display display)
           (list 'list list)
-          (list 'require require)
+          ;          (list 'require require)
           (list 'an-element-of an-element-of)))
   
   ;;; 基本过程名
@@ -458,11 +459,10 @@
      (display ";;; There is no current problem")
      (driver-loop))))
 
-(list '(1 2 3))
 (driver-loop)
 
 (define (aeo items)
-  (require (not (null? items)))
+  (require (pair? items))
   (amb (car items) (aeo (cdr items))))
 
 (define (two-sum s list1 list2)
