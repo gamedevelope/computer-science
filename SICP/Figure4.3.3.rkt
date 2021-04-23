@@ -28,9 +28,8 @@
 (define (self-evaluating? exp)
   (or (number? exp) (string? exp)))
 
-;;; TODO
 (define (quoted? exp)
-  false)
+  (and (pair? exp) (equal? 'quote (car exp))))
 
 (define (analyze-self-evaluating exp)
   (lambda (env succeed fail)
@@ -144,6 +143,7 @@
 (define (analyze-self-valuating exp)
   (lambda (env succeed fail)
     (succeed exp fail)))
+
 (define (analyze-quoted exp)
   (let ((qval (text-of-quotation exp)))
     (lambda (env succeed fail)
@@ -458,6 +458,7 @@
      (display ";;; There is no current problem")
      (driver-loop))))
 
+(list '(1 2 3))
 (driver-loop)
 
 (define (aeo items)
