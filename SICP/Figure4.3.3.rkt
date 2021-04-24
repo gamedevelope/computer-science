@@ -377,12 +377,7 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
-(define (require p)
-  (if (not p) (amb)))
 
-(define (an-element-of items)
-  (require (not (null? items)))
-  (amb (car items) (an-element-of (cdr items))))
 
 ;;; 
 (define (setup-environment)
@@ -407,9 +402,7 @@
           (list 'make-vector make-vector)
           (list 'vector-set! vector-set!)
           (list 'display display)
-          (list 'list list)
-          ;          (list 'require require)
-          (list 'an-element-of an-element-of)))
+          (list 'list list)))
   
   ;;; 基本过程名
   (define (primitive-procedure-names)
@@ -461,13 +454,20 @@
 
 (driver-loop)
 
+(define (require p)
+  (if (not p) (amb)))
+
+(define (an-element-of items)
+  (require (not (null? items)))
+  (amb (car items) (an-element-of (cdr items))))
+
 (define (aeo items)
   (require (pair? items))
   (amb (car items) (aeo (cdr items))))
 
 (define (two-sum s list1 list2)
-  (let ((a (aeo list1)))
+  ((let ((a (aeo list1)))
     (let ((b (aeo list2)))
-      (display (list a b)))))
+      (display (list (a) (b)))))))
 ;      (require (= s (+ a b)))
 ;      (list a b))))
