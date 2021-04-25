@@ -465,6 +465,8 @@
   (require (pair? items))
   (amb (car items) (aeo (cdr items))))
 
+(define f (let ((a 1)) a))
+
 (define (two-sum s list1 list2)
   ((let ((a (aeo list1)))
     (let ((b (aeo list2)))
