@@ -299,7 +299,8 @@
             (let ((lbd (append (list 'lambda (map car definitions)) body)))
               (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
                 (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
-                  (execute-application lbdval mp)))))
+                  ;;; TODO let 需要处理
+                  (extend-environment lbdval mp env)))))
           ;;; 命名 let
           (let ((funcname (cadr exp))
                 (definitions (caddr exp))
@@ -470,6 +471,6 @@
 (define (two-sum s list1 list2)
   ((let ((a (aeo list1)))
     (let ((b (aeo list2)))
-      (display (list (a) (b)))))))
+      (display (list a b))))))
 ;      (require (= s (+ a b)))
 ;      (list a b))))
