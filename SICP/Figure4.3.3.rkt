@@ -291,16 +291,22 @@
 ;;; 练习 4.35需要
 (define (analyze-let exp)
   (lambda (env succeed fail)
-    (define (eval-let exp succeed fail)
+    (define (eval-let exp)
       (if (list? (cadr exp))
           ;;; 普通 let
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
             (let ((lbd (append (list 'lambda (map car definitions)) body)))
-              (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
+              (let ((v (analyze-lambda lbd)))
+;                (display "============")
+;                (newline)
+;                (display v)
+;                (newline)
+;                (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
                 (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
-                  ;;; TODO let 需要处理
-                  (extend-environment lbdval mp env)))))
+                  (display mp)
+                    ;;; TODO let 需要处理
+                  (extend-environment v mp env)))))
           ;;; 命名 let
           (let ((funcname (cadr exp))
                 (definitions (caddr exp))
@@ -309,7 +315,7 @@
               (let ((funcval (analyze-definition func)))
                 (let ((e (cons funcname (map (lambda (x) (eval (cadr x))) definitions))))
                   (eval e)))))))
-    (eval-let exp succeed fail)))
+    (succeed (eval-let exp) fail)))
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
@@ -378,7 +384,6 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
-
 
 ;;; 
 (define (setup-environment)
