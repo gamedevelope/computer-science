@@ -302,7 +302,7 @@
 ;                (newline)
 ;                (display v)
 ;                (newline)
-;                (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
+                ;                (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
                 (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
                   (display mp)
                     ;;; TODO let 需要处理
