@@ -295,18 +295,14 @@
       (if (list? (cadr exp))
           ;;; 普通 let
           (let ((definitions (cadr exp))
-                (body (cddr exp)))
-            (let ((lbd (append (list 'lambda (map car definitions)) body)))
-              (let ((v (analyze-lambda lbd)))
-;                (display "============")
-;                (newline)
-;                (display v)
-;                (newline)
-                ;                (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
-                (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
-                  (display mp)
-                    ;;; TODO let 需要处理
-                  (extend-environment v mp env)))))
+                (body (caddr exp)))
+            (display body)
+;            (let ((lbd (append (list 'lambda (map car definitions)) body)))
+            (let ((v (make-procedure (map car definitions) body env)))
+              (let ((mp (map (lambda (x) (cadr x)) definitions)))
+                  ;;; TODO let 需要处理
+                (execute-application v mp succeed fail))))
+;                  (extend-environment v mp env)))))
           ;;; 命名 let
           (let ((funcname (cadr exp))
                 (definitions (caddr exp))
