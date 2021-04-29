@@ -141,6 +141,7 @@
 (install-cond)
 
 (define (apply procedure arguments)
+  (display procedure)
   (if (pair? procedure)
       (let ((proc (get 'apply (car procedure))))
         (if proc
@@ -207,8 +208,6 @@
                          (eval (assignment-value exp) env)
                          env)
     'ok)
-
-  
   
   (define (assignment-variable exp) (cadr exp))
   (define (assignment-value exp) (caddr exp))
@@ -548,8 +547,8 @@
       (cdadr exp)
       '()))
 
-(produre-params '(define a 100))
-(produre-params '(define (b x) (* x x)))
+;(produre-params '(define a 100))
+;(produre-params '(define (b x) (* x x)))
 
 (define (produre-body exp)
   (cddr exp))
@@ -583,8 +582,8 @@
              (list (produre-name x) ''*unassigned*)))
        exp))
 
-(map-produre->lambda '((define x 100)))
-(produre-lambda-set '(define (ffff x) (+ x 1)))
+;(map-produre->lambda '((define x 100)))
+;(produre-lambda-set '(define (ffff x) (+ x 1)))
 
 (define (scan-out-defines exp)
   (cond ((null? exp) '())
@@ -603,83 +602,83 @@
                         (map produre-lambda-set funcs))
                 body)))))))
 
-(eval '(define (f x)
-         (define b (+ a x))
-         (define a 5)
-         (+ a b)) genv)
-
-(eval '(let ((a 1))le
-         (define (f x)
-           (define b (+ a x))
-           (define a 5)
-           (+ a b))
-         (f 10)) genv)
-
-;;; 练习 4.20
-(eval '(define (f x)
-         (letrec ((even?
-                   (lambda (n)
-                     (if (= n 0)
-                         true
-                         (odd? (- n 1)))))
-                  (odd?
-                   (lambda (n)
-                     (if (= n 0)
-                         false
-                         (even? (- n 1))))))
-           (even? x))) genv)
-;(eval '(f 10) genv)
-
-(eval '(letrec () 100) genv)
-
-;; 练习 4.21
-(eval '((lambda (n)
-          ((lambda (fact)
-             (fact fact n))
-           (lambda (ft k)
-             (if (= k 1)
-                 1
-                 (* k (ft ft (- k 1)))))))
-        10) genv)
-
-;; 练习 4.21a
-(eval '((lambda (n)
-          ((lambda (fib)
-             (fib fib n))
-           (lambda (fib k)
-             (if (<= k 2)
-                 1
-                 (+ (fib fib (- k 2)) (fib fib (- k 1)))))))
-        6) genv)
-;; 练习 4.21b
-(eval '(define (f x)
-         (define (even? n)
-           (if (= n 0)
-               true
-               (odd? (- n 1))))
-         (define (odd? n)
-           (if (= n 0)
-               false
-               (even? (- n 1))))
-         (even? x)) genv)
-
-(eval '(define (f x)
-         ((lambda (even? odd?)
-            (even? even? odd? x))
-          (lambda (ev? od? n)
-            (if (= n 0)
-                true
-                (od? od? ev? (- n 1))))
-          (lambda (od? ev? n)
-            (if (= n 0)
-                false
-                (ev? ev? od? (- n 1)))))) genv)
-(eval '(define (fib n)
-         (if (<= n 2)
-             1
-             (+ (fib (- n 1)) (fib (- n 2))))) genv)
-
-(define t1 (runtime))
-(eval '(fib 25) genv)
-(define t2 (runtime))
-(display (list "时间差 " (- t2 t1)))
+;(eval '(define (f x)
+;         (define b (+ a x))
+;         (define a 5)
+;         (+ a b)) genv)
+;
+;(eval '(let ((a 1))le
+;         (define (f x)
+;           (define b (+ a x))
+;           (define a 5)
+;           (+ a b))
+;         (f 10)) genv)
+;
+;;;; 练习 4.20
+;(eval '(define (f x)
+;         (letrec ((even?
+;                   (lambda (n)
+;                     (if (= n 0)
+;                         true
+;                         (odd? (- n 1)))))
+;                  (odd?
+;                   (lambda (n)
+;                     (if (= n 0)
+;                         false
+;                         (even? (- n 1))))))
+;           (even? x))) genv)
+;;(eval '(f 10) genv)
+;
+;(eval '(letrec () 100) genv)
+;
+;;; 练习 4.21
+;(eval '((lambda (n)
+;          ((lambda (fact)
+;             (fact fact n))
+;           (lambda (ft k)
+;             (if (= k 1)
+;                 1
+;                 (* k (ft ft (- k 1)))))))
+;        10) genv)
+;
+;;; 练习 4.21a
+;(eval '((lambda (n)
+;          ((lambda (fib)
+;             (fib fib n))
+;           (lambda (fib k)
+;             (if (<= k 2)
+;                 1
+;                 (+ (fib fib (- k 2)) (fib fib (- k 1)))))))
+;        6) genv)
+;;; 练习 4.21b
+;(eval '(define (f x)
+;         (define (even? n)
+;           (if (= n 0)
+;               true
+;               (odd? (- n 1))))
+;         (define (odd? n)
+;           (if (= n 0)
+;               false
+;               (even? (- n 1))))
+;         (even? x)) genv)
+;
+;(eval '(define (f x)
+;         ((lambda (even? odd?)
+;            (even? even? odd? x))
+;          (lambda (ev? od? n)
+;            (if (= n 0)
+;                true
+;                (od? od? ev? (- n 1))))
+;          (lambda (od? ev? n)
+;            (if (= n 0)
+;                false
+;                (ev? ev? od? (- n 1)))))) genv)
+;(eval '(define (fib n)
+;         (if (<= n 2)
+;             1
+;             (+ (fib (- n 1)) (fib (- n 2))))) genv)
+(eval '(let () 100) genv)
+;(define t1 (runtime))
+;(eval '(fib 25) genv)
+;(define t2 (runtime))
+;(display (list "时间差 " (- t2 t1)))
