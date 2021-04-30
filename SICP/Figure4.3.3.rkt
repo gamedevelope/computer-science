@@ -248,7 +248,7 @@
   (cond ((primitive-procedure? proc)
          (succeed (apply-primitive-procedure proc args)
                   fail))
-        ((compound-procedure? proc)         
+        ((compound-procedure? proc)
          ((procedure-body proc)
           (extend-environment (procedure-parameters proc)
                               args
@@ -296,7 +296,6 @@
           ;;; 普通 let
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
-            (display body)
 ;            (let ((lbd (append (list 'lambda (map car definitions)) body)))
             (let ((v (make-procedure (map car definitions) body env)))
               (let ((mp (map (lambda (x) (cadr x)) definitions)))
