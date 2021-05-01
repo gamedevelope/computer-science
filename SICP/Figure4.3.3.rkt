@@ -436,7 +436,7 @@
           (try-again)
           (begin
             (newline)
-            (display ";;; Starting a new problem ")
+            (display ";;; 开始求解新问题 ")
             (ambeval input
                      genv
                      (lambda (val next-alternative)
@@ -444,7 +444,7 @@
                        (user-print val)
                        (internal-loop next-alternative))
                      (lambda ()
-                       (announce-output ";;; There are no more values of")
+                       (announce-output ";;; 表达式没有更多可能值")
                        (user-print input)
                        (driver-loop)))))))
   (internal-loop
