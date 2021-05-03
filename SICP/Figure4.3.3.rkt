@@ -289,6 +289,7 @@
 ;;; TODO 求值 let
 ;;; 需要定义出 let
 ;;; 练习 4.35需要
+;;; 参考 if 的实现，需要分析出为什么解释器求值 (let () 1)返回了一个过程，而不是1
 (define (analyze-let exp)
   (lambda (env succeed fail)
     (define (eval-let exp)
@@ -314,7 +315,7 @@
               (let ((funcval (analyze-definition func)))
                 (let ((e (cons funcname (map (lambda (x) (eval (cadr x))) definitions))))
                   (eval e)))))))
-    (succeed (eval-let exp) fail)))
+    ((eval-let exp) env succeed fail)))
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
