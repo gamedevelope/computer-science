@@ -290,6 +290,7 @@
 ;;; 需要定义出 let
 ;;; 练习 4.35需要
 ;;; 参考 if 的实现，需要分析出为什么解释器求值 (let () 1)返回了一个过程，而不是1
+;;; 确实比较难以解决
 (define (analyze-let exp)
   (lambda (env succeed fail)
     (define (eval-let exp)
