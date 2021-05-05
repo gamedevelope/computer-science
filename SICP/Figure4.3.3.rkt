@@ -161,6 +161,11 @@
       (succeed (make-procedure vars bproc env)
                fail))))
 
+(define (parse-lambda exp)
+  (let ((vars (lambda-parameters exp))
+        (bproc (analyze-sequence (lambda-body exp))))
+    (make-procedure vars bproc)))
+
 (define (analyze-if exp)
   (let ((pproc (analyze (if-predicate exp)))
         (cproc (analyze (if-consequent exp)))
@@ -305,7 +310,7 @@
                   (execute-application lbdval mp succeed fail)))))
 ;            (let ((v (make-procedure (map car definitions) body env)))
 ;              (let ((mp (map (lambda (x) (cadr x)) definitions)))
-;                  ;;; TODO let 需要处理
+          ;                  ;;; TODO let 需要处理
 ;                (execute-application v mp succeed fail))))
           ;                  (extend-environment v mp env)))))
           ;;; 命名 let

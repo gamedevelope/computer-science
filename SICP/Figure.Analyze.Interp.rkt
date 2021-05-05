@@ -382,4 +382,4 @@
 ;;; 练习 4.22 特殊形式的 let
 (eval '(let () (+ 1 2)) genv)
 (eval '(let () (+ (let () (* 100 100)) 2)) genv)
-
+(eval '(let () 1) genv)
