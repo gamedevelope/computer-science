@@ -178,6 +178,7 @@
                    (aproc env succeed fail2)))
              fail))))
 
+;;; 有点奇怪
 (define (analyze-sequence exps)
   (define (sequentially a b)
     (lambda (env succeed fail)
@@ -304,10 +305,16 @@
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
 ;            (let ((lbd (append (list 'lambda (map car definitions)) body)))
+            (display "11111111")
             (let ((lbd (append (list 'lambda (map car definitions)) body)))
+              (display "2222222")
               (let ((lbdval ((analyze-lambda lbd) env succeed fail)))
+                (display "3333333")
                 (let ((mp (map (lambda (x) (eval (cadr x) env)) definitions)))
-                  (execute-application lbdval mp succeed fail)))))
+                  (display "==============")
+                  (display lbdval)
+                  
+                  ( lbdval mp succeed fail)))))
 ;            (let ((v (make-procedure (map car definitions) body env)))
 ;              (let ((mp (map (lambda (x) (cadr x)) definitions)))
           ;                  ;;; TODO let 需要处理
