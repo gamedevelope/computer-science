@@ -482,8 +482,7 @@
 (define f (let ((a 1)) a))
 
 (define (two-sum s list1 list2)
-  ((let ((a (aeo list1)))
+  (let ((a (aeo list1)))
     (let ((b (aeo list2)))
-      (display (list a b))))))
-;      (require (= s (+ a b)))
-;      (list a b))))
+      (require (= s (+ a b)))
+      (list a b))))
