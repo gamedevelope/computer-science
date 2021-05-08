@@ -297,6 +297,12 @@
 ;;; 练习 4.35需要
 ;;; 参考 if 的实现，需要分析出为什么解释器求值 (let () 1)返回了一个过程，而不是1
 ;;; 确实比较难以解决
+;(pproc env
+;             (lambda (pred-value fail2)
+;               (if (true? pred-value)
+;                   (cproc env succeed fail2)
+;                   (aproc env succeed fail2)))
+;             fail)
 (define (analyze-let exp)
   (lambda (env succeed fail)
     (define (eval-let exp)
@@ -304,11 +310,10 @@
           ;;; 普通 let
           (let ((definitions (cadr exp))
                 (body (cddr exp)))
-            (let ((mp (map (lambda (x) (analyze (cadr x))) definitions)))
-              (display mp)
-              (let ((lbd (append (list 'lambda (map car definitions)) body)))
-                (let ((lbdval (analyze lbd)))
-                  (lbdval mp succeed fail)))))
+            (analyze
+             (append
+              (list (append (list 'lambda (map car definitions)) body))
+              (map cadr definitions))))
           ;;; 命名 let
           (let ((funcname (cadr exp))
                 (definitions (caddr exp))
@@ -317,7 +322,8 @@
               (let ((funcval (analyze-definition func)))
                 (let ((e (cons funcname (map (lambda (x) (eval (cadr x))) definitions))))
                   (eval e)))))))
-    ((eval-let exp) env succeed fail)))
+    ((eval-let exp) env (lambda (v fail2)
+                          (succeed v fail2)) fail)))
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
