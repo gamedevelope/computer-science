@@ -1,5 +1,9 @@
 #lang sicp
 
+(#%provide ambeval
+           driver-loop
+           genv)
+
 (#%require "FigureCommon.scm")
 
 ;;; 惰性求值
@@ -436,11 +440,6 @@
     initial-env))
 (define genv (setup-environment))
 
-;;; 练习 4.35
-(define (an-integer-between a b)
-  (require (not (> a b)))
-  (amb a (an-integer-between (+ a 1) b)))
-
 (define (driver-loop)
   (define (internal-loop try-again)
     (prompt-for-input input-prompt)
@@ -466,23 +465,4 @@
      (display ";;; There is no current problem")
      (driver-loop))))
 
-(driver-loop)
-
-(define (require p)
-  (if (not p) (amb)))
-
-(define (an-element-of items)
-  (require (not (null? items)))
-  (amb (car items) (an-element-of (cdr items))))
-
-(define (aeo items)
-  (require (pair? items))
-  (amb (car items) (aeo (cdr items))))
-
-(define f (let ((a 1)) a))
-
-(define (two-sum s list1 list2)
-  (let ((a (aeo list1)))
-    (let ((b (aeo list2)))
-      (require (= s (+ a b)))
-      (list a b))))
+;(driver-loop)
