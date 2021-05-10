@@ -396,6 +396,20 @@
 (define (procedure-parameters p) (cadr p))
 (define (procedure-environment p) (cadddr p))
 (define (procedure-body p) (caddr p))
+(define (op-or arg . args)
+  (define (iter a b)
+    (cond ((true? a) a)
+          ((null? b) a)
+          (else
+           (iter (car b) (cdr b)))))
+  (iter arg args))
+(define (op-and arg . args)
+  (define (iter a b)
+    (cond ((not (true? a)) false)
+          ((null? b) a)
+          (else
+           (iter (car b) (cdr b)))))
+  (iter arg args))
 
 ;;; 
 (define (setup-environment)
@@ -405,8 +419,9 @@
           (list 'cons cons)
           (list 'null? null?)
           (list 'pair? pair?)
-          ;          (list 'and and)
-          ;          (list 'or or)
+          (list 'true? true?)
+          (list 'or op-or)
+          (list 'and op-and)
           (list 'not not)
           (list 'sqrt sqrt)
           (list 'integer? integer?)
