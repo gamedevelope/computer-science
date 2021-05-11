@@ -172,4 +172,8 @@
                       (list 'ethel ethel)
                       (list 'joan joan)
                       (list 'mary mary))))))
+
+;;; 练习 4.43
+(analyze '(define (ex4.43) 100))
+
 (driver-loop)
