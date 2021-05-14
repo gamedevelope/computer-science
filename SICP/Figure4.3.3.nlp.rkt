@@ -12,6 +12,10 @@
   
   (ambeval input genv succeed fail))
 
+
+(analyze '(define (require p)
+            (if (not p) (amb))))
+
 (analyze '(define (parse-sentence)
             (list 'sentence
                   (parse-noun-phrase)
@@ -20,3 +24,17 @@
             (list 'noun-phrase
                   (parse-word articles)
                   (parse-word nouns))))
+
+(analyze '(define (parse-word word-list)
+         (require (not (null? *unparsed*)))
+         (require (memq (car *unparsed*) (cdr word-list)))
+         (let ((found-word (car *unparsed*)))
+           (set! *unparsed* (cdr *unparsed*))
+           (list (car word-list) found-word))))
+
+(analyze '(define *unparsed* '()))
+(analyze '(define (parse input)
+            (set! *unparsed* input)
+            (let ((send (parse-sentence)))
+              (require (null? *unparsed*))
+              sent)))

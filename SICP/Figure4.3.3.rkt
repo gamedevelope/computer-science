@@ -427,6 +427,7 @@
           (list 'integer? integer?)
           (list 'member member)
           (list 'abs abs)
+          ;          (list 'input input)
           (list '+ +)
           (list '- -)
           (list '* *)
