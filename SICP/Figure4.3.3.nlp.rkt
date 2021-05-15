@@ -12,6 +12,9 @@
   
   (ambeval input genv succeed fail))
 
+(analyze '(define nouns '(noun student professor cat class)))
+(analyze '(define verbs '(verb studies lectures eats sleeps)))         
+(analyze '(define articles '(article the a)))
 
 (analyze '(define (require p)
             (if (not p) (amb))))
@@ -38,3 +41,5 @@
             (let ((send (parse-sentence)))
               (require (null? *unparsed*))
               sent)))
+
+(driver-loop)
