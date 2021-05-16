@@ -23,10 +23,16 @@
             (list 'sentence
                   (parse-noun-phrase)
                   (parse-word verbs))))
+
 (analyze '(define (parse-noun-phrase)
             (list 'noun-phrase
                   (parse-word articles)
                   (parse-word nouns))))
+
+(analyze '(define (memq item x)
+            (cond ((null? x) false)
+                  ((eq? item (car x)) x)
+                  (else (memq item (cdr x))))))
 
 (analyze '(define (parse-word word-list)
          (require (not (null? *unparsed*)))
@@ -38,8 +44,8 @@
 (analyze '(define *unparsed* '()))
 (analyze '(define (parse input)
             (set! *unparsed* input)
-            (let ((send (parse-sentence)))
+            (let ((sent (parse-sentence)))
               (require (null? *unparsed*))
               sent)))
-
+;(analyze '(parse '(the cat eats)))
 (driver-loop)

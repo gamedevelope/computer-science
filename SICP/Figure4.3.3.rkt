@@ -420,6 +420,7 @@
           (list 'null? null?)
           (list 'pair? pair?)
           (list 'true? true?)
+          (list 'eq? eq?)
           (list 'or op-or)
           (list 'and op-and)
           (list 'not not)
