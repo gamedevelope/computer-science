@@ -12,9 +12,11 @@
   
   (ambeval input genv succeed fail))
 
-(analyze '(define nouns '(noun student professor cat class)))
-(analyze '(define verbs '(verb studies lectures eats sleeps)))         
+(analyze '(define nouns '(noun student professor cat class 教授 苹果 学生 猫 教师)))
+(analyze '(define verbs '(verb studies lectures eats sleeps 学习 睡觉 吃)))         
 (analyze '(define articles '(article the a)))
+;(analyze '(define 名词 '(名词 教授 学生 猫 教师)))
+;(analyze '(define 动词 '(动词 学习 睡觉 吃)))
 
 (analyze '(define (require p)
             (if (not p) (amb))))
@@ -35,11 +37,11 @@
                   (else (memq item (cdr x))))))
 
 (analyze '(define (parse-word word-list)
-         (require (not (null? *unparsed*)))
-         (require (memq (car *unparsed*) (cdr word-list)))
-         (let ((found-word (car *unparsed*)))
-           (set! *unparsed* (cdr *unparsed*))
-           (list (car word-list) found-word))))
+            (require (not (null? *unparsed*)))
+            (require (memq (car *unparsed*) (cdr word-list)))
+            (let ((found-word (car *unparsed*)))
+              (set! *unparsed* (cdr *unparsed*))
+              (list (car word-list) found-word))))
 
 (analyze '(define *unparsed* '()))
 (analyze '(define (parse input)
