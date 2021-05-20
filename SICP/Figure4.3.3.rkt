@@ -270,16 +270,41 @@
           "Unknown procedure type -- EXECUTE-APPLICATION"
           proc))))
 
+;(define (analyze-amb exp)
+;  (let ((cprocs (map analyze (amb-choices exp))))
+;    (lambda (env succeed fail)
+;      (define (try-next choices)
+;        (if (null? choices)
+;            (fail)
+;            ((car choices) env
+;                           succeed
+;                           (lambda ()
+;                             (try-next (cdr choices))))))
+;      (try-next cprocs))))
+
+;;; 练习 4.50
+;;; 定义一个随机的 analyze-amb
+(define (nth n elems)
+  (if (= n 0)
+      elems
+      (nth (- n 1) (append (cdr elems) (list (car elems))))))
+
+(define (gen-rand elems)
+  
+  (let ((len (length elems)))
+    (nth (random len) elems)))
+
 (define (analyze-amb exp)
   (let ((cprocs (map analyze (amb-choices exp))))
     (lambda (env succeed fail)
       (define (try-next choices)
         (if (null? choices)
             (fail)
-            ((car choices) env
-                           succeed
-                           (lambda ()
-                             (try-next (cdr choices))))))
+            (let ((rand-choices (gen-rand choices)))
+              ((car rand-choices) env
+                                  succeed
+                                  (lambda ()
+                                    (try-next (cdr rand-choices)))))))
       (try-next cprocs))))
 
 (define input-prompt ";;; Amb-Eval input:")
@@ -486,4 +511,4 @@
      (display ";;; There is no current problem")
      (driver-loop))))
 
-;(driver-loop)
+(driver-loop)
