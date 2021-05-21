@@ -211,4 +211,9 @@
                         (require (not (can-attack? d f)))
                         (require (not (can-attack? e f)))
                         (list a b c d e f)))))))))
+
+;;; 4.51
+(analyze '(define count 0))
+(analyze '(define (permanent-set! var val)
+            (set! var val)))
 (driver-loop)
