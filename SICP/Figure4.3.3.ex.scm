@@ -216,4 +216,16 @@
 (analyze '(define count 0))
 (analyze '(define (permanent-set! var val)
             (set! var val)))
+
+;;; 4.54
+(define (analyze-require exp)
+  (let ((pproc (analyze (require-predicate exp))))
+    (lambda (env succeed fail)
+      (proc env
+            (lambda (pred-value fail2)
+              (if ??
+                  ??
+                  (succeed 'ok fail2)))
+            fail))))
+              
 (driver-loop)
