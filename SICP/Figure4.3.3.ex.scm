@@ -136,8 +136,25 @@
 
 ;;; 练习 4.41
 ;;; 常规方法解决 4.40问题
+;;; 先写一个全排列算法
+;(define (cnr n lst)
+(define (append3 front middle back)
+  (append front (append middle back)))
 
+(define (nth n lst)
+  (if (= n 0)
+      (car lst)
+      (nth (- n 1) (cdr lst))))
 
+(define (remove-nth n lst)
+  (if (= n 0)
+      (cdr lst)
+      (cons (car lst) (remove-nth (- n 1) (cdr lst)))))
+
+(define (headn n lst)
+  (cond ((<= n 0) lst)
+        (else (cons (nth n lst) (remove-nth n lst)))))
+        
 ;;; 练习 4.42
 (analyze '(define (ex4.42)
             (let ((kitty (amb 2))
@@ -218,14 +235,14 @@
             (set! var val)))
 
 ;;; 4.54
-(define (analyze-require exp)
-  (let ((pproc (analyze (require-predicate exp))))
-    (lambda (env succeed fail)
-      (proc env
-            (lambda (pred-value fail2)
-              (if ??
-                  ??
-                  (succeed 'ok fail2)))
-            fail))))
+;(define (analyze-require exp)
+;  (let ((pproc (analyze (require-predicate exp))))
+;    (lambda (env succeed fail)
+;      (proc env
+;            (lambda (pred-value fail2)
+;              (if ??
+;                  ??
+;                  (succeed 'ok fail2)))
+;            fail))))
               
-(driver-loop)
+;(driver-loop)
