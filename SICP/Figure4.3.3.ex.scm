@@ -154,7 +154,49 @@
 (define (headn n lst)
   (cond ((<= n 0) lst)
         (else (cons (nth n lst) (remove-nth n lst)))))
-        
+
+(define (f lst)
+  (define (iter n lst)
+    (if (< n 0)
+        '()
+        (cons (headn n lst) (iter (- n 1) lst))))
+  (iter (- (length lst) 1) lst))
+
+(define (p lst)
+  (append (list lst) (list lst)))
+
+(define (make-pair a b)
+  (if (list? b)
+      (cons a b)
+      (list a b)))
+
+(define (map-prefix-append elem lst)
+  (if (null? lst)
+      '()
+      (make-pair (make-pair elem (car lst))
+                 (map-prefix-append elem (cdr lst)))))
+
+(define (gp n lst)
+  (let ((p (permutation lst)))
+    (map-prefix-append n p)))
+
+(define (fgp lst)
+  (if (null? lst)
+      '()
+      (append (gp (caar lst) (cdar lst))
+              (fgp (cdr lst)))))
+
+(define (permutation lst)
+  (if (null? (cdr lst))
+      lst
+      (let ((ps (f lst)))
+        (fgp ps))))
+
+(permutation '(1))
+(permutation '(1 2))
+(permutation '(1 2 3))
+(permutation '(1 2 3 4))
+
 ;;; 练习 4.42
 (analyze '(define (ex4.42)
             (let ((kitty (amb 2))
