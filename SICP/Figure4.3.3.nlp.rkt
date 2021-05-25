@@ -2,7 +2,6 @@
 
 (#%require "Figure4.3.3.rkt")
 
-
 (define (analyze input)
   (define (succeed v next)
     'ok)
@@ -73,5 +72,5 @@
                                        noun-phrase
                                        (parse-prepositional-phrase)))))
             (maybe-extend (parse-simple-noun-phrase))))
-
+; (parse '(the student with the cat sleeps in the class))
 (driver-loop)
