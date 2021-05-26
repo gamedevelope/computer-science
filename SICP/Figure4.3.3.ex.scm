@@ -303,6 +303,11 @@
 (analyze '(define count 0))
 (analyze '(define (permanent-set! var val)
             (set! var val)))
+(let ((x (aeo '(a b c)))
+      (y (aeo '(a b c))))
+  (permanent-set! count (+ 1 count))
+  (require (not (eq? x y)))
+  (list x y count))
 
 ;;; 4.54
 ;(define (analyze-require exp)
@@ -315,4 +320,4 @@
 ;                  (succeed 'ok fail2)))
 ;            fail))))
               
-;(driver-loop)
+(driver-loop)
