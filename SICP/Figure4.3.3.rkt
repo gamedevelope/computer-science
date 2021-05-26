@@ -17,6 +17,7 @@
         ((quoted? exp) (analyze-quoted exp))
         ((variable? exp) (analyze-variable exp))
         ((assignment? exp) (analyze-assignment exp))
+        ((permanent-assignment? exp) (analyze-permanent-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
         ((let? exp) (analyze-let exp))
@@ -44,6 +45,9 @@
 
 (define (assignment? exp)
   (equal? 'set! (car exp)))
+
+(define (permanent-assignment? exp)
+  (equal? 'permanent-set! (car exp)))
 
 (define (if? exp)
   (equal? 'if (car exp)))
@@ -224,6 +228,20 @@
                             (set-variable-value! var
                                                  old-value
                                                  env)
+                            (fail2)))))
+             fail))))
+
+(define (analyze-permanent-assignment exp)
+  (let ((var (assignment-variable exp))
+        (vproc (analyze (assignment-value exp))))
+    (lambda (env succeed fail)
+      (vproc env
+             (lambda (val fail2)
+               (let ((old-value
+                      (lookup-variable-value var env)))
+                 (set-variable-value! var val env)
+                 (succeed 'ok
+                          (lambda ()
                             (fail2)))))
              fail))))
 
