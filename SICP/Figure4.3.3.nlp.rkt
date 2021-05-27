@@ -74,3 +74,6 @@
             (maybe-extend (parse-simple-noun-phrase))))
 ; (parse '(the student with the cat sleeps in the class))
 (driver-loop)
+
+;;; 4.46 因为语法是需要按照顺序来分析的
+;;; 如果采用了随机求值顺序，就导致语法规则失效
