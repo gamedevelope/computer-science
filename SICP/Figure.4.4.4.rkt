@@ -2,6 +2,8 @@
 
 (define input-prompt ";;; Query input:")
 (define output-prompt ";;; Query result:")
+(define (prompt-for-input string)
+  (newline)(newline)(display string)(newline))
 
 (define (query-driver-loop)
   (prompt-for-input input-prompt)
@@ -87,3 +89,70 @@
          (singleton-stream frame)
          the-empty-stream))
    frame-stream))
+
+(define (execute exp)
+  (apply (eval (predicate exp) user-initial-environment)
+         (args exp)))
+
+(define (always-true ignore frame-stream) frame-stream)
+
+(put 'always-true 'qeval always-true)
+
+(define (find-assertions pattern frame)
+  (stream-flatmap (lambda (datum)
+                    (check-an-assertion detum pattern frame))
+                  (fetch-assertions pattern frame)))
+
+(define (check-an-assertion assertion query-pat query-frame)
+  (let ((match-result
+         (pattern-match query-pat assertion query-frame)))
+    (if (eq? match-result 'failed)
+        the-empty-stream
+        (singleton-stream match-result))))
+
+(define (pattern-match pat dat frame)
+  (cond ((eq? frame 'failed) 'failed)
+        ((equal? pat dat) frame)
+        ((var? pat) (extend-if-consistent pat dat frame))
+        ((and (pair? pat) (pair? dat))
+         (pattern-match (cdr pat)
+                        (cdr dat)
+                        (pattern-match (cdr pat)
+                                       (car dat)
+                                       frame)))
+        (else 'failed)))
+
+(define (extend-if-consistent var dat frame)
+  (let ((binding (binding-in-frame var frame)))
+    (if binding
+        (pattern-match (binding-value binding) dat frame)
+        (extend var dat frame))))
+
+(define (apply-rules pattern frame)
+  (stream-flatmap (lambda (rule)
+                    (apply-a-rule rule pattern frame))
+                  (fetch-rules pattern frame)))
+
+(define (apply-a-rule rule query-pattern query-frame)
+  (let ((clean-rule (rename-variables-in rule)))
+    (let ((unify-result
+           (unify-match query-pattern
+                        (conclusion clean-rule)
+                        query-frame)))
+      (if (eq? unify-result 'failed)
+          the-empty-stream
+          (qeval (rule-body clean-rule)
+                 (singleton-stream unify-result))))))
+
+(define (rename-variables-in rule)
+  (let ((rule-application-id (new-rule-application-id)))
+    (define (tree-walk exp)
+      (cond ((var? exp)
+             (make-new-variable exp rule-application-id))
+            ((pair? exp)
+             (cons (tree-walk (car exp))
+                   (tree-walk (cdr exp))))
+            (else exp)))
+    (tree-walk rule)))
+
+             
