@@ -153,6 +153,8 @@
 (put 'always-true 'qeval always-true)
 
 (define (find-assertions pattern frame)
+  (display (list "pattern " pattern))
+  (display frame)
   (stream-flatmap (lambda (datum)
                     (check-an-assertion datum pattern frame))
                   (fetch-assertions pattern frame)))
@@ -404,8 +406,6 @@
 (define (extend variable value frame)
   (cons (make-binding variable value) frame))
 
-
-
 (define (type exp)
   (if (pair? exp)
       (car exp)
@@ -444,5 +444,7 @@
         (force delayed-s2)
         (delay (stream-cdr s1))))))
 
-(query-driver-loop)
+(query-syntax-process '(a b c))
+(query-syntax-process '(?a ?b ?c))
 
+;(query-driver-loop)
