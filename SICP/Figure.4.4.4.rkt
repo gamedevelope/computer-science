@@ -444,7 +444,12 @@
         (force delayed-s2)
         (delay (stream-cdr s1))))))
 
-(query-syntax-process '(a b c))
-(query-syntax-process '(?a ?b ?c))
+;(query-syntax-process '(a b c))
+;(query-syntax-process '(?a ?b ?c))
+;(add-assertion-body '(a (b) (c)))
+(query-driver-loop)
 
-;(query-driver-loop)
+;;; 4.55
+;(supervisor ?x (Bitdiddle Ben))
+;(job ?x (accounting . ?y))
+;(address ?x (Slumerville . ?y))
