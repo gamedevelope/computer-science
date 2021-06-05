@@ -458,3 +458,8 @@
 ;(supervisor ?x (Bitdiddle Ben))
 ;(job ?x (accounting . ?y))
 ;(address ?x (Slumerville . ?y))
+(query-syntax-process '(assert! (rule (append-to-form () ?y ?y))))
+(query-syntax-process '(assert! (rule (append-to-form (?u . ?v) ?y (?u . ?z))
+                                      (append-to-form ?v ?y ?z))))
+;(qeval (query-syntax-process '(append-to-form (a b) (c d) ?z))
+;       (singleton-stream '()))
