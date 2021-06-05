@@ -474,6 +474,32 @@
 (aroa! '(rule (salary (Reasoner Louis) 30000)))
 (aroa! '(rule (supervisor (Reasoner Louis) (Hacker Alyssa P))))
 
+(aroa! '(rule (supervisor (Bitdiddle Ben) (Warbukers Oliver))))
+
+(aroa! '(rule (address (Warbucks Oliver) (Swellesley (Top Heap Road)))))
+(aroa! '(rule (job (Warbucks Oliver) (administration big wheel))))
+(aroa! '(rule (salary (Warbucks Oliver) 150000)))
+
+(aroa! '(rule (address (Scrooge Eben) (Weston (Shady Lane) 10))))
+(aroa! '(rule (job (Scrooge Eben) (accounting chief accountant))))
+(aroa! '(rule (salary (Scrooge Eben) 75000)))
+(aroa! '(rule (supervisor (Scrooge Eben) (Warbucks Oliver))))
+
+(aroa! '(rule (address (Cratchet Robert) (Allston (N Harvard Street) 16))))
+(aroa! '(rule (job (Cratchet Robert) (accounting scriverner))))
+(aroa! '(rule (salary (Cratchet Robert) 18000)))
+(aroa! '(rule (supervisor (Cratchet Robert) (Scrooge Eben))))
+
+(aroa! '(rule (address (Aull Dewitt) (Slumerville (Onion Square) 5))))
+(aroa! '(rule (job (Aull DeWitt) (administration secretary))))
+(aroa! '(rule (salary (Aull Dewitt) 25000)))
+(aroa! '(rule (supervisor (Aull Dewitt) (Warbucks Oliver))))
+
+(aroa! '(rule (can-do-job (computer wizard) (computer programmer))))
+(aroa! '(rule (can-do-job (computer wizard) (computer technician))))
+(aroa! '(rule (can-do-job (computer programmer) (computer programmer trainee))))
+(aroa! '(rule (can-do-job (administration secretary)
+                          (administration big wheel))))
 
 (query-driver-loop)
 
