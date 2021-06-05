@@ -33,10 +33,33 @@
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
 
+(define THE-ASSERTIONS the-empty-stream)
+(define THE-RULES the-empty-stream)
+
+(define (assertion-to-be-added? exp)
+  (eq? (type exp) 'assert!))
+
+(define (rule? statement)
+  (tagged-list? statement 'rule))
+
+(define (index-key-of pat)
+  (let ((key (car pat)))
+    (if (var? key) '? key)))
+
+(define (var? exp) (tagged-list? exp '?))
+(define (constant-symbol? exp) (symbol? exp))
+
+(define (use-index? pat)
+  (constant-symbol? (car pat)))
+
 (define input-prompt ";;; Query input:")
 (define output-prompt ";;; Query result:")
+
 (define (prompt-for-input string)
-  (newline)(newline)(display string)(newline))
+  (newline)
+  (newline)
+  (display string)
+  (newline))
 
 (define (query-driver-loop)
   (prompt-for-input input-prompt)
@@ -101,8 +124,7 @@
 (define (negated-query exps) (car exps))
 (define (predicate exps) (car exps))
 (define (args exps) (cdr exps))
-(define (rule? statement)
-  (tagged-list? statement 'rule))
+
 (define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
@@ -153,8 +175,6 @@
 (put 'always-true 'qeval always-true)
 
 (define (find-assertions pattern frame)
-  (display (list "pattern " pattern))
-  (display frame)
   (stream-flatmap (lambda (datum)
                     (check-an-assertion datum pattern frame))
                   (fetch-assertions pattern frame)))
@@ -217,7 +237,6 @@
 (define (make-new-variable var rule-application-id)
   (cons '? (cons rule-application-id (cdr var))))
 
-
 (define (unify-match p1 p2 frame)
   (cond ((eq? frame 'failed) 'failed)
         ((equal? p1 p2) frame)
@@ -261,7 +280,6 @@
           (else false)))
   (tree-walk exp))
 
-(define THE-ASSERTIONS the-empty-stream)
 (define (fetch-assertions pattern frame)
   (if (use-index? pattern)
       (get-indexed-assertions pattern)
@@ -275,7 +293,6 @@
   (let ((s (get key1 key2)))
     (if s s the-empty-stream)))
 
-(define THE-RULES the-empty-stream)
 (define (fetch-rules pattern frame)
   (if (use-index? pattern)
       (get-indexed-rules pattern)
@@ -295,54 +312,47 @@
    (get-stream '? 'rule-stream)))
 
 (define (add-rule-or-assertion! assertion)
+  (define (store-rule-in-index rule)
+    (let ((pattern (conclusion rule)))
+      (if (indexable? pattern)
+          (let ((key (index-key-of pattern)))
+            (let ((current-rule-stream
+                   (get-stream key 'rule-stream)))
+              (put key
+                   'rule-stream
+                   (cons-stream rule
+                                current-rule-stream)))))))
+  
+  (define (add-rule! rule)
+    (store-rule-in-index rule)
+    (let ((old-rules THE-RULES))
+      (set! THE-RULES (cons-stream rule old-rules))
+      'ok))
+
+  (define (store-assertion-in-index assertion)
+    (if (indexable? assertion)
+        (let ((key (index-key-of assertion)))
+          (let ((current-assertion-stream
+                 (get-stream key 'assertion-stream)))
+            (put key
+                 'assertion-stream
+                 (cons-stream assertion
+                              current-assertion-stream))))))
+  
+  (define (add-assertion! assertion)
+    (store-assertion-in-index assertion)
+    (let ((old-assertions THE-ASSERTIONS))
+      (set! THE-ASSERTIONS
+            (cons-stream assertion old-assertions))
+      'ok))
+  
   (if (rule? assertion)
       (add-rule! assertion)
       (add-assertion! assertion)))
 
-(define (add-assertion! assertion)
-  (store-assertion-in-index assertion)
-  (let ((old-assertions THE-ASSERTIONS))
-    (set! THE-ASSERTIONS
-          (cons-stream assertion old-assertions))
-    'ok))
-
-(define (add-rule! rule)
-  (store-rule-in-index rule)
-  (let ((old-rules THE-RULES))
-    (set! THE-RULES (cons-stream rule old-rules))
-    'ok))
-
-(define (store-assertion-in-index assertion)
-  (if (indexable? assertion)
-      (let ((key (index-key-of assertion)))
-        (let ((current-assertion-stream
-               (get-stream key 'assertion-stream)))
-          (put key
-               'assertion-stream
-               (cons-stream assertion
-                            current-assertion-stream))))))
-
-(define (store-rule-in-index rule)
-  (let ((pattern (conclusion rule)))
-    (if (indexable? pattern)
-        (let ((key (index-key-of pattern)))
-          (let ((current-rule-stream
-                 (get-stream key 'rule-stream)))
-            (put key
-                 'rule-stream
-                 (cons-stream rule
-                              current-rule-stream)))))))
-
 (define (indexable? pat)
   (or (constant-symbol? (car pat))
       (var? (car pat))))
-
-(define (index-key-of pat)
-  (let ((key (car pat)))
-    (if (var? key) '? key)))
-
-(define (use-index? pat)
-  (constant-symbol? (car pat)))
 
 (define (query-syntax-process exp)
   (map-over-symbols expand-question-mark exp))
@@ -359,9 +369,6 @@
               (string->symbol
                (substring chars 1 (string-length chars))))
         symbol)))
-
-(define (assertion-to-be-added? exp)
-  (eq? (type exp) 'assert!))
 
 (define (add-assertion-body exp)
   (car (contents exp)))
@@ -395,8 +402,6 @@
 (define (singleton-stream x)
   (cons-stream x the-empty-stream))
 
-(define (var? exp) (tagged-list? exp '?))
-(define (constant-symbol? exp) (symbol? exp))
 (define (make-binding variable value)
   (cons variable value))
 (define (binding-variable binding) (car binding))
