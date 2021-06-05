@@ -449,17 +449,35 @@
         (force delayed-s2)
         (delay (stream-cdr s1))))))
 
-;(query-syntax-process '(a b c))
-;(query-syntax-process '(?a ?b ?c))
-;(add-assertion-body '(a (b) (c)))
+(define aroa! add-rule-or-assertion!)
+
+(aroa! '(rule (address (Bitdiddle Ben) (Slumerville (ridge Road) 10))))
+(aroa! '(rule (job (Bitdiddle Ben) (computer wizard))))
+(aroa! '(rule (salary (Bitdiddle Ben) 60000)))
+(aroa! '(rule (address (Hacker Alyssa P) (Cambridge (Mass Ave) 78))))
+(aroa! '(rule (job (Hacker Alyssa P) (computer programmer))))
+(aroa! '(rule (salary (Hacker Alyssa P) 40000)))
+(aroa! '(rule (supervisor (hacker Alyssa P) (Bitdiddle Ben))))
+
+(aroa! '(rule (address (Fect Cy D) (Cambridge (Ames Street) 3))))
+(aroa! '(rule (job (Fect Cy D) (computer programmer))))
+(aroa! '(rule (salary (Fect Cy D) 35000)))
+(aroa! '(rule (supervisor (Fect Cy D) (Bitdiddle Ben))))
+
+(aroa! '(rule (address (Tweakit Lem E) (Boston (Bay State Road) 22))))
+(aroa! '(rule (job (Tweakit Lem E) (computer technician))))
+(aroa! '(rule (salary (Tweakit Lem E) 25000)))
+(aroa! '(rule (supervisor (Tweakit Lem E) (Bitdiddle Ben))))
+
+(aroa! '(rule (address (Reasoner Louis) (Slumerville (Pine Tree Road) 80))))
+(aroa! '(rule (job (Reasoner Louis) (computer programmer trainee))))
+(aroa! '(rule (salary (Reasoner Louis) 30000)))
+(aroa! '(rule (supervisor (Reasoner Louis) (Hacker Alyssa P))))
+
+
 (query-driver-loop)
 
 ;;; 4.55
 ;(supervisor ?x (Bitdiddle Ben))
 ;(job ?x (accounting . ?y))
 ;(address ?x (Slumerville . ?y))
-(query-syntax-process '(assert! (rule (append-to-form () ?y ?y))))
-(query-syntax-process '(assert! (rule (append-to-form (?u . ?v) ?y (?u . ?z))
-                                      (append-to-form ?v ?y ?z))))
-;(qeval (query-syntax-process '(append-to-form (a b) (c d) ?z))
-;       (singleton-stream '()))
