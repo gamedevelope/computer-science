@@ -398,9 +398,9 @@
 
 (define (contract-question-mark variable)
   (string->symbol
-   (stream-append "?"
+   (string-append "?"
                   (if (number? (cadr variable))
-                      (stream-append (symbol->string (caddr variable))
+                      (string-append (symbol->string (caddr variable))
                                      "-"
                                      (number->string (cadr variable)))
                       (symbol->string (cadr variable))))))
