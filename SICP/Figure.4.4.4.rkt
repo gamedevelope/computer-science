@@ -35,6 +35,10 @@
 
 (define THE-ASSERTIONS the-empty-stream)
 (define THE-RULES the-empty-stream)
+(define rule-counter 0)
+
+(define (show-rule-count? exp)
+  (eq? (type exp) 'show-rule-count))
 
 (define (assertion-to-be-added? exp)
   (eq? (type exp) 'assert!))
@@ -67,8 +71,9 @@
     (cond ((assertion-to-be-added? q)
            (add-rule-or-assertion! (add-assertion-body q))
            (newline)
-           (display "Assertion added to data base.")
-           (query-driver-loop))
+           (display "Assertion added to data base."))
+          ((show-rule-count? q)
+           (display rule-counter))
           (else
            (newline)
            (display output-prompt)
@@ -79,8 +84,8 @@
                  frame
                  (lambda (v f)
                    (contract-question-mark v))))
-             (qeval q (singleton-stream '()))))
-           (query-driver-loop)))))
+             (qeval q (singleton-stream '()))))))
+    (query-driver-loop)))
 
 (define (instantiate exp frame unbound-var-handler)
   (define (copy exp)
@@ -230,10 +235,11 @@
                    (tree-walk (cdr exp))))
             (else exp)))
     (tree-walk rule)))
-(define rule-counter 0)
+
 (define (new-rule-application-id)
   (set! rule-counter (+ 1 rule-counter))
   rule-counter)
+
 (define (make-new-variable var rule-application-id)
   (cons '? (cons rule-application-id (cdr var))))
 
