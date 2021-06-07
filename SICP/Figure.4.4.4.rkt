@@ -113,12 +113,6 @@
       (delay (apply-rules query-pattern frame))))
    frame-stream))
 
-(define (conjoin conjuncts frame-stream)
-  (if (empty-conjunction? conjuncts)
-      frame-stream
-      (conjoin (rest-conjuncts conjuncts)
-               (qeval (first-conjunct conjuncts)
-                      frame-stream))))
 
 (define (empty-conjunction? exps) (null? exps))
 (define (first-conjunct exps) (car exps))
@@ -138,6 +132,14 @@
 (define (rule-body rule)
   (if (null? (cddr rule)) '(always-true) (caddr rule)))
 
+(define (conjoin conjuncts frame-stream)
+  (if (empty-conjunction? conjuncts)
+      frame-stream
+      (conjoin (rest-conjuncts conjuncts)
+               (qeval (first-conjunct conjuncts)
+                      frame-stream))))
+(put 'and 'qeval conjoin)
+
 (define (disjoin disjuncts frame-stream)
   (if (empty-disjunction? disjuncts)
       the-empty-stream
@@ -155,6 +157,7 @@
          (singleton-stream frame)
          the-empty-stream))
    frame-stream))
+(put 'not 'qeval negate)
 
 (define (lisp-value call frame-stream)
   (stream-flatmap
@@ -513,4 +516,7 @@
 ;(supervisor ?x (Bitdiddle Ben))
 ;(job ?x (accounting . ?y))
 ;(address ?x (Slumerville . ?y))
+
+;;; 4.56
+
 
