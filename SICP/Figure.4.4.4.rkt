@@ -1,5 +1,15 @@
 #lang sicp
 
+(#%provide aroa!
+           query-driver-loop)
+
+(define input-prompt ";;; Query input:")
+(define output-prompt ";;; Query result:")
+(define (pfi string)
+  (newline)
+  (display string)
+  (newline))
+
 (define (make-table)
   (let ((local-table (list '*table*)))
     (define (lookup key-1 key-2)
@@ -29,6 +39,7 @@
             ((eq? m 'insert-proc!) insert!)
             (else (error "Unknown operation -- TABLE" m))))
     dispatch))
+
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
@@ -56,17 +67,10 @@
 (define (use-index? pat)
   (constant-symbol? (car pat)))
 
-(define input-prompt ";;; Query input:")
-(define output-prompt ";;; Query result:")
 
-(define (prompt-for-input string)
-  (newline)
-  (newline)
-  (display string)
-  (newline))
 
 (define (query-driver-loop)
-  (prompt-for-input input-prompt)
+  (pfi input-prompt)
   (let ((q (query-syntax-process (read))))
     (cond ((assertion-to-be-added? q)
            (add-rule-or-assertion! (add-assertion-body q))
@@ -112,7 +116,6 @@
       (find-assertions query-pattern frame)
       (delay (apply-rules query-pattern frame))))
    frame-stream))
-
 
 (define (empty-conjunction? exps) (null? exps))
 (define (first-conjunct exps) (car exps))
@@ -459,64 +462,5 @@
         (delay (stream-cdr s1))))))
 
 (define aroa! add-rule-or-assertion!)
-
-(aroa! '(rule (address (Bitdiddle Ben) (Slumerville (ridge Road) 10))))
-(aroa! '(rule (job (Bitdiddle Ben) (computer wizard))))
-(aroa! '(rule (salary (Bitdiddle Ben) 60000)))
-(aroa! '(rule (address (Hacker Alyssa P) (Cambridge (Mass Ave) 78))))
-(aroa! '(rule (job (Hacker Alyssa P) (computer programmer))))
-(aroa! '(rule (salary (Hacker Alyssa P) 40000)))
-(aroa! '(rule (supervisor (hacker Alyssa P) (Bitdiddle Ben))))
-
-(aroa! '(rule (address (Fect Cy D) (Cambridge (Ames Street) 3))))
-(aroa! '(rule (job (Fect Cy D) (computer programmer))))
-(aroa! '(rule (salary (Fect Cy D) 35000)))
-(aroa! '(rule (supervisor (Fect Cy D) (Bitdiddle Ben))))
-
-(aroa! '(rule (address (Tweakit Lem E) (Boston (Bay State Road) 22))))
-(aroa! '(rule (job (Tweakit Lem E) (computer technician))))
-(aroa! '(rule (salary (Tweakit Lem E) 25000)))
-(aroa! '(rule (supervisor (Tweakit Lem E) (Bitdiddle Ben))))
-
-(aroa! '(rule (address (Reasoner Louis) (Slumerville (Pine Tree Road) 80))))
-(aroa! '(rule (job (Reasoner Louis) (computer programmer trainee))))
-(aroa! '(rule (salary (Reasoner Louis) 30000)))
-(aroa! '(rule (supervisor (Reasoner Louis) (Hacker Alyssa P))))
-
-(aroa! '(rule (supervisor (Bitdiddle Ben) (Warbukers Oliver))))
-
-(aroa! '(rule (address (Warbucks Oliver) (Swellesley (Top Heap Road)))))
-(aroa! '(rule (job (Warbucks Oliver) (administration big wheel))))
-(aroa! '(rule (salary (Warbucks Oliver) 150000)))
-
-(aroa! '(rule (address (Scrooge Eben) (Weston (Shady Lane) 10))))
-(aroa! '(rule (job (Scrooge Eben) (accounting chief accountant))))
-(aroa! '(rule (salary (Scrooge Eben) 75000)))
-(aroa! '(rule (supervisor (Scrooge Eben) (Warbucks Oliver))))
-
-(aroa! '(rule (address (Cratchet Robert) (Allston (N Harvard Street) 16))))
-(aroa! '(rule (job (Cratchet Robert) (accounting scriverner))))
-(aroa! '(rule (salary (Cratchet Robert) 18000)))
-(aroa! '(rule (supervisor (Cratchet Robert) (Scrooge Eben))))
-
-(aroa! '(rule (address (Aull Dewitt) (Slumerville (Onion Square) 5))))
-(aroa! '(rule (job (Aull DeWitt) (administration secretary))))
-(aroa! '(rule (salary (Aull Dewitt) 25000)))
-(aroa! '(rule (supervisor (Aull Dewitt) (Warbucks Oliver))))
-
-(aroa! '(rule (can-do-job (computer wizard) (computer programmer))))
-(aroa! '(rule (can-do-job (computer wizard) (computer technician))))
-(aroa! '(rule (can-do-job (computer programmer) (computer programmer trainee))))
-(aroa! '(rule (can-do-job (administration secretary)
-                          (administration big wheel))))
-
-(query-driver-loop)
-
-;;; 4.55
-;(supervisor ?x (Bitdiddle Ben))
-;(job ?x (accounting . ?y))
-;(address ?x (Slumerville . ?y))
-
-;;; 4.56
 
 
