@@ -5,6 +5,7 @@
 (aroa! '(rule (address (Bitdiddle Ben) (Slumerville (ridge Road) 10))))
 (aroa! '(rule (job (Bitdiddle Ben) (computer wizard))))
 (aroa! '(rule (salary (Bitdiddle Ben) 60000)))
+
 (aroa! '(rule (address (Hacker Alyssa P) (Cambridge (Mass Ave) 78))))
 (aroa! '(rule (job (Hacker Alyssa P) (computer programmer))))
 (aroa! '(rule (salary (Hacker Alyssa P) 40000)))
@@ -41,10 +42,10 @@
 (aroa! '(rule (salary (Cratchet Robert) 18000)))
 (aroa! '(rule (supervisor (Cratchet Robert) (Scrooge Eben))))
 
-(aroa! '(rule (address (Aull Dewitt) (Slumerville (Onion Square) 5))))
+(aroa! '(rule (address (Aull DeWitt) (Slumerville (Onion Square) 5))))
 (aroa! '(rule (job (Aull DeWitt) (administration secretary))))
-(aroa! '(rule (salary (Aull Dewitt) 25000)))
-(aroa! '(rule (supervisor (Aull Dewitt) (Warbucks Oliver))))
+(aroa! '(rule (salary (Aull DeWitt) 25000)))
+(aroa! '(rule (supervisor (Aull DeWitt) (Warbucks Oliver))))
 
 (aroa! '(rule (can-do-job (computer wizard) (computer programmer))))
 (aroa! '(rule (can-do-job (computer wizard) (computer technician))))
@@ -63,6 +64,10 @@
 ;(and (supervisor ?x (Bitdiddle Ben))
 ;     (address ?x . ?y))
 
-;(or (salary (Bitdiddle Ben) ?x)
-;    (and (salary ?person ?y)
-;         (lisp-value > ?x ?y)))
+;(and (salary ?person ?amount)
+;     (salary (Bitdiddle Ben) ?max)
+;     (lisp-value <= ?amount ?max))
+
+;(and (job ?person ?y)
+;     (supervisor ?person ?manager)
+;     (not (job ?manager (computer . ?x))))
