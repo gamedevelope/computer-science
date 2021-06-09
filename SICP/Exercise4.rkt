@@ -71,3 +71,4 @@
 ;(and (job ?person ?y)
 ;     (supervisor ?person ?manager)
 ;     (not (job ?manager (computer . ?x))))
+
