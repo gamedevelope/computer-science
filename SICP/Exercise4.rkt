@@ -8,7 +8,7 @@
 (aroa! '(rule (address (Hacker Alyssa P) (Cambridge (Mass Ave) 78))))
 (aroa! '(rule (job (Hacker Alyssa P) (computer programmer))))
 (aroa! '(rule (salary (Hacker Alyssa P) 40000)))
-(aroa! '(rule (supervisor (hacker Alyssa P) (Bitdiddle Ben))))
+(aroa! '(rule (supervisor (Hacker Alyssa P) (Bitdiddle Ben))))
 
 (aroa! '(rule (address (Fect Cy D) (Cambridge (Ames Street) 3))))
 (aroa! '(rule (job (Fect Cy D) (computer programmer))))
@@ -60,3 +60,9 @@
 ;(address ?x (Slumerville . ?y))
 
 ;;; 4.56
+;(and (supervisor ?x (Bitdiddle Ben))
+;     (address ?x . ?y))
+
+;(or (salary (Bitdiddle Ben) ?x)
+;    (and (salary ?person ?y)
+;         (lisp-value > ?x ?y)))
