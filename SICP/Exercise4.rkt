@@ -72,3 +72,6 @@
 ;     (supervisor ?person ?manager)
 ;     (not (job ?manager (computer . ?x))))
 
+;;; 4.57
+
+
