@@ -72,6 +72,18 @@
 ;     (supervisor ?person ?manager)
 ;     (not (job ?manager (computer . ?x))))
 
+;;; 定义 same
+;(rule (same ?x ?x))
+
+;(rule (lives-near ?p1 ?p2)
+;      (and (address ?p1 (?town . ?rest-1))
+;           (address ?p2 (?town . ?rest-2))
+;           (not (same ?p1 p2))))
+
+;(rule (lives-near ?p1 ?p2)
+;      (and (address ?p1 (?town . ?rest-1))
+;           (address ?p2 (?town . ?rest-2))
+;           (not (same ?p1 p2))))
 ;;; 4.57
 
 
