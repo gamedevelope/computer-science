@@ -86,4 +86,8 @@
 ;           (not (same ?p1 p2))))
 ;;; 4.57
 
-
+;;; 4.64
+(rule (outranked-by ?staff-person ?boss)
+      (or (supervisor ?staff-person ?boss)
+          (and (outranked-by ?middle-manager ?boss)
+               (supervisor ?staff-person ?middle-manager))))

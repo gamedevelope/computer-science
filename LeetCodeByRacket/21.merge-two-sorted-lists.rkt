@@ -13,5 +13,5 @@
 
 (define/contract (merge-two-lists l1 l2)
   (-> (or/c list-node? #f) (or/c list-node? #f) (or/c list-node? #f))
-  (display l1.val)
+  l1
   )
