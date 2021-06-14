@@ -84,10 +84,17 @@
 ;      (and (address ?p1 (?town . ?rest-1))
 ;           (address ?p2 (?town . ?rest-2))
 ;           (not (same ?p1 p2))))
+
 ;;; 4.57
+;(aroa! '(rule (can-replace? ?p1 ?p2)
+;              (and (job ?p1 ?j1)
+;                   (job ?p2 ?j2)
+;                   (or (same ?j1 ?j2)
+;                       (can-do-job ?j1 ?j2))
+;                   (not (same ?p1 ?p2)))))
 
 ;;; 4.64
-(rule (outranked-by ?staff-person ?boss)
-      (or (supervisor ?staff-person ?boss)
-          (and (outranked-by ?middle-manager ?boss)
-               (supervisor ?staff-person ?middle-manager))))
+;(rule (outranked-by ?staff-person ?boss)
+;      (or (supervisor ?staff-person ?boss)
+;          (and (outranked-by ?middle-manager ?boss)
+;               (supervisor ?staff-person ?middle-manager))))
