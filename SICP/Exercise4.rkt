@@ -55,6 +55,7 @@
 
 (query-driver-loop)
 
+(define assert! 0)
 ;;; 4.55
 ;(supervisor ?x (Bitdiddle Ben))
 ;(job ?x (accounting . ?y))
@@ -86,12 +87,13 @@
 ;           (not (same ?p1 p2))))
 
 ;;; 4.57
-;(aroa! '(rule (can-replace? ?p1 ?p2)
-;              (and (job ?p1 ?j1)
-;                   (job ?p2 ?j2)
-;                   (or (same ?j1 ?j2)
-;                       (can-do-job ?j1 ?j2))
-;                   (not (same ?p1 ?p2)))))
+(assert! '(rule (can-replace? ?p1 ?p2)
+                (and (job ?p1 ?j1)
+                     (job ?p2 ?j2)
+                     (or (same ?j1 ?j2)
+                         (can-do-job ?j1 ?j2))
+                     (not (same ?p1 ?p2)))))
+'(can-replace? ?x (Fect Cy D))
 
 ;;; 4.58
 
