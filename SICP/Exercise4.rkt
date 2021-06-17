@@ -52,10 +52,10 @@
 (aroa! '(rule (can-do-job (computer programmer) (computer programmer trainee))))
 (aroa! '(rule (can-do-job (administration secretary)
                           (administration big wheel))))
-
+;(aroa! '(rule (same ?x ?x)))
 (query-driver-loop)
 
-(define assert! 0)
+;(define assert! 0)
 ;;; 4.55
 ;(supervisor ?x (Bitdiddle Ben))
 ;(job ?x (accounting . ?y))
@@ -74,8 +74,8 @@
 ;     (not (job ?manager (computer . ?x))))
 
 ;;; 定义 same
-;(rule (same ?x ?x))
 
+;(assert! '(rule (same ?x ?x)))
 ;(rule (lives-near ?p1 ?p2)
 ;      (and (address ?p1 (?town . ?rest-1))
 ;           (address ?p2 (?town . ?rest-2))
@@ -87,13 +87,19 @@
 ;           (not (same ?p1 p2))))
 
 ;;; 4.57
-(assert! '(rule (can-replace? ?p1 ?p2)
+;  '(assert! (rule (same ?x ?x)))
+
+;'(and (job ?p1 ?j) (job ?p2 ?j) (not (same ?p1 ?p2)))
+'(assert! (rule (can-replace? ?p1 ?p2)
                 (and (job ?p1 ?j1)
                      (job ?p2 ?j2)
-                     (or (same ?j1 ?j2)
-                         (can-do-job ?j1 ?j2))
-                     (not (same ?p1 ?p2)))))
+                     (not (same ?p1 ?p2))
+                     (or (can-do-job ?j1 ?j2)
+                         (same ?j1 ?j2)))))
+
 '(can-replace? ?x (Fect Cy D))
+'(can-replace? ?x (Reasoner Louis))
+'(can-replace? ?x (Tweakit Lem E))
 
 ;;; 4.58
 
