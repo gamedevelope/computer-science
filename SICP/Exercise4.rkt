@@ -90,19 +90,29 @@
 ;  '(assert! (rule (same ?x ?x)))
 
 ;'(and (job ?p1 ?j) (job ?p2 ?j) (not (same ?p1 ?p2)))
+; 有问题的解答
+; 存在另一种情况 a可以代替b, b可以代替c，那么a也可以代替c
 '(assert! (rule (can-replace? ?p1 ?p2)
-                (and (job ?p1 ?j1)
-                     (job ?p2 ?j2)
-                     (not (same ?p1 ?p2))
-                     (or (can-do-job ?j1 ?j2)
-                         (same ?j1 ?j2)))))
+                (or (and (job ?p1 ?j1)
+                         (job ?p2 ?j2)
+                         (not (same ?p1 ?p2))
+                         (or (can-do-job ?j1 ?j2)
+                             (same ?j1 ?j2))))))
 
 '(can-replace? ?x (Fect Cy D))
 '(can-replace? ?x (Reasoner Louis))
 '(can-replace? ?x (Tweakit Lem E))
 
 ;;; 4.58
+'(assert! (rule (wheel ?person)
+                (and (supervisor ?middle-manager ?person)
+                     (supervisor ?x ?middle-manager))))
 
+'(assert! (rule (big-wheel ?person)
+                (and (supervisor ?x ?person)
+                     (not (and (supervisor ?person ?y))
+                          (job ?person (?j . ?rest-1))
+                          (job ?y (?j . ?rest-2))))))
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
 ;      (or (supervisor ?staff-person ?boss)
