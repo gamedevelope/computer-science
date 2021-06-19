@@ -52,6 +52,13 @@
 (aroa! '(rule (can-do-job (computer programmer) (computer programmer trainee))))
 (aroa! '(rule (can-do-job (administration secretary)
                           (administration big wheel))))
+
+(aroa! '(rule (meeting accounting (Monday 9am))))
+(aroa! '(rule (meeting administration (Monday 10am))))
+(aroa! '(rule (meeting computer (Wednesday 3pm))))
+(aroa! '(rule (meeting administration (Friday 1pm))))
+(aroa! '(rule (meeting whole-company (Wednesday 4pm))))
+
 ;(aroa! '(rule (same ?x ?x)))
 (query-driver-loop)
 
@@ -113,6 +120,16 @@
                      (not (and (supervisor ?person ?y))
                           (job ?person (?j . ?rest-1))
                           (job ?y (?j . ?rest-2))))))
+
+;;; 4.59
+; (meeting ?x (Friday ?t))
+'(assert! (rule (meeting-time ?person ?day-and-time)
+                (or (and (job ?person (?a . ?b))
+                         (meeting ?a ?day-and-time))
+                    (meeting whole-company ?day-and-time))))
+
+'(meeting-time (Hacker Alyssa P) (Wednesday ?t))
+
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
 ;      (or (supervisor ?staff-person ?boss)
