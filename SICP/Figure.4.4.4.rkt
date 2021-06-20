@@ -176,6 +176,14 @@
    frame-stream))
 (put 'lisp-value 'qeval lisp-value)
 
+(define (name->string lst frame-stream)
+  (define (f lst)
+    (if (null? lst)
+        ""
+        (string-append (car lst) (f (cdr lst)))))
+  (f lst))
+(put 'name->string 'qeval name->string)
+
 ;(define user-initial-environment (make-top-level-environment))
 (define user-initial-environment (scheme-report-environment 5))
 

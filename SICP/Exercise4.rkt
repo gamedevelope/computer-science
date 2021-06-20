@@ -83,20 +83,16 @@
 ;;; 定义 same
 
 '(assert! (rule (same ?x ?x)))
-;(rule (lives-near ?p1 ?p2)
-;      (and (address ?p1 (?town . ?rest-1))
-;           (address ?p2 (?town . ?rest-2))
-;           (not (same ?p1 p2))))
 
 '(assert! (rule (lives-near ?p1 ?p2)
                 (and (address ?p1 (?town . ?rest-1))
                      (address ?p2 (?town . ?rest-2))
-                     (not (same ?p1 ?p2)))))
+                     (not (same ?p1 ?p2))
+                     (lisp-value string<?
+                                 (name->string ?p1)
+                                 (name->string ?p2)))))
 
 ;;; 4.57
-;  '(assert! (rule (same ?x ?x)))
-
-;'(and (job ?p1 ?j) (job ?p2 ?j) (not (same ?p1 ?p2)))
 ; 有问题的解答
 ; 存在另一种情况 a可以代替b, b可以代替c，那么a也可以代替c
 '(assert! (rule (can-replace? ?p1 ?p2)
