@@ -84,14 +84,6 @@
 
 '(assert! (rule (same ?x ?x)))
 
-'(assert! (rule (lives-near ?p1 ?p2)
-                (and (address ?p1 (?town . ?rest-1))
-                     (address ?p2 (?town . ?rest-2))
-                     (not (same ?p1 ?p2))
-                     (lisp-value string<?
-                                 (name->string ?p1)
-                                 (name->string ?p2)))))
-
 ;;; 4.57
 ; 有问题的解答
 ; 存在另一种情况 a可以代替b, b可以代替c，那么a也可以代替c
@@ -125,6 +117,24 @@
                     (meeting whole-company ?day-and-time))))
 
 '(meeting-time (Hacker Alyssa P) (Wednesday ?t))
+
+;;; 4.60
+;;; 每种组合会出现两次，所以会出现重复的结果
+;;; 解决这种问题，可以设置一个权重，只允许名字按权重从小到大出现
+'(assert! (rule (lives-near ?p1 ?p2)
+                (and (address ?p1 (?town . ?rest-1))
+                     (address ?p2 (?town . ?rest-2))
+                     (not (same ?p1 ?p2)))))
+;                     (lisp-value string<?
+;                                 (name->string ?p1)
+;                                 (name->string ?p2)))))
+
+;;; 4.61
+'(assert! (rule (?x next-to ?y in (?x ?y . ?u))))
+'(assert! (rule (?x next-to ?y in (?v . ?z))
+                (?x next-to ?y in ?z)))
+'(?x next-to ?y in (1 (2 3) 4))
+'(?x next-to 1 in (2 1 3 1))
 
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
