@@ -136,6 +136,11 @@
 '(?x next-to ?y in (1 (2 3) 4))
 '(?x next-to 1 in (2 1 3 1))
 
+;;; 4.62
+;;; 定义 last-pair
+;;; (last-pair (list 1 2 3 4 5)) => (5)
+
+
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
 ;      (or (supervisor ?staff-person ?boss)
