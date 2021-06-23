@@ -140,6 +140,12 @@
 ;;; 定义 last-pair
 ;;; (last-pair (list 1 2 3 4 5)) => (5)
 
+;;; (last-pair (3) ?x)
+;;; (last-pair (1 2 3) ?x)
+;;; (last-pair (2 ?x) (3))
+'(assert! (rule (last-pair (?x . ()) ?x)))
+'(assert! (rule (last-pair (?x . ?v) ?v)
+                (last-pair (?x . ?w) (?w . ?v))))
 
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
