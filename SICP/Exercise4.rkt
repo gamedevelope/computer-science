@@ -143,7 +143,7 @@
 ;;; (last-pair (3) ?x)
 ;;; (last-pair (1 2 3) ?x)
 ;;; (last-pair (2 ?x) (3))
-'(assert! (rule (last-pair (?x . ()) ?x)))
+'(assert! (rule (last-pair (?x . ()) (?x))))
 '(assert! (rule (last-pair (?x . ?z) ?last-elem)
                 (last-pair ?z ?last-elem)))
 
