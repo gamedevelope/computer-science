@@ -59,6 +59,16 @@
 (aroa! '(rule (meeting administration (Friday 1pm))))
 (aroa! '(rule (meeting whole-company (Wednesday 4pm))))
 
+(aroa! '(rule (son Adam Cain)))
+(aroa! '(rule (son Cain Enoch)))
+(aroa! '(rule (son Enoch Irad)))
+(aroa! '(rule (son Irad Mehujael)))
+(aroa! '(rule (son Mehujael Methushael)))
+(aroa! '(rule (son Methushael Lamech)))
+(aroa! '(rule (wife Lamech Ada)))
+(aroa! '(rule (son Ada Jabal)))
+(aroa! '(rule (son Ada Jubal)))
+
 ;(aroa! '(rule (same ?x ?x)))
 (query-driver-loop)
 
@@ -144,9 +154,10 @@
 ;;; (last-pair (1 2 3) ?x)
 ;;; (last-pair (2 ?x) (3))
 '(assert! (rule (last-pair (?x . ()) (?x))))
-;'(assert! (rule (last-pair (() . ?x) (?x))))
 '(assert! (rule (last-pair (?x . ?z) ?last-elem)
                 (last-pair ?z ?last-elem)))
+
+;;; 4.63
 
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
