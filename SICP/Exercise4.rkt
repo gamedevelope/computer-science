@@ -158,6 +158,9 @@
                 (last-pair ?z ?last-elem)))
 
 ;;; 4.63
+'(assert! (rule (grandson ?s ?g)
+                (and (son ?s ?f)
+                     (son ?f ?g))))
 
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
