@@ -158,9 +158,14 @@
                 (last-pair ?z ?last-elem)))
 
 ;;; 4.63
+'(assert! (rule (is-son ?m ?s)
+                (or (and (son ?w ?s)
+                         (wife ?m ?w))
+                    (son ?m ?s))))
+
 '(assert! (rule (grandson ?s ?g)
-                (and (son ?s ?f)
-                     (son ?f ?g))))
+                (and (is-son ?s ?f)
+                     (is-son ?f ?g))))
 
 ;;; 4.64
 ;(rule (outranked-by ?staff-person ?boss)
