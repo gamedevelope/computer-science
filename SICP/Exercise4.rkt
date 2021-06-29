@@ -168,8 +168,10 @@
                      (is-son ?f ?g))))
 
 ;;; 4.64
-;(rule (outranked-by ?staff-person ?boss)
-;      (or (supervisor ?staff-person ?boss)
-;          (and (outranked-by ?middle-manager ?boss)
-;               (supervisor ?staff-person ?middle-manager))))
+'(assert! (rule (outranked-by ?staff-person ?boss)
+                (or (supervisor ?staff-person ?boss)
+                    (and (outranked-by ?middle-manager ?boss)
+                         (supervisor ?staff-person ?middle-manager)))))
 
+;;; 4.65
+;;; 出现多次是因为 Bitdiddle Ben 含有多个下属, 匹配到了多个管理链表
