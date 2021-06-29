@@ -1,0 +1,23 @@
+#lang racket
+
+(inexact->exact 1.2)
+(exact->inexact (/ 1 10))
+(integer? 5)
+(complex? 5)
+(integer? 1+2i)
+(+ 1+2i 2+3i)
+(abs -5)
+(sin -5+2i)
+(sin 3.1415926)
+(sin 30)
+(eqv? 1 1.0)
+
+(inexact->exact 0.1)
+(inexact->exact 0.2)
+(inexact->exact 0.3)
+(inexact->exact 0.4)
+(inexact->exact 0.5)
+(inexact->exact 0.6)
+(inexact->exact 0.7)
+(inexact->exact 0.8)
+(inexact->exact 0.9)
