@@ -175,3 +175,7 @@
 
 ;;; 4.65
 ;;; 出现多次是因为 Bitdiddle Ben 含有多个下属, 匹配到了多个管理链表
+
+;;; 4.68
+'(assert! (rule (reverse (?x . ()) ?x)))
+'(assert! (rule (reverse (?x . ?y) (?y . ?x))))
