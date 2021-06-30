@@ -1,0 +1,37 @@
+#lang racket
+
+(cons 1 2)
+(cons (cons 1 2) 3)
+(cons 1 (cons 2 3))
+(cons 1 (cons 2 '()))
+(cons 1 (cons 2 null))
+(list? (cons 1 2))
+(list? (cons 1 null))
+(pair? (cons 1 2))
+(pair? (cons 1 null))
+(srcloc "file.rkt" 1 0 1 (+ 4 4))
+(list 'here (srcloc "file.rkt" 1 0 1 8) 'there)
+(cons 1 (srcloc "file.rkt" 1 0 1 8))
+(cons 1 (cons 2 (srcloc "file.rkt" 1 0 1 8)))
+(map (lambda (i) (/ 1 i)) '(1 2 3 4))
+(andmap (lambda (i) (i . < . 3)) '(1 2 3))
+(andmap (lambda (i) (i . > . 0)) '(1 2 3))
+(ormap (lambda (i) (i . < . 3)) '(1 2 3))
+(filter (lambda (i) (i . < . 3)) '(1 2 3))
+(foldl (lambda (v i) (+ v i))
+       10
+       '(1 2 3 4))
+(for-each (lambda (i) (display i))
+          '(1 2 3))
+(member "keys" '("Florida" "China" "keys" "U.S.A." "India"))
+(assoc 'where
+       '((when "3.30") (where "Florida") (who "mickey")))
+(define p (mcons 1 2))
+p
+(pair? p)
+(mpair? p)
+(set-mcar! p 0)
+p
+(mcons 0 2)
+(write p)
+(display p)
