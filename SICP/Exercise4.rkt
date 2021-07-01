@@ -183,5 +183,5 @@
 
 '(assert! (rule (reverse (?x . ()) (?x))))
 '(assert! (rule (reverse (?x . ?y) ?z)
-                (and (append-to-form ?t ?x ?z)
-                     (reverse ?y ?t))))
+                (and (reverse ?y ?t)
+                     (append-to-form ?t (?x) ?z))))
