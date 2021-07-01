@@ -177,5 +177,11 @@
 ;;; 出现多次是因为 Bitdiddle Ben 含有多个下属, 匹配到了多个管理链表
 
 ;;; 4.68
-'(assert! (rule (reverse (?x . ()) ?x)))
-'(assert! (rule (reverse (?x . ?y) (?y . ?x))))
+'(assert! (rule (append-to-form () ?y ?y)))
+'(assert! (rule (append-to-form (?u . ?v) ?y (?u . ?z))
+                (append-to-form ?v ?y ?z)))
+
+'(assert! (rule (reverse (?x . ()) (?x))))
+'(assert! (rule (reverse (?x . ?y) ?z)
+                (and (append-to-form ?t ?x ?z)
+                     (reverse ?y ?t))))
