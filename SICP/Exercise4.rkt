@@ -186,3 +186,14 @@
 '(assert! (rule (reverse (?x . ?y) (?u . ?v))
                 (and (reverse ?y ?t)
                      (append-to-form ?t (?x) (?u . ?v)))))
+
+;;; 4.69
+;;; 4.71
+(define (simple-query query-pattern frame-stream)
+  (stream-flatmap
+   (lambda (frame)
+     (stream-append (find-assertions query-pattern frame)
+                    (apply-rules query-pattern frame)))
+   frame-stream))
+
+
