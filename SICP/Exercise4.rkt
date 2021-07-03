@@ -196,4 +196,9 @@
                     (apply-rules query-pattern frame)))
    frame-stream))
 
-
+(define (disjoin disjuncts frame-stream)
+  (if (empty-disjunction? disjuncts)
+      the-empty-stream
+      (interleave
+       (qeval (first-disjunct disjuncts) frame-stream)
+       (disjoin (rest-disjuncts disjuncts) frame-stream))))
