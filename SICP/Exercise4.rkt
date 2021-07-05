@@ -188,17 +188,20 @@
                      (append-to-form ?t (?x) (?u . ?v)))))
 
 ;;; 4.69
-;;; 4.71
-(define (simple-query query-pattern frame-stream)
-  (stream-flatmap
-   (lambda (frame)
-     (stream-append (find-assertions query-pattern frame)
-                    (apply-rules query-pattern frame)))
-   frame-stream))
+;;; 4.70
+;;; 这样定义会将 THE-ASSERTION 设置成一个无穷流
 
-(define (disjoin disjuncts frame-stream)
-  (if (empty-disjunction? disjuncts)
-      the-empty-stream
-      (interleave
-       (qeval (first-disjunct disjuncts) frame-stream)
-       (disjoin (rest-disjuncts disjuncts) frame-stream))))
+;;; 4.71
+'(define (simple-query query-pattern frame-stream)
+   (stream-flatmap
+    (lambda (frame)
+      (stream-append (find-assertions query-pattern frame)
+                     (apply-rules query-pattern frame)))
+    frame-stream))
+
+'(define (disjoin disjuncts frame-stream)
+   (if (empty-disjunction? disjuncts)
+       the-empty-stream
+       (interleave
+        (qeval (first-disjunct disjuncts) frame-stream)
+        (disjoin (rest-disjuncts disjuncts) frame-stream))))
