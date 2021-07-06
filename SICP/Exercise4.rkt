@@ -205,3 +205,14 @@
        (interleave
         (qeval (first-disjunct disjuncts) frame-stream)
         (disjoin (rest-disjuncts disjuncts) frame-stream))))
+
+;;; 4.72
+;;; 疑问：什么是交错方式? 具体的代码形式是什么？
+
+;;; 4.73
+'(define (flatten-stream stream)
+   (if (stream-null? stream)
+       the-empty-stream
+       (interleave
+        (stream-car stream)
+        (flatten-stream (stream-cdr stream)))))
