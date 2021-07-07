@@ -167,6 +167,8 @@
                 (and (is-son ?s ?f)
                      (is-son ?f ?g))))
 
+'(?x Adam Irad) ;; 搜索 Adam Irad 之间是什么关系
+
 ;;; 4.64
 '(assert! (rule (outranked-by ?staff-person ?boss)
                 (or (supervisor ?staff-person ?boss)
