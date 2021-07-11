@@ -59,6 +59,9 @@
 (define (get-register-contents machine register-name)
   (get-contents (get-register machine register-name)))
 
+(define (get-register machine reg-name)
+  ((machine 'get-register) reg-name))
+
 (define (set-register=contents! machine register-name value)
   (set-contents! (get-register machine register-name) value)
   'done)
@@ -112,3 +115,107 @@
                   (lambda (insts labels)
                     (update-insts! insts labels machine)
                     insts)))
+
+(define (extract-labels text receive)
+  (if (null? text)
+      (receive '() '())
+      (extract-labels (cdr text)
+                      (lambda (insts labels)
+                        (let ((next-inst (car text)))
+                          (if (symbol? next-inst)
+                              (receive insts
+                                       (cons (make-label-entry next-inst
+                                                               insts)
+                                             labels))
+                              (receive (cons (make-instruction next-inst)
+                                             insts)
+                                       labels)))))))
+
+(define (update-insts! insts labels machine)
+  (let ((pc (get-register machine 'pc))
+        (flag (get-register machine 'flag))
+        (stack (machine 'stack))
+        (ops (machine 'operations)))
+    (for-each
+     (lambda (inst)
+       (set-instruction-execution-proc!
+        inst
+        (make-execution-procedure
+         (instruction-text inst) labels machine
+         pc flag stack ops)))
+     insts)))
+
+(define (make-instruction text)
+  (cons text '()))
+
+'(define (extract-labels text)
+   (if (null? text)
+       (cons '() '())
+       (let  ((result (extract-labels (cdr text))))
+         (let ((insts (car result)) (labels (cdr result)))
+           (let ((next-inst (car text)))
+             (if (symbol? next-inst)
+                 (cons insts
+                       (cons (make-label-entry next-inst insts) labels))
+                 (cons (cons (make-instruction next-inst) insts)
+                       labels)))))))
+
+(define (instruction-text inst)
+  (car inst))
+
+(define (instruction-execution-proc inst)
+  (cdr inst))
+
+(define (set-instruction-execution-proc! inst proc)
+  (set-cdr! inst proc))
+
+(define (make-label-entry label-name insts)
+  (cons label-name insts))
+
+(define (lookup-label labels label-name)
+  (let ((val (assoc label-name labels)))
+    (if val
+        (cdr val)
+        (error "Undefined label -- ASSEMBLE" label-name))))
+
+(define (make-execution-procedure inst labels machine pc flag stack ops)
+  (cond ((eq? (car inst) 'assign)
+         (make-assign inst machine labels ops pc))
+        ((eq? (car inst) 'test)
+         (make-test inst machine labels ops flag pc))
+        ((eq? (car inst) 'branch)
+         (make-branch inst machine labels flag pc))
+        ((eq? (car inst) 'goto)
+         (make-goto inst machine labels pc))
+        ((eq? (car inst) 'save)
+         (make-save inst machine stack pc))
+        ((eq? (car inst) 'restore)
+         (make-restore inst machine stack pc))
+        ((eq? (car inst) 'perform)
+         (make-perform inst machine lables ops pc))
+        (else (error "Unknown instruction type -- ASSE<BLE"
+                     inst))))
+        
+(define (make-assign inst machine lables operations pc)
+  (let ((target
+         (get-register machine (assign-reg-name inst)))
+        (value-exp (assign-value-exp inst)))
+    (let ((value-proc
+           (if (operation-exp? value-exp)
+               (make-peration-exp
+                value-exp machine labels operations)
+               (make-primitive-exp
+                (car value-exp) machine labels))))
+      (lambda ()
+        (set-contents! target (value-proc))
+        (advance-pc pc)))))
+
+(define (assign-reg-name assign-instruction)
+  (cadr assign-instruction))
+
+(define (assign-value-exp assign-instruction)
+  (cddr assign-instruction))
+
+(define (advance-pc pc)
+  (set-contents! pc (cdr (get-contents pc))))
+
