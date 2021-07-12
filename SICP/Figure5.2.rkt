@@ -53,7 +53,7 @@
 (define (push stack value)
   ((stack 'push) value))
 
-(define (stack machine)
+(define (start machine)
   (machine 'start))
 
 (define (get-register-contents machine register-name)
@@ -62,7 +62,7 @@
 (define (get-register machine reg-name)
   ((machine 'get-register) reg-name))
 
-(define (set-register=contents! machine register-name value)
+(define (set-register-contents! machine register-name value)
   (set-contents! (get-register machine register-name) value)
   'done)
 
@@ -196,13 +196,13 @@
         (else (error "Unknown instruction type -- ASSE<BLE"
                      inst))))
         
-(define (make-assign inst machine lables operations pc)
+(define (make-assign inst machine labels operations pc)
   (let ((target
          (get-register machine (assign-reg-name inst)))
         (value-exp (assign-value-exp inst)))
     (let ((value-proc
            (if (operation-exp? value-exp)
-               (make-peration-exp
+               (make-operation-exp
                 value-exp machine labels operations)
                (make-primitive-exp
                 (car value-exp) machine labels))))
@@ -250,7 +250,7 @@
 (define (make-goto inst machine labels pc)
   (let ((dest (goto-dest inst)))
     (cond ((label-exp? dest)
-           (let ((inst
+           (let ((insts
                   (lookup-label labels
                                 (label-exp-label dest))))
              (lambda () (set-contents! pc insts))))
@@ -263,7 +263,7 @@
           (else (error "Bad GOTO instruction -- ASSE<BLE"
                        inst)))))
 
-(define (goto-test goto-instruction)
+(define (goto-dest goto-instruction)
   (cadr goto-instruction))
 
 (define (make-save inst machine stack pc)
@@ -312,9 +312,49 @@
         (else
          (error "Unknown expression type -- ASSEMBLE" exp))))
 
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      false))
 (define (register-exp? exp) (tagged-list? exp 'reg))
 (define (register-exp-reg exp) (cadr exp))
 (define (constant-exp? exp) (tagged-list? exp 'const))
 (define (constant-exp-value exp) (cadr exp))
 (define (label-exp? exp) (tagged-list? exp 'label))
 (define (label-exp-label exp) (cadr exp))
+(define (make-operation-exp exp machine labels operations)
+  (let ((op (lookup-prim (operation-exp-op exp) operations))
+        (aprocs
+         (map (lambda (e)
+                (make-primitive-exp e machine labels))
+              (operation-exp-operands exp))))
+    (lambda ()
+      (apply op (map (lambda (p) (p)) aprocs)))))
+
+(define (lookup-prim symbol operations)
+  (let ((val (assoc symbol operations)))
+    (if val
+        (cadr val)
+        (error "Unknown operation -- ASSEMBLE" symbol))))
+
+(define (operation-exp? exp)
+  (and (pair? exp) (tagged-list? (car exp) 'op)))
+
+(define (operation-exp-op operation-exp)
+  (cadr (car operation-exp)))
+
+(define (operation-exp-operands operation-exp)
+  (cdr operation-exp))
+
+(define gcd-machine
+  (make-machine
+   '(a b t)
+   (list (list 'rem remainder) (list '= =))
+   '(test-b
+     (test (op =) (reg b) (const 0))
+     (branch (label gcd-done))
+     (assign t (op rem) (reg a) (reg b))
+     (assign a (reg b))
+     (assign b (reg t))
+     (goto (label test-b))
+     gcd-done)))
