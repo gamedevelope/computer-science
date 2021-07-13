@@ -358,3 +358,8 @@
      (assign b (reg t))
      (goto (label test-b))
      gcd-done)))
+
+(set-register-contents! gcd-machine 'a 1000)
+(set-register-contents! gcd-machine 'b 640)
+(start gcd-machine)
+(get-register-contents gcd-machine 'a)
