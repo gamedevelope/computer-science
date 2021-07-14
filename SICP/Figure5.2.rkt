@@ -363,3 +363,23 @@
 (set-register-contents! gcd-machine 'b 640)
 (start gcd-machine)
 (get-register-contents gcd-machine 'a)
+
+(define prod-machine
+  (make-machine
+   '(a b n t)
+   (list (list 'prod *) (list '> >) (list '= =) (list 'inc inc))
+   '(test-b
+     (test (op >) (reg b) (reg n))
+     (branch (label prod-done))
+     (assign t (op prod) (reg a) (reg b))
+     (assign a (reg t))
+     (assign b (op inc) (reg b))
+     (goto (label test-b))
+     prod-done)))
+
+
+(set-register-contents! prod-machine 'a 1)
+(set-register-contents! prod-machine 'b 1)
+(set-register-contents! prod-machine 'n 10)
+(start prod-machine)
+(get-register-contents prod-machine 'a)
