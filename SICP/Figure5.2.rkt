@@ -383,3 +383,14 @@
 (set-register-contents! prod-machine 'n 10)
 (start prod-machine)
 (get-register-contents prod-machine 'a)
+
+;;; 练习5.8
+'start
+'(goto (label here))
+'here
+'(assign a (const 3))
+'(goto (label there))
+'here
+'(assign a (const 4))
+'(goto (label there))
+'there
