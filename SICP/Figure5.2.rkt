@@ -123,10 +123,13 @@
                       (lambda (insts labels)
                         (let ((next-inst (car text)))
                           (if (symbol? next-inst)
-                              (receive insts
-                                       (cons (make-label-entry next-inst
-                                                               insts)
-                                             labels))
+                              ;;; 练习 5.8
+                              ;;; 增加逻辑处理同一个标号处在多个不同位置的错误
+                              (begin (display (list 'symbol next-inst))
+                                     (receive insts
+                                              (cons (make-label-entry next-inst
+                                                                      insts)
+                                                    labels)))
                               (receive (cons (make-instruction next-inst)
                                              insts)
                                        labels)))))))
@@ -155,8 +158,9 @@
          (let ((insts (car result)) (labels (cdr result)))
            (let ((next-inst (car text)))
              (if (symbol? next-inst)
-                 (cons insts
-                       (cons (make-label-entry next-inst insts) labels))
+                 ((display (list 'symbol next-inst))
+                  (cons insts
+                        (cons (make-label-entry next-inst insts) labels)))
                  (cons (cons (make-instruction next-inst) insts)
                        labels)))))))
 
