@@ -125,7 +125,8 @@
                           (if (symbol? next-inst)
                               ;;; 练习 5.8
                               ;;; 增加逻辑处理同一个标号处在多个不同位置的错误
-                              (begin (display (list 'symbol next-inst))
+                              (begin (display (list 'symbol next-inst labels))
+                                     
                                      (receive insts
                                               (cons (make-label-entry next-inst
                                                                       insts)
@@ -379,7 +380,8 @@
      (assign a (reg t))
      (assign b (op inc) (reg b))
      (goto (label test-b))
-     prod-done)))
+     prod-done
+     prod-done2)))
 
 
 (set-register-contents! prod-machine 'a 1)
