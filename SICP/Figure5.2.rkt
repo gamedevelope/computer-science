@@ -26,6 +26,12 @@
 (define (set-contents! register value)
   ((register 'set) value))
 
+(define (member? elem lst)
+  (cond ((null? lst) false)
+        ((equal? elem (car lst)) true)
+        (else
+         (member? elem (cdr lst)))))
+
 (define (make-stack)
   (let ((s '()))
     (define (push x)
@@ -125,12 +131,12 @@
                           (if (symbol? next-inst)
                               ;;; 练习 5.8
                               ;;; 增加逻辑处理同一个标号处在多个不同位置的错误
-                              (begin (display (list 'symbol next-inst labels))
-                                     
-                                     (receive insts
-                                              (cons (make-label-entry next-inst
-                                                                      insts)
-                                                    labels)))
+                              (if (member? (list next-inst) labels)
+                                  (error "Label repeat" next-inst)
+                                  (receive insts
+                                           (cons (make-label-entry next-inst
+                                                                   insts)
+                                                 labels)))
                               (receive (cons (make-instruction next-inst)
                                              insts)
                                        labels)))))))
@@ -381,7 +387,9 @@
      (assign b (op inc) (reg b))
      (goto (label test-b))
      prod-done
-     prod-done2)))
+     prod-done2
+     prod-done3
+     prod-done4)))
 
 
 (set-register-contents! prod-machine 'a 1)
