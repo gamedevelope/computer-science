@@ -357,6 +357,15 @@
 (define (operation-exp-operands operation-exp)
   (cdr operation-exp))
 
+;;; 练习 5.3
+'(controller
+  test-good-enough
+  (test (op good-enough) (reg b) (reg a))
+  (branch (label sqrt-done))
+  (assign t (op improve) (reg b) (reg a))
+  (goto (label test-good-enough))
+  sqrt-done)
+
 (define gcd-machine
   (make-machine
    '(a b t)
@@ -386,11 +395,7 @@
      (assign a (reg t))
      (assign b (op inc) (reg b))
      (goto (label test-b))
-     prod-done
-     prod-done2
-     prod-done3
-     prod-done4)))
-
+     prod-done)))
 
 (set-register-contents! prod-machine 'a 1)
 (set-register-contents! prod-machine 'b 1)
