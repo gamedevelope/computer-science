@@ -413,3 +413,17 @@
 '(assign a (const 4))
 '(goto (label there))
 'there
+
+(define machine-5.8
+  (make-machine
+   '(a)
+   (list)
+   '(start
+     (goto (label here))
+     here
+     (assign a (const 3))
+     (goto (label there))
+     here
+     (assign a (const 4))
+     (goto (label there))
+     there)))
