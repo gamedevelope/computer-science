@@ -1,6 +1,7 @@
 #lang racket
 
 (#%provide abs
+           cube
            println
            square
            )
@@ -10,6 +11,9 @@
 
 (define (square x)
   (* x x))
+
+(define (cube x)
+  (* x x x))
 
 (define (println p)
   (display p)
