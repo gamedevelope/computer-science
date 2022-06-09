@@ -59,6 +59,30 @@
   ;        (expt 2 (h (- n 1)))))
   ; (h n) => 2 ^ 2 ^ 2 ... ^ 2 count 2 is n
   (println (h 4))
-  0
   )
 (ex1.10)
+
+;;; Exercise 1.11
+;;; 递归版本
+(define (ex1.11-v1)
+  (define (f n)
+    (if (< n 3)
+        n
+        (+ (f (- n 1))
+           (* 2 (f (- n 2)))
+           (* 3 (f (- n 3))))))
+  (println (f 11)))
+(ex1.11-v1)
+;;; 迭代版本
+(define (ex1.11-v2)
+  (define (f n)
+    (define (iter n v1 v2 v3)
+      (if (< n 3)
+          v1
+          (iter (- n 1)
+                (+ v1 (* 2 v2) (* 3 v3))
+                v1
+                v2)))
+    (iter n 2 1 0))
+  (println (f 11)))
+(ex1.11-v2)
