@@ -86,3 +86,22 @@
     (iter n 2 1 0))
   (println (f 11)))
 (ex1.11-v2)
+
+;;; Exercise 1.12
+;;; 帕斯卡三角形
+;;; 由于本章还没有开始介绍 cons, car, cdr 等操作
+;;; 所以暂时只提供 (f x y) 来表示第几行第几个数
+(define (ex1.12)
+  (define (f x y)
+    (cond ((< x y) (error "x must <= y"))
+          ((= y 1) 1)
+          ((= x y) 1)
+          (else
+           (+ (f (- x 1) (- y 1))
+              (f (- x 1) y)))))
+
+  (display (list (f 4 1) (f 4 2) (f 4 3) (f 4 4)))
+  (display (list (f 5 1) (f 5 2) (f 5 3) (f 5 4) (f 5 5))))
+(ex1.12)
+
+        
