@@ -42,7 +42,23 @@
           ((= x 0) (* 2 y))
           ((= y 1) 2)
           (else (A (- x 1) (A x (- y 1))))))
-  (println (A 1 10))
-  (println (A 2 4))
-  (println (A 3 3)))
+  (println (A 1 10)) ; 1024
+  (println (A 2 4))  ; 65536
+  (println (A 3 3))  ; 65536
+
+  (define (f n) (A 0 n)) ; (define (f n) (* 2 n))
+  (println (f 11))
+  
+  (define (g n) (A 1 n)) ; (define (g n) (expt 2 n))
+  (println (g 11))
+
+  (define (h n) (A 2 n))
+  ;  (define (h n)
+  ;    (if (<= n 1)
+  ;        2
+  ;        (expt 2 (h (- n 1)))))
+  ; (h n) => 2 ^ 2 ^ 2 ... ^ 2 count 2 is n
+  (println (h 4))
+  0
+  )
 (ex1.10)
