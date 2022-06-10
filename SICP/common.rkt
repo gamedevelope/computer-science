@@ -1,10 +1,6 @@
 #lang racket
 
-(#%provide abs
-           cube
-           println
-           square
-           )
+(provide (all-defined-out))
 
 (define (abs x)
   (if (< x 0) (- x) x))
@@ -15,6 +11,15 @@
 (define (cube x)
   (* x x x))
 
-(define (println p)
-  (display p)
-  (newline))
+;(define (println p)
+;  (display p)
+;  (newline))
+
+(define (lambda-cost f)
+  (define t1 (current-inexact-milliseconds))
+  (define v (f))
+  (define t2 (current-inexact-milliseconds))
+  (fprintf (current-output-port)
+           "~a cost [~a ms] \n"
+           v
+           (- t2 t1)))
