@@ -1,6 +1,6 @@
 #lang racket
 
-(#%require "common.rkt")
+(require "common.rkt")
 
 ;;; Exercise 1.3
 (define (ex1.3)
@@ -71,7 +71,7 @@
         (+ (f (- n 1))
            (* 2 (f (- n 2)))
            (* 3 (f (- n 3))))))
-  (println (f 11)))
+  (lambda-cost (lambda ()(f 15))))
 (ex1.11-v1)
 ;;; 迭代版本
 (define (ex1.11-v2)
@@ -89,7 +89,7 @@
   (println (f 1))
   (println (f 2))
   (println (f 3))
-  (println (f 11))
+  (lambda-cost (lambda ()(f 15)))
   )
 (ex1.11-v2)
 
@@ -109,5 +109,4 @@
   (display (list (f 4 1) (f 4 2) (f 4 3) (f 4 4)))
   (display (list (f 5 1) (f 5 2) (f 5 3) (f 5 4) (f 5 5))))
 (ex1.12)
-
-        
+  
