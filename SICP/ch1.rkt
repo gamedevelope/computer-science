@@ -2,6 +2,7 @@
 
 (require "common.rkt")
 (require racket/trace)
+(require rackunit)
 
 ;;; Exercise 1.3
 (define (ex1.3)
@@ -138,18 +139,40 @@
 
 ;;; Exercise 1.17
 (define (ex1.17)
-  (define (* a b)
+  (define (fast-mul a b)
     (cond ((= a 0) 0)
           ((= b 0) 0)
           ((= b 1) a)
           ((= b -1) (- a))
-          ((< a b) (* b a))
-          ((even? b) (* (double a) (halve b)))
+          ((< a b) (fast-mul b a))
+          ((even? b) (fast-mul (double a) (halve b)))
           (else
-           (+ a (* a (- b 1))))))
-  (trace *)
-  (println (* 10 10))
-  (println (* 99 99))
-  (println (* 2 -1024))
+           (+ a (fast-mul a (- b 1))))))
+  (check-equal? (fast-mul 10 10) (* 10 10))
+  (println (fast-mul 10 10))
+  (println (fast-mul 99 99))
+  (println (fast-mul 2 -1024))
   )
 (ex1.17)
+
+;;; Exercise 1.18 跟 1.17 要求一样
+;;; 换成迭代的计算方式
+(define (ex1.18)
+  (define (iter r a b)
+      (cond [(= b 0) r]
+            [(even? b)
+             (iter r (double a) (halve b))]
+            [else
+             (iter (+ r a)
+                   a
+                   (- b 1))]))
+  (define (fast-mul a b)
+    (iter 0 a b))
+  (check-equal? (fast-mul 10 10) (* 10 10))
+  (check-equal? (fast-mul 0 0) (* 0 0))
+  (check-equal? (fast-mul 1 1) (* 1 1))
+  (trace iter)
+  (trace fast-mul)
+  (println (fast-mul 1024 1023))
+  )
+(ex1.18)
