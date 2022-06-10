@@ -76,15 +76,21 @@
 ;;; 迭代版本
 (define (ex1.11-v2)
   (define (f n)
-    (define (iter n v1 v2 v3)
-      (if (< n 3)
+    (define (iter x v1 v2 v3)
+      (if (<= n x)
           v1
-          (iter (- n 1)
+          (iter (+ x 1)
                 (+ v1 (* 2 v2) (* 3 v3))
                 v1
                 v2)))
-    (iter n 2 1 0))
-  (println (f 11)))
+    (if (< n 3)
+        n
+        (iter 2 2 1 0)))
+  (println (f 1))
+  (println (f 2))
+  (println (f 3))
+  (println (f 11))
+  )
 (ex1.11-v2)
 
 ;;; Exercise 1.12
