@@ -135,3 +135,21 @@
   (println (fast-expt 2 100))
   )
 (ex1.16)
+
+;;; Exercise 1.17
+(define (ex1.17)
+  (define (* a b)
+    (cond ((= a 0) 0)
+          ((= b 0) 0)
+          ((= b 1) a)
+          ((= b -1) (- a))
+          ((< a b) (* b a))
+          ((even? b) (* (double a) (halve b)))
+          (else
+           (+ a (* a (- b 1))))))
+  (trace *)
+  (println (* 10 10))
+  (println (* 99 99))
+  (println (* 2 -1024))
+  )
+(ex1.17)

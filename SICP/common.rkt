@@ -11,9 +11,11 @@
 (define (cube x)
   (* x x x))
 
-;(define (println p)
-;  (display p)
-;  (newline))
+(define (double x)
+  (* x 2))
+
+(define (halve x)
+  (/ x 2))
 
 (define (lambda-cost f)
   (define t1 (current-inexact-milliseconds))
