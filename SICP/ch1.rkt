@@ -1,6 +1,7 @@
 #lang racket
 
 (require "common.rkt")
+(require racket/trace)
 
 ;;; Exercise 1.3
 (define (ex1.3)
@@ -106,7 +107,31 @@
            (+ (f (- x 1) (- y 1))
               (f (- x 1) y)))))
 
-  (display (list (f 4 1) (f 4 2) (f 4 3) (f 4 4)))
-  (display (list (f 5 1) (f 5 2) (f 5 3) (f 5 4) (f 5 5))))
+  (println (list (f 4 1) (f 4 2) (f 4 3) (f 4 4)))
+  (println (list (f 5 1) (f 5 2) (f 5 3) (f 5 4) (f 5 5))))
 (ex1.12)
-  
+
+;;; Exercise 1.13
+;;; 根据提示很容易证明结论
+
+;;; Exercise 1.14
+
+;;; Exercise 1.16
+(define (ex1.16)
+  ;;; 使用迭代的方式求幂
+  ;;; n不能是负整数
+  (define (iter p x n)
+    (cond ((= n 0) 1)
+          ((= n 1) p)
+          ((odd? n) (iter (* p x) x (- n 1)))
+          (else
+           (iter (* p p) x (/ n 2)))))
+  (define (fast-expt x n)
+    (iter x x n))
+  (println (fast-expt 1 4))
+  (println (fast-expt 2 0))
+  (println (fast-expt 2 4))
+  (trace iter)
+  (println (fast-expt 2 100))
+  )
+(ex1.16)
