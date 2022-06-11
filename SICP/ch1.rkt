@@ -176,3 +176,37 @@
   (println (fast-mul 1024 1023))
   )
 (ex1.18)
+
+;;; Exercise 1.19
+;(define (ex1.19)
+;  (define (fib n)
+;    (fib-iter 1 0 0 1 n))
+;  (define (fib-iter a b p q count)
+;    (cond [(= count 0) b]
+;          [(even? count)
+;           (fib-iter a
+;                     b
+;                     ..
+;                     ..
+;                     (/ count 2))]
+;          [else
+;           (fib-iter (+ (* b q) (* a q) (* a p))
+;                     (+ (* b p) (* a q))
+;                     p
+;                     q
+;                     (- count 1))]))
+;  (println (fib 10))
+;  )
+;(ex1.19)
+
+;;;
+(define (expmod base exp m)
+  (cond [(= exp 0) 1]
+        [(even? exp)
+         (remainder
+          (square (expmod base (/ exp 2) m))
+          m)]
+        (else
+         (remainder
+          (* base (expmod base (- exp 1) m))
+          m))))
