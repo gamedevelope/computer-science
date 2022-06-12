@@ -132,7 +132,6 @@
   (println (fast-expt 1 4))
   (println (fast-expt 2 0))
   (println (fast-expt 2 4))
-  (trace iter)
   (println (fast-expt 2 100))
   )
 (ex1.16)
@@ -171,8 +170,6 @@
   (check-equal? (fast-mul 10 10) (* 10 10))
   (check-equal? (fast-mul 0 0) (* 0 0))
   (check-equal? (fast-mul 1 1) (* 1 1))
-  (trace iter)
-  (trace fast-mul)
   (println (fast-mul 1024 1023))
   )
 (ex1.18)
@@ -199,14 +196,39 @@
 ;  )
 ;(ex1.19)
 
+; 1.2.6
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(define (ex1.21)
+  (println (smallest-divisor 199))
+  (println (smallest-divisor 1999))
+  (println (smallest-divisor 19999))
+  )
+(ex1.21)
+
+(define (ex1.22)
+  (define (timed-prime-test n)
+    (newline)
+    (display n)
+    (start-prime-test n (runtime)))
+
+  (define (start-prime-test n start-time)
+    (if (prime? n)
+        (report-prime (- (runtime) start-time))
+        0))
+  
+  (define (report-prime elapsed-time)
+    (display " **** ")
+    (display elapsed-time))
+
+  (timed-prime-test 1125899839733759)
+  )
+(ex1.22)
+
 ;;;
-(define (expmod base exp m)
-  (cond [(= exp 0) 1]
-        [(even? exp)
-         (remainder
-          (square (expmod base (/ exp 2) m))
-          m)]
-        (else
-         (remainder
-          (* base (expmod base (- exp 1) m))
-          m))))
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
