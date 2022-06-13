@@ -253,6 +253,37 @@
 ;;;
 
 ;;; ex1.25
+;;; Alysss P.Hacker 说的不对
+;;; 求特别大的数，会有明显差异
+(define (ex1.25)
+  (define (iter p x n)
+    (cond ((= n 0) 1)
+          ((= n 1) p)
+          ((odd? n) (iter (* p x) x (- n 1)))
+          (else
+           (iter (* p p) x (/ n 2)))))
+  (define (fast-expt x n)
+    (iter x x n))
+  (define (expmod-v1 base exp m)
+    (remainder (fast-expt base exp) m))
 
+  (define (expmod-v2 base exp m)
+  (cond [(= exp 0) 1]
+        [(even? exp)
+         (remainder
+          (square (expmod-v2 base (/ exp 2) m))
+          m)]
+        [else
+         (remainder
+          (* base (expmod-v2 base (- exp 1) m))
+          m)]))
 
+  (println "ex1.25")
 
+  (trace iter)
+  (println (expmod-v1 10 10 3))
+
+  (trace expmod-v2)
+  (println (expmod-v2 105 11 11))
+  )
+(ex1.25)
