@@ -158,13 +158,13 @@
 ;;; 换成迭代的计算方式
 (define (ex1.18)
   (define (iter r a b)
-      (cond [(= b 0) r]
-            [(even? b)
-             (iter r (double a) (halve b))]
-            [else
-             (iter (+ r a)
-                   a
-                   (- b 1))]))
+    (cond [(= b 0) r]
+          [(even? b)
+           (iter r (double a) (halve b))]
+          [else
+           (iter (+ r a)
+                 a
+                 (- b 1))]))
   (define (fast-mul a b)
     (iter 0 a b))
   (check-equal? (fast-mul 10 10) (* 10 10))
@@ -233,16 +233,21 @@
             (search-for-primes (inc low) (dec count))
             (search-for-primes (inc low) count))))
   
-  (search-for-primes 100000000000 3)
-  (newline)
-  (search-for-primes 1000000000000 3)
-  (newline)
-  (search-for-primes 10000000000000 3)
+  ;(search-for-primes 100000000000 3)
+  ;(newline)
+  ;(search-for-primes 1000000000000 3)
+  ;(newline)  
+  ;(search-for-primes 10000000000000 3)
   
   (timed-prime-test 1125899839733759)
   )
 (ex1.22)
 
+;;; 
+(define (ex1.23)
+  (println "1.23")
+  )
+(ex1.23)
 ;;;
 (define (fermat-test n)
   (define (try-it a)
