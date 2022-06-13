@@ -215,7 +215,7 @@
     (start-prime-test n (runtime)))
 
   (define (start-prime-test n start-time)
-    (if (prime? n)
+    (if (fast-prime? n 100)
         (report-prime n (- (runtime) start-time))
         #f))
   
@@ -233,13 +233,14 @@
             (search-for-primes (inc low) (dec count))
             (search-for-primes (inc low) count))))
   
-  ;(search-for-primes 100000000000 3)
-  ;(newline)
-  ;(search-for-primes 1000000000000 3)
-  ;(newline)  
-  ;(search-for-primes 10000000000000 3)
+  (search-for-primes 10000000 3)
+  (newline)
+  (search-for-primes 100000000 3)
+  (newline)  
+  (search-for-primes 1000000000 3)
   
-  (timed-prime-test 1125899839733759)
+  ;  (timed-prime-test 11258998397111)
+  ;  (timed-prime-test 1125899839733759)
   )
 (ex1.22)
 
@@ -248,8 +249,10 @@
   (println "1.23")
   )
 (ex1.23)
+;;; ex1.24 因为CPU太快，在书上指定范围内已经测量不出性能差别
 ;;;
-(define (fermat-test n)
-  (define (try-it a)
-    (= (expmod a n n) a))
-  (try-it (+ 1 (random (- n 1)))))
+
+;;; ex1.25
+
+
+
