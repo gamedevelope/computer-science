@@ -17,6 +17,12 @@
 (define (halve x)
   (/ x 2))
 
+(define (inc x)
+  (+ x 1))
+
+(define (dec x)
+  (- x 1))
+
 (define (lambda-cost f)
   (define t1 (current-inexact-milliseconds))
   (define v (f))

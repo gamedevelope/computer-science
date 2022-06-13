@@ -216,13 +216,29 @@
 
   (define (start-prime-test n start-time)
     (if (prime? n)
-        (report-prime (- (runtime) start-time))
-        0))
+        (report-prime n (- (runtime) start-time))
+        #f))
   
-  (define (report-prime elapsed-time)
+  (define (report-prime n elapsed-time)
+    (display n)
     (display " **** ")
-    (display elapsed-time))
+    (display elapsed-time)
+    (newline)
+    #t)
 
+  (define (search-for-primes low count)
+    (if (= count 0)
+        #f
+        (if (start-prime-test low (runtime))
+            (search-for-primes (inc low) (dec count))
+            (search-for-primes (inc low) count))))
+  
+  (search-for-primes 100000000000 3)
+  (newline)
+  (search-for-primes 1000000000000 3)
+  (newline)
+  (search-for-primes 10000000000000 3)
+  
   (timed-prime-test 1125899839733759)
   )
 (ex1.22)
