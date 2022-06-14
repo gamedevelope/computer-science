@@ -287,3 +287,49 @@
   (println (expmod-v2 105 11 11))
   )
 (ex1.25)
+
+;;; 多次重复计算 expmod 导致性能下降
+(define (ex1.26)
+  ;;; (base ^ exp) mod m
+  (define (expmod base exp m)
+    (cond [(= exp 0) 1]
+          [(even? exp)
+           (remainder
+            (* (expmod base (/ exp 2) m)
+               (expmod base (/ exp 2) m))
+            m)]
+          [else
+           (remainder
+            (* base (expmod base (- exp 1) m))
+            m)]))
+  (trace expmod)
+  (expmod 10 100 3)
+  )
+;(ex1.26)
+
+(define (ex1.27)
+  (define (try-it a n)
+    (cond [(>= a n) #t]
+          [(= (expmod a n n) a) (try-it (add1 a) n)]
+          [else #f]))
+  (define (fermat-test n)
+    (display "fermat-test ")
+    (display n)
+    (display " result: ")
+    (try-it 1 n))
+  
+  (println (fermat-test 3))
+  (println (fermat-test 4))
+  (println (fermat-test 5))
+  (println (fermat-test 6))
+
+  ;;; 能通过费马检查的数
+  ;;; 561, 1105, 1729, 2465, 2821, and 6601.
+  (println (fermat-test 561))
+  (println (fermat-test 1105))
+  (println (fermat-test 1729))
+  (println (fermat-test 2465))
+  (println (fermat-test 2821))
+  (println (fermat-test 6601))
+  )
+(ex1.27)
