@@ -344,10 +344,6 @@
           0
           (square p)))
     (cond [(= exp 0) 1]
-          [(even? base)
-           (remainder (double (remainder (expmod-v1.28 (halve base) exp m)
-                                         m))
-                      m)]
           [(even? exp)
            (remainder
             (square-test (expmod-v1.28 base (/ exp 2) m))
@@ -378,5 +374,6 @@
   
   ;;; 是素数
   (println (miller-rabin-test? 1009 10))
+  (println (miller-rabin-test? 100000007 10))
   )
 (ex1.28)
