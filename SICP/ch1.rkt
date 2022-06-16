@@ -336,15 +336,21 @@
 
 (define (ex1.28)
   (define (expmod-v1.28 base exp m)
+    ;;; 在这个方法中检测
+    (define (square-test p)
+      (if (and (> p 1)
+               (< p (- m 1))
+               (= 1 (remainder (square p) m)))
+          0
+          (square p)))
     (cond [(= exp 0) 1]
-          [(and (> base 1)
-                (< base (- m 1))
-                (= exp 2)
-                (= 1 (remainder (square base) m)))
-           0]
+          [(even? base)
+           (remainder (double (remainder (expmod-v1.28 (halve base) exp m)
+                                         m))
+                      m)]
           [(even? exp)
            (remainder
-            (square (expmod-v1.28 base (/ exp 2) m))
+            (square-test (expmod-v1.28 base (/ exp 2) m))
             m)]
           [else
            (remainder
@@ -360,17 +366,17 @@
     (cond ((= times 0) true)
           ((fermat-test n) (miller-rabin-test? n (- times 1)))
           (else false)))
-
+  
   ;;; 检测次数足够大才能排错
   ;;; 这些都不是素数
-  (println (miller-rabin-test? 561 100))
-  (println (miller-rabin-test? 1105 100))
-  (println (miller-rabin-test? 1729 100))
-  (println (miller-rabin-test? 2465 100))
-  (println (miller-rabin-test? 2821 100))
-  (println (miller-rabin-test? 6601 100))
-
+  (println (miller-rabin-test? 561 10))
+  (println (miller-rabin-test? 1105 10))
+  (println (miller-rabin-test? 1729 10))
+  (println (miller-rabin-test? 2465 10))
+  (println (miller-rabin-test? 2821 10))
+  (println (miller-rabin-test? 6601 10))
+  
   ;;; 是素数
-  (println (miller-rabin-test? 1009 100))
+  (println (miller-rabin-test? 1009 10))
   )
 (ex1.28)
