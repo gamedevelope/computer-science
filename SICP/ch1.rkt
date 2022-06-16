@@ -233,7 +233,7 @@
             (search-for-primes (inc low) (dec count))
             (search-for-primes (inc low) count))))
   
-  (search-for-primes 10000000 3)
+  (search-for-primes 1000 3)
   (newline)
   (search-for-primes 100000000 3)
   (newline)  
@@ -333,3 +333,44 @@
   (println (fermat-test 6601))
   )
 (ex1.27)
+
+(define (ex1.28)
+  (define (expmod-v1.28 base exp m)
+    (cond [(= exp 0) 1]
+          [(and (> base 1)
+                (< base (- m 1))
+                (= exp 2)
+                (= 1 (remainder (square base) m)))
+           0]
+          [(even? exp)
+           (remainder
+            (square (expmod-v1.28 base (/ exp 2) m))
+            m)]
+          [else
+           (remainder
+            (* base (expmod-v1.28 base (- exp 1) m))
+            m)]))
+  
+  (define (fermat-test n)
+    (define (try-it-v1.28 a)
+      (= (expmod-v1.28 a n n) a))
+    (try-it-v1.28 (+ 1 (random (- n 1)))))
+  
+  (define (miller-rabin-test? n times)
+    (cond ((= times 0) true)
+          ((fermat-test n) (miller-rabin-test? n (- times 1)))
+          (else false)))
+
+  ;;; 检测次数足够大才能排错
+  ;;; 这些都不是素数
+  (println (miller-rabin-test? 561 100))
+  (println (miller-rabin-test? 1105 100))
+  (println (miller-rabin-test? 1729 100))
+  (println (miller-rabin-test? 2465 100))
+  (println (miller-rabin-test? 2821 100))
+  (println (miller-rabin-test? 6601 100))
+
+  ;;; 是素数
+  (println (miller-rabin-test? 1009 100))
+  )
+(ex1.28)
