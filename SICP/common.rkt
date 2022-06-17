@@ -84,3 +84,16 @@
         result
         (iter (next a) (+ (term a) result))))
   (iter a 0))
+
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a)
+         (product term (next a) next b))))
+
+(define (product-iter term a next b)
+  (define (iter x result)
+    (if (> x b)
+        result
+        (iter (next x) (* result (term x)))))
+  (iter a 1))
