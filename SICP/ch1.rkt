@@ -408,3 +408,20 @@
   (println (simpson-rule sin 0 1 1000))
   )
 (ex1.29)
+
+;;; 将sum的递归形式改成迭代形式
+(define (ex1.30)
+  (define (sum term a next b)
+    (define (iter a result)
+      (if (> a b)
+          result
+          (iter (next a) (+ (term a) result))))
+    (iter a 0))
+  (println (sum square 1 inc 100))
+  (println (sum (lambda (x)
+                  x)
+                1
+                inc
+                100))
+  )
+(ex1.30)
