@@ -425,3 +425,14 @@
                 100))
   )
 (ex1.30)
+
+(define (ex1.31)
+  (println (double (product (lambda (x)
+                              (/ (square x)
+                                 (- (square x) 1)))
+                            2.0
+                            (lambda (x) (+ x 2))
+                            99)))
+  )
+(ex1.31)
+
