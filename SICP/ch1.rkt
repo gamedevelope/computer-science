@@ -436,3 +436,34 @@
   )
 (ex1.31)
 
+(define (ex1.32)
+  (define (accumulate-v1 combiner null-value term a next b)
+    (if (> a b)
+        null-value
+        (combiner (term a)
+                  (accumulate-v1 combiner null-value term (next a) next b))))
+  (define (accumulate-v2 combiner null-value term a next b)
+    (define (iter x result)
+      (if (> x b)
+          result
+          (iter (next x)
+                (combiner (term x)
+                          result))))
+    (iter a null-value))
+  
+  (println (accumulate-v1 + 0 identity 1 inc 10))
+  (println (accumulate-v1 * 1 identity 1 inc 10))
+
+  (println (accumulate-v2 + 0 identity 1 inc 10))
+  (println (accumulate-v2 * 1 identity 1 inc 10))
+
+  (println (accumulate-v2 *
+                          1
+                          (lambda (x)
+                            (/ (square x)
+                               (- (square x) 1)))
+                          2.0
+                          (lambda (x) (+ x 2))
+                          99))
+  )
+(ex1.32)
