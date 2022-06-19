@@ -502,3 +502,13 @@
   (println (sum-gcd 7))
   )
 (ex1.33)
+
+(define (ex1.34)
+  (define (f g) (g 2))
+  (println (f square))
+  (println (f (lambda (z) (* z (+ z 1)))))
+
+  ;;;
+  ;;; (f f) error
+  )
+(ex1.34)
