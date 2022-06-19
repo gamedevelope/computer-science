@@ -199,7 +199,8 @@
 ; 1.2.6
 
 (define (prime? n)
-  (= n (smallest-divisor n)))
+  (and (> n 1)
+       (= n (smallest-divisor n))))
 
 (define (ex1.21)
   (println (smallest-divisor 199))
@@ -465,5 +466,39 @@
                           2.0
                           (lambda (x) (+ x 2))
                           99))
+
+  (define (sum term a next b)
+    (accumulate-v2 + 0 term a next b))
+
+  (define (product term a next b)
+    (accumulate-v2 * 1 term a next b))
+  
+  (println (sum identity 1 inc 10))
+  (println (product identity 1 inc 10))
   )
 (ex1.32)
+
+(define (ex1.33)
+  (define (filtered-accumulate combiner null-value term a next b filter)
+    (define (iter x result)
+      (if (> x b)
+          result
+          (iter (next x)
+                (combiner (if (filter x) (term x) null-value)
+                          result))))
+    (iter a null-value))
+
+  (define (sum-primes a b)
+    (filtered-accumulate + 0 identity a inc b prime?))
+  
+  (println (sum-primes 1 100))
+
+  (define (sum-gcd n)
+    (define (filter-gcd x)
+      (= (gcd n x) 1))
+
+    (filtered-accumulate * 1 identity 1 inc (- n 1) filter-gcd))
+
+  (println (sum-gcd 7))
+  )
+(ex1.33)
