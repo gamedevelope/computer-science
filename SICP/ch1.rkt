@@ -269,15 +269,15 @@
     (remainder (fast-expt base exp) m))
 
   (define (expmod-v2 base exp m)
-  (cond [(= exp 0) 1]
-        [(even? exp)
-         (remainder
-          (square (expmod-v2 base (/ exp 2) m))
-          m)]
-        [else
-         (remainder
-          (* base (expmod-v2 base (- exp 1) m))
-          m)]))
+    (cond [(= exp 0) 1]
+          [(even? exp)
+           (remainder
+            (square (expmod-v2 base (/ exp 2) m))
+            m)]
+          [else
+           (remainder
+            (* base (expmod-v2 base (- exp 1) m))
+            m)]))
 
   (println "ex1.25")
 
@@ -589,3 +589,16 @@
                1.5)
   )
 (ex1.36)
+
+(define (ex1.37)
+  (define (cont-frac-v1 n d k)
+    (define (f n d p)
+      (if (>= p k)
+          (/ (n p) (d p))
+          (/ (n p) (+ (d p) (f n d (inc p))))))
+    (f n d 1))
+  (cont-frac-v1 (lambda (i) 1.0)
+                (lambda (i) 1.0)
+                30)
+  )
+(ex1.37)
