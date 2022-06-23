@@ -49,3 +49,18 @@
    (println (two-in-a-row? '(b a b a c)))
    (println (two-in-a-row? '(a b c d)))
    ))
+
+((λ ()
+   (define sum-of-prefixes-b
+     (λ (num lat)
+       (cond ((null? lat) '())
+             (else (cons (+ num (car lat))
+                         (sum-of-prefixes-b
+                          (+ num (car lat))
+                          (cdr lat)))))))
+   (define sum-of-prefixes
+     (λ (lat)
+       (sum-of-prefixes-b 0 lat)))
+   (println (sum-of-prefixes '(1 2 3 4)))
+   (println (sum-of-prefixes '(1 1 1 1)))
+   ))
