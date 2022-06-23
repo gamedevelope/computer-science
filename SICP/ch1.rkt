@@ -13,6 +13,7 @@
 
   (println (f 1 2 3))
   (println (f 4 3 2)))
+(link 'ex1.3 ex1.3)
 
 ;;; Exercise 1.8
 (define (ex1.8)
@@ -36,6 +37,7 @@
 
   (println (cube-root -10))
   (println (cube (cube-root -10))))
+(link 'ex1.8 ex1.8)
 
 ;;; Exercise 1.10
 (define (ex1.10)
@@ -62,7 +64,7 @@
   ; (h n) => 2 ^ 2 ^ 2 ... ^ 2 count 2 is n
   (println (h 4))
   )
-(ex1.10)
+(link 'ex1.10 ex1.10)
 
 ;;; Exercise 1.11
 ;;; 递归版本
@@ -74,7 +76,8 @@
            (* 2 (f (- n 2)))
            (* 3 (f (- n 3))))))
   (lambda-cost (lambda ()(f 15))))
-(ex1.11-v1)
+(link 'ex1.11-v1 ex1.11-v1)
+
 ;;; 迭代版本
 (define (ex1.11-v2)
   (define (f n)
@@ -93,7 +96,7 @@
   (println (f 3))
   (lambda-cost (lambda ()(f 15)))
   )
-(ex1.11-v2)
+(link 'ex1.11-v2 ex1.11-v2)
 
 ;;; Exercise 1.12
 ;;; 帕斯卡三角形
@@ -110,7 +113,7 @@
 
   (println (list (f 4 1) (f 4 2) (f 4 3) (f 4 4)))
   (println (list (f 5 1) (f 5 2) (f 5 3) (f 5 4) (f 5 5))))
-(ex1.12)
+(link 'ex1.12 ex1.12)
 
 ;;; Exercise 1.13
 ;;; 根据提示很容易证明结论
@@ -134,7 +137,7 @@
   (println (fast-expt 2 4))
   (println (fast-expt 2 100))
   )
-(ex1.16)
+(link 'ex1.16 ex1.16)
 
 ;;; Exercise 1.17
 (define (ex1.17)
@@ -152,7 +155,7 @@
   (println (fast-mul 99 99))
   (println (fast-mul 2 -1024))
   )
-(ex1.17)
+(link 'ex1.17 ex1.17)
 
 ;;; Exercise 1.18 跟 1.17 要求一样
 ;;; 换成迭代的计算方式
@@ -172,7 +175,7 @@
   (check-equal? (fast-mul 1 1) (* 1 1))
   (println (fast-mul 1024 1023))
   )
-(ex1.18)
+(link 'ex1.18 ex1.18)
 
 ;;; Exercise 1.19
 ;(define (ex1.19)
@@ -207,7 +210,7 @@
   (println (smallest-divisor 1999))
   (println (smallest-divisor 19999))
   )
-(ex1.21)
+(link 'ex1.21 ex1.21)
 
 (define (ex1.22)
   (define (timed-prime-test n)
@@ -243,13 +246,13 @@
   ;  (timed-prime-test 11258998397111)
   ;  (timed-prime-test 1125899839733759)
   )
-(ex1.22)
+(link 'ex1.22 ex1.22)
 
 ;;; 
 (define (ex1.23)
   (println "1.23")
   )
-(ex1.23)
+(link 'ex1.23 ex1.23)
 ;;; ex1.24 因为CPU太快，在书上指定范围内已经测量不出性能差别
 ;;;
 
@@ -287,7 +290,7 @@
   (trace expmod-v2)
   (println (expmod-v2 105 11 11))
   )
-(ex1.25)
+(link 'ex1.25 ex1.25)
 
 ;;; 多次重复计算 expmod 导致性能下降
 (define (ex1.26)
@@ -306,7 +309,7 @@
   (trace expmod)
   (expmod 10 100 3)
   )
-;(ex1.26)
+(link 'ex1.26 ex1.26)
 
 (define (ex1.27)
   (define (try-it a n)
@@ -333,7 +336,7 @@
   (println (fermat-test 2821))
   (println (fermat-test 6601))
   )
-(ex1.27)
+(link 'ex1.27 ex1.27)
 
 (define (ex1.28)
   (define (expmod-v1.28 base exp m)
@@ -377,7 +380,7 @@
   (println (miller-rabin-test? 1009 10))
   (println (miller-rabin-test? 100000007 10))
   )
-(ex1.28)
+(link 'ex1.28 ex1.28)
 
 (define (ch1.3.1)
   (define (integral f a b dx)
@@ -386,7 +389,7 @@
       dx))
   (integral square 0 1 0.1)
   )
-(ch1.3.1)
+(link 'ch1.3.1 ch1.3.1)
 
 (define (ex1.29)
   (define (integral f a b dx)
@@ -408,7 +411,7 @@
        (sum g 0 inc n)))
   (println (simpson-rule sin 0 1 1000))
   )
-(ex1.29)
+(link 'ex1.29 ex1.29)
 
 ;;; 将sum的递归形式改成迭代形式
 (define (ex1.30)
@@ -425,7 +428,7 @@
                 inc
                 100))
   )
-(ex1.30)
+(link 'ex1.30 ex1.30)
 
 (define (ex1.31)
   (println (double (product (lambda (x)
@@ -435,7 +438,7 @@
                             (lambda (x) (+ x 2))
                             99)))
   )
-(ex1.31)
+(link 'ex1.31 ex1.31)
 
 (define (ex1.32)
   (define (accumulate-v1 combiner null-value term a next b)
@@ -476,7 +479,7 @@
   (println (sum identity 1 inc 10))
   (println (product identity 1 inc 10))
   )
-(ex1.32)
+(link 'ex1.32 ex1.32)
 
 (define (ex1.33)
   (define (filtered-accumulate combiner null-value term a next b filter)
@@ -501,7 +504,7 @@
 
   (println (sum-gcd 7))
   )
-(ex1.33)
+(link 'ex1.33 ex1.33)
 
 (define (ex1.34)
   (define (f g) (g 2))
@@ -511,7 +514,7 @@
   ;;;
   ;;; (f f) error
   )
-(ex1.34)
+(link 'ex1.34 ex1.34)
 
 (define (average x y)
   (/ (+ x y) 2))
@@ -565,7 +568,7 @@
   (fixed-point (λ (x)
                  (+ 1 (/ 1 x)))
                1.0))
-(ex1.35)
+(link 'ex1.35 ex1.35)
 
 ;;; ex1.36
 (define (ex1.36)
@@ -588,7 +591,7 @@
                     (log x)))
                1.5)
   )
-(ex1.36)
+(link 'ex1.36 ex1.36)
 
 (define (ex1.37)
   (define (cont-frac-v1 n d k)
@@ -601,4 +604,4 @@
                 (lambda (i) 1.0)
                 30)
   )
-(ex1.37)
+(link 'ex1.37 ex1.37)

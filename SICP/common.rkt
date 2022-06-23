@@ -97,3 +97,16 @@
         result
         (iter (next x) (* result (term x)))))
   (iter a 1))
+
+(define exercises '())
+(define (link name proc)
+  (fprintf (current-output-port)
+           "link ~a \n"
+           name)
+  (set! exercises (cons (cons name proc) exercises)))
+(define (run name)
+  (define (lookup name lst)
+    (cond ((null? lst) #f)
+          ((eq? name (car (car lst))) (cdr (car lst)))
+          (else (lookup name (cdr lst)))))
+  ((lookup name exercises)))
