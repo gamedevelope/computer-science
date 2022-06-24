@@ -644,4 +644,25 @@
   (println (tan-cf (/ pi 3) 30)))
 (link 'ex1.39 ex1.39)
 
+(define dx 0.00001)
+(define (deriv g)
+  (λ (x) (/ (- (g (+ x dx)) (g x)) dx)))
+
+(define (newton-transform g)
+  (λ (x) (- x (/ (g x) ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (sqrt-v2 x)
+  (newtons-method
+   (λ (y) (- (square y) x)) 1.0))
+
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+(define (sqrt-v3 x)
+  (fixed-point-of-transform
+   (lambda (y) (- (square y) x)) newton-transform 1.0))
+
 (last-exercise)
