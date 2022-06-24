@@ -110,3 +110,11 @@
           ((eq? name (car (car lst))) (cdr (car lst)))
           (else (lookup name (cdr lst)))))
   ((lookup name exercises)))
+(define (last-exercise)
+  (let [(last (car exercises))]
+    (let [(name (car last))
+          (proc (cdr last))]
+      (fprintf (current-output-port)
+               "* * * ~a * * *\n"
+               name)
+      (proc))))
