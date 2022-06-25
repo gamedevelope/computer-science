@@ -665,4 +665,11 @@
   (fixed-point-of-transform
    (lambda (y) (- (square y) x)) newton-transform 1.0))
 
+(define (ex1.41)
+  (define (double f)
+    (λ (x) (f (f x))))
+  (println ((double inc) 1))
+  (println (((double (double double)) inc) 5)))
+(link 'ex1.41 ex1.41)
+
 (last-exercise)
