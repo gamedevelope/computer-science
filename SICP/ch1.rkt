@@ -665,11 +665,30 @@
   (fixed-point-of-transform
    (lambda (y) (- (square y) x)) newton-transform 1.0))
 
+(define (ex1.40)
+  (define (cubic a b c)
+    (lambda (x)
+      (+ (cube x)
+         (* a (square x))
+         (* b x)
+         c)))
+  (println (newtons-method (cubic 1 2 3) 1))
+  )
+(link 'ex1.40 ex1.40)
+
 (define (ex1.41)
   (define (double f)
     (λ (x) (f (f x))))
   (println ((double inc) 1))
   (println (((double (double double)) inc) 5)))
 (link 'ex1.41 ex1.41)
+
+(define (ex1.42)
+  (define (compose f g)
+    (lambda (x)
+      (f (g x))))
+  (println ((compose square inc) 6))
+  )
+(link 'ex1.42 ex1.42)
 
 (last-exercise)
