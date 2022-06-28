@@ -691,4 +691,19 @@
   )
 (link 'ex1.42 ex1.42)
 
+(define (ex1.43)
+  (define (iter f g n)
+    (if (= 1 n)
+        g
+        (iter f
+              (compose f g)             
+              (dec n))))
+  (define (repeated-v1 f n)
+    (iter f f n))
+  (println ((repeated-v1 square 2) 5))
+  (println ((repeated-v1 square 3) 5))
+  (println ((repeated-v1 square 4) 5))
+  )
+(link 'ex1.43 ex1.43)
+
 (last-exercise)
