@@ -2,6 +2,7 @@
 
 (require "common.rkt")
 (require racket/trace)
+(require plot)
 (require rackunit)
 
 ;;; Exercise 1.3
@@ -705,5 +706,28 @@
   (println ((repeated-v1 square 4) 5))
   )
 (link 'ex1.43 ex1.43)
+
+(define (ex1.44)
+  (define (iter f g n)
+    (if (= 1 n)
+        g
+        (iter f
+              (compose f g)             
+              (dec n))))
+  (define (repeated f n)
+    (iter f f n))
+  
+  (define (smooth f)
+    (λ (x)
+      (/ (+ (f (- x dx))
+            (f x)
+            (f (+ x dx)))
+         3)))
+  (define (repeated-smooth f n)
+    ((repeated smooth n) f))
+  
+  (plot (function (repeated-smooth (λ (x) (* (floor x) x)) 1) (- pi) pi #:label "y = sin(x)"))
+  )
+(link 'ex1.44 ex1.44)
 
 (last-exercise)
