@@ -731,8 +731,21 @@
 (link 'ex1.44 ex1.44)
 
 (define (ex1.45)
-  (define (f x) (* x x x x))
+  (define (f x) (- (* x x x x x) 20000))
   (println (newtons-method f 10000))
   )
 (link 'ex1.45 ex1.45)
+
+(define (ex1.46)
+  (define (iterative-improve good-enough? improve)
+    (λ (x)
+      (if (good-enough? x) x
+          ((iterative-improve good-enough? improve) (improve x)))))
+  (define (sqrt x)
+    ((iterative-improve (λ (y)
+                          (< (abs (- x (square y))) 0.00001))
+                        (λ (y)
+                          (/ (+ y (/ x y)) 2.0))) x))
+  (println (sqrt 2)))
+(link 'ex1.46 ex1.46)
 (last-exercise)
