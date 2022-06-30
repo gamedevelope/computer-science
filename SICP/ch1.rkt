@@ -730,4 +730,9 @@
   )
 (link 'ex1.44 ex1.44)
 
+(define (ex1.45)
+  (define (f x) (* x x x x))
+  (println (newtons-method f 10000))
+  )
+(link 'ex1.45 ex1.45)
 (last-exercise)
