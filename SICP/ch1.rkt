@@ -32,7 +32,7 @@
             (* 2 y))
          3.0))
     (cube-root-iter 1))
-
+  
   (println (cube-root 3))
   (println (cube (cube-root 3)))
 
@@ -595,10 +595,10 @@
 (link 'ex1.36 ex1.36)
 
 (define (cont-frac-v1 n d k)
-    (define (f n d p)
-      (if (>= p k)
-          (/ (n p) (d p))
-          (/ (n p) (+ (d p) (f n d (inc p))))))
+  (define (f n d p)
+    (if (>= p k)
+        (/ (n p) (d p))
+        (/ (n p) (+ (d p) (f n d (inc p))))))
   (f n d 1))
 
 (define (cont-frac-v2 n d k)
