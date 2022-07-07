@@ -181,6 +181,32 @@
      (define p2 (make-interval 3 4))
      (println (add-interval p1 p2)))
    (link 'ex2.7 ex2.7)
+
+   (define (sub-interval x y)
+     (make-interval (- (lower-bound x) (upper-bound y))
+                    (- (upper-bound x) (lower-bound y))))
+
+   ;;; ex2.8
+   (define (ex2.8)
+     (define p1 (make-interval 1 2))
+     (define p2 (make-interval 3 4))
+     (println (sub-interval p1 p2))
+     )
+   (link 'ex2.8 ex2.8)
+
+   ;;; ex2.9
+   (define (ex2.9)
+     ;;; 用中间值与区间宽度表示的区间
+     (define (make-interval-v2 a b)
+       (cons a b))
+     (define (lower-bound p) (- (car p) (cdr p)))
+     (define (upper-bound p) (+ (car p) (cdr p)))
+
+     (define p1 (make-interval-v2 1 2))
+     (define p2 (make-interval-v2 3 4))
+     (println (sub-interval p1 p2))
+     )
+   (link 'ex2.9 ex2.9)
    ))
 
 (last-exercise)
