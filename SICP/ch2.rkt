@@ -207,6 +207,27 @@
      (println (sub-interval p1 p2))
      )
    (link 'ex2.9 ex2.9)
+
+   (define (ex2.10)
+     (define (div-interval x y)
+       (let ((uy (upper-bound y))
+             (ly (lower-bound y)))
+         (if (and (< ly 0)
+                  (> uy 0))
+             (error "Invalid arguments -- div-interval")
+             (mul-interval x
+                           (make-interval (/ 1.0 uy)
+                                          (/ 1.0 ly))))))
+     (println (div-interval (make-interval 1 2)
+                            (make-interval 2 3)))
+     (println (div-interval (make-interval 1 2)
+                            (make-interval -2 3)))
+     )
+   (link 'ex2.10 ex2.10)
+
+   (define (ex2.11)
+     ;;; 根据区间端点正负关系分成9种情况讨论
+     1
    ))
 
 (last-exercise)
