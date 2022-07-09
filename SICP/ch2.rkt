@@ -227,7 +227,30 @@
 
    (define (ex2.11)
      ;;; 根据区间端点正负关系分成9种情况讨论
-     1
+     (define (mul-interval x y)
+       (let ((lx (lower-bound x))
+             (ux (upper-bound x))
+             (ly (lower-bound y))
+             (uy (upper-bound y)))
+         (cond ((< 0 lx)
+                (cond ((< 0 ly) (make-interval (* lx ly) (* ux uy)))
+                      ((< uy 0) (make-interval (* ux ly) (* lx uy)))
+                      (else (make-interval (* ux ly) (* ux uy)))))
+               ((< ux 0)
+                (cond ((< 0 ly) (make-interval (* lx uy) (* ux ly)))
+                      ((< uy 0) (make-interval (* ux uy) (* lx ly)))
+                      (else (make-interval (* lx uy) (* lx ly)))))
+               (else
+                (cond ((< 0 ly) (make-interval (* lx uy) (ux uy)))
+                      ((< uy 0) (make-interval (* ux ly) (* lx ly)))
+                      (else (make-interval (min (* lx uy) (* ux ly))
+                                           (max (* lx ly) (* ux uy)))))))))
+     (define x (make-interval -100 -1))
+     (define y (make-interval -100 -1))
+     (println (mul-interval y x))
+     (println (mul-interval x y))
+     )
+   (link 'ex2.11 ex2.11)
    ))
 
 (last-exercise)
