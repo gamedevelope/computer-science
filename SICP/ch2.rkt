@@ -251,6 +251,57 @@
      (println (mul-interval x y))
      )
    (link 'ex2.11 ex2.11)
+
+   (define (ex2.12&2.13)
+     (define (make-center-width c w)
+       (make-interval (- c w) (+ c w)))
+     (define (center i)
+       (/ (+ (lower-bound i) (upper-bound i)) 2))
+     (define (width i)
+       (/ (- (upper-bound i) (lower-bound i)) 2))
+     
+     (define (make-center-percent c p)
+       (make-center-width c (* c (/ p 100.0))))
+     (define (percent i)
+       (* 100.0 (/ (- (upper-bound i) (lower-bound i))
+                   (+ (upper-bound i) (lower-bound i)))))
+
+     (define i1 (make-center-percent 100 1))
+     (println i1)
+
+     ;;; ex2.13 当误差很小时，两个区间乘积的误差约等于两个区间的误差之和
+     (define i2 (make-center-percent 100 10))
+     (println i2)
+
+     (define i3 (make-center-percent 100 10))
+     (println i3)
+     
+     (println (percent i2))
+     (println (percent i3))
+     (define i4 (mul-interval i2 i3))
+     (println i4)
+     (println (percent i4))
+     )
+   (link 'ex2.12&2.13 ex2.12&2.13)
+
+   ;;; 这道题让我对初中的电阻计算公式认识更深了
+   ;;; 误差范围较小时，两个公式计算结果接近
+   (define (ex2.14)
+     (define (par1 r1 r2)
+       (div-interval (mul-interval r1 r2)
+                     (add-interval r1 r2)))
+     (define (par2 r1 r2)
+       (let ((one (make-interval 1 1)))
+         (div-interval one
+                       (add-interval (div-interval one r1)
+                                     (div-interval one r2)))))
+
+     (define r1 (make-interval 10 20))
+     (define r2 (make-interval 5 10))
+     (println (par1 r1 r2))
+     (println (par2 r1 r2))
+     )
+   (link 'ex2.14 ex2.14)
    ))
 
 (last-exercise)
