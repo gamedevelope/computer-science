@@ -7,5 +7,5 @@
 .#*.scm
 *.bak
 *.rkt~
-
+*.exe
 compiled
