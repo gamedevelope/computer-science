@@ -1,6 +1,7 @@
 #lang racket
 
 (require "common.rkt")
+(require racket/trace)
 
 (define (add-rat x y)
   (make-rat (+ (* (numer x) (denom y))
@@ -302,6 +303,39 @@
      (println (par2 r1 r2))
      )
    (link 'ex2.14 ex2.14)
+
+   (define (ex2.17)
+     (define (last-pair list)
+       (if (null? (cdr list))
+           (cons (car list) '())
+           (last-pair (cdr list))))
+     (println (last-pair (list 23 72 149 34)))
+     (println (last-pair '()))
+     )
+   (link 'ex2.17 ex2.17)
+
+   (define (ex2.18)
+     (define (reverse list)
+       (if (null? list) '()
+           (append (reverse (cdr list))
+                   (cons (car list) '()))))
+     (println (reverse '(1 2 3 4 5)))
+     )
+   (link 'ex2.18 ex2.18)
+
+   (define (ex2.20)
+     (define (same-parity u . list)
+       (if (null? list) (cons u '())
+           (let ((v (car list)))
+             (if (eq? (odd? u) (odd? v))
+                 (cons u (apply same-parity list))
+                 (apply same-parity (cons u (cdr list)))))))
+     (println (same-parity 1))
+     (println (same-parity 1 1 1 1 1 1))
+     (println (same-parity 1 2 3 4 5))
+     (println (same-parity 2 3 4 5 6))
+     )
+   (link 'ex2.20 ex2.20)
    ))
 
 (last-exercise)
