@@ -385,6 +385,16 @@
           (iter items '()))
         (println (square-list '(1 2 3 4)))
         ))
+     ;;; 正确实现迭代版本
+     ((λ ()
+        (define (square-list items)
+          (define (iter things answer)
+            (if (null? things) answer
+                (iter (cdr things)
+                      (append answer (list (square (car things)))))))
+          (iter items '()))
+        (println (square-list '(1 2 3 4)))
+        ))
      )
    (link 'ex2.22 ex2.22)
    ))
