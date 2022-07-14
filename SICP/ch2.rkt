@@ -397,6 +397,16 @@
         ))
      )
    (link 'ex2.22 ex2.22)
+
+   (define (ex2.23)
+     (define (for-each f items)
+       (if (null? items) (void)
+           (begin
+             (f (car items))
+             (for-each f (cdr items)))))
+     (for-each display '(1 2 3 4 5))
+     )
+   (link 'ex2.23 ex2.23)
    ))
 
 (last-exercise)
