@@ -1,6 +1,8 @@
 #lang racket
 
-(require htdp/image)
+;(require htdp/image)
+(require 2htdp/image)
+
 
 (define c1 (rectangle 30 30 'outline (make-color 255 0 0)))
 (define c2 (rectangle 30 30 'outline (make-color 0 0 0)))
@@ -26,3 +28,5 @@
  (line 20 0 (make-color 255 0 0))))
 
 (place-image arrow-r 100 100 s)
+
+;(rotate 90 arrow-r)
