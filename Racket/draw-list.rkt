@@ -22,11 +22,18 @@
 ;(f 100 100 lst s c1)
 
 (define arrow-r (overlay/xy
- (text "   >" 12 (make-color 255 0 0))
- 0
- 10
- (line 20 0 (make-color 255 0 0))))
+                 (line 20 0 (make-color 255 0 0))
+                 20
+                 -5
+                 (rotate 30 (regular-polygon 10 3 "solid" "red"))))
 
-(place-image arrow-r 100 100 s)
+(define arrow-u (rotate 90 arrow-r))
+(define arrow-l (rotate 180 arrow-r))
+(define arrow-d (rotate 270 arrow-r))
+
+(place-image arrow-l 20 20 s)
+(place-image arrow-u 40 40 s)
+(place-image arrow-r 60 60 s)
+(place-image arrow-d 80 80 s)
 
 ;(rotate 90 arrow-r)
