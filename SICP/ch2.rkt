@@ -323,6 +323,49 @@
      )
    (link 'ex2.18 ex2.18)
 
+   (define (ex2.19)
+     (define (count-change amount) (cc amount 5))
+     (define (cc amount kinds-of-coins)
+       (cond ((= amount 0) 1)
+             ((or (< amount 0) (= kinds-of-coins 0)) 0)
+             (else (+ (cc amount
+                          (- kinds-of-coins 1))
+                      (cc (- amount
+                             (first-denomination
+                              kinds-of-coins))
+                          kinds-of-coins)))))
+     (define (first-denomination kinds-of-coins)
+       (cond ((= kinds-of-coins 1) 1)
+             ((= kinds-of-coins 2) 5)
+             ((= kinds-of-coins 3) 10)
+             ((= kinds-of-coins 4) 25)
+             ((= kinds-of-coins 5) 50))
+       )
+     (println (count-change 100))
+     
+     (define us-coins (list 50 25 10 5 1))
+     (define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+     (define (cc-v2 amount coin-values)
+       (cond ((= amount 0) 1)
+             ((or (< amount 0) (no-more? coin-values)) 0)
+             (else
+              (+ (cc-v2 amount
+                        (except-first-denomination coin-values))
+                 (cc-v2 (- amount
+                           (first-denomination-v2 coin-values))
+                        coin-values)))))
+     (define no-more? null?)
+     (define (first-denomination-v2 coin-values)
+       (car coin-values))
+     (define (except-first-denomination coin-values)
+       (cdr coin-values))
+     
+     (println (cc-v2 100 us-coins))
+     (println (cc-v2 10 uk-coins))
+     )
+   (link 'ex2.19 ex2.19)
+   
    (define (ex2.20)
      ((λ ()
        (define (same-parity u . lst)
