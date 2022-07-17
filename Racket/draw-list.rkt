@@ -36,4 +36,12 @@
 (place-image arrow-r 60 60 s)
 (place-image arrow-d 80 80 s)
 
+(image-height (text "10" 18 "black"))
+(image-width (text "AI" 18 "black"))
+
+(overlay/xy
+ (rectangle 30 30 "outline" "blue")
+ 10
+ 6
+ (text "10" 18 "black"))
 ;(rotate 90 arrow-r)
