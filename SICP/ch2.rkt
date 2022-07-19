@@ -487,6 +487,17 @@
      (println (deep-reverse '((1 2) (3 4) 5 6)))
      )
    (link 'ex2.27 ex2.27)
+
+   (define (ex2.28)
+     (define (fringe lst)
+       (cond ((null? lst) '())
+             ((not (pair? lst)) (list lst))
+             (else
+              (append (fringe (car lst))
+                      (fringe (cdr lst))))))
+     (println (fringe '((1 2) (3 4))))
+     )
+   (link 'ex2.28 ex2.28)
    ))
 
 (last-exercise)
