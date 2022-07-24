@@ -368,17 +368,17 @@
    
    (define (ex2.20)
      ((λ ()
-       (define (same-parity u . lst)
-         (cond [(null? lst) (list u)]
-               [(eq? (odd? u) (odd? (car lst)))
-                (cons u (apply same-parity lst))]
-               [else
-                (apply same-parity u (cdr lst))]))
+        (define (same-parity u . lst)
+          (cond [(null? lst) (list u)]
+                [(eq? (odd? u) (odd? (car lst)))
+                 (cons u (apply same-parity lst))]
+                [else
+                 (apply same-parity u (cdr lst))]))
         (println (same-parity 1))
         (println (same-parity 1 1 1 1 1 1))
         (println (same-parity 1 2 3 4 5))
         (println (same-parity 2 3 4 5 6))
-       ))
+        ))
 
      ((λ ()
         (define (same-parity u . list)
@@ -644,6 +644,7 @@
                    0
                    sequence))
      (println (length '(1 2 3 4 5)))
+     (println (length '()))
 
      (define (sum sequence)
        (accumulate (lambda (x y)
@@ -665,6 +666,39 @@
      (println (horner-eval 3 '(1 2 1)))
      )
    (link 'ex2.34 ex2.34)
+
+   (define (ex2.35)
+     ((λ ()
+        (define (count-leaves t)
+          (accumulate (lambda (x y)
+                        (+ y
+                           (if (list? x)
+                               (count-leaves x)
+                               1)))
+                      0
+                      t))
+        (println (count-leaves '()))
+        (println (count-leaves '(1)))
+        (println (count-leaves '(1 (2 3))))
+        (println (count-leaves '(())))
+        ))
+     ((λ ()
+        (define (count-leaves t)
+          (accumulate (lambda (x y)
+                        (+ x y))
+                      0
+                      (map (lambda (x)
+                             (if (list? x)
+                                 (count-leaves x)
+                                 1))
+                           t)))
+        (println (count-leaves '()))
+        (println (count-leaves '(1)))
+        (println (count-leaves '(1 (2 3))))
+        (println (count-leaves '(())))
+        ))
+     )
+   (link 'ex2.35 ex2.35)
    ))
 
-(last-exercise)
+ (last-exercise)
