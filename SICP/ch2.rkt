@@ -633,7 +633,7 @@
                          (cons (p x) y))) '() sequence))
      (println (map inc '(1 2 3 4)))
      (println (map square '(1 2 3 4 5)))
-
+     
      (define (append seq1 seq2)
        (accumulate cons seq2 seq1))
      (println (append '(1 2 3) '(4 5 6)))
@@ -653,6 +653,18 @@
      (println (sum '(1 2 3 4 5 6)))
      )
    (link 'ex2.33 ex2.33)
+
+   (define (ex2.34)
+     (define (horner-eval x coefficient-sequence)
+       (accumulate (lambda (this-coeff higher-terms)
+                     (+ this-coeff
+                        (* x higher-terms)))
+                   0
+                   coefficient-sequence))
+     (println (horner-eval 2 '(1 3 0 5 0 1)))
+     (println (horner-eval 3 '(1 2 1)))
+     )
+   (link 'ex2.34 ex2.34)
    ))
 
 (last-exercise)
