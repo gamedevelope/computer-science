@@ -619,6 +619,40 @@
      (println (subsets '(1 2 3 4)))
      )
    (link 'ex2.32 ex2.32)
+
+   (define (accumulate op initial sequence)
+     (if (null? sequence)
+         initial
+         (op (car sequence)
+             (accumulate op initial (cdr sequence)))))
+   (define (ex2.33)
+     (define (map p sequence)
+       (accumulate (lambda (x y)
+                     (if (null? y)
+                         (list (p x))
+                         (cons (p x) y))) '() sequence))
+     (println (map inc '(1 2 3 4)))
+     (println (map square '(1 2 3 4 5)))
+
+     (define (append seq1 seq2)
+       (accumulate cons seq2 seq1))
+     (println (append '(1 2 3) '(4 5 6)))
+
+     (define (length sequence)
+       (accumulate (lambda (x y)
+                     (+ y 1))
+                   0
+                   sequence))
+     (println (length '(1 2 3 4 5)))
+
+     (define (sum sequence)
+       (accumulate (lambda (x y)
+                     (+ x y))
+                   0
+                   sequence))
+     (println (sum '(1 2 3 4 5 6)))
+     )
+   (link 'ex2.33 ex2.33)
    ))
 
 (last-exercise)
