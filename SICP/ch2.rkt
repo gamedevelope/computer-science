@@ -727,6 +727,29 @@
      (println (matrix-*-matrix m (transpose m)))
      )
    (link 'ex2.37 ex2.37)
+
+   (define (ex2.38)
+     (define fold-right accumulate)
+     (define (fold-left op initial sequence)
+       (define (iter result rest)
+         (if (null? rest)
+             result
+             (iter (op result (car rest))
+                   (cdr rest))))
+       (iter initial sequence))
+     (println (fold-right / 1 (list 1 2 3)))
+     (println (fold-left / 1 (list 1 2 3)))
+
+     (println (fold-right list '() (list 1 2 3)))
+     (println (fold-left list '() (list 1 2 3)))
+
+     (println (fold-right + 1 (list 1 2 3)))
+     (println (fold-left + 1 (list 1 2 3)))
+
+     ;;; 要使fold-left与fold-right结果相同
+     ;;; 必须满足 (op a b)与(op b a)结果一样
+     )
+   (link 'ex2.38 ex2.38)
    ))
 
  (last-exercise)
