@@ -699,10 +699,10 @@
    (link 'ex2.35 ex2.35)
 
    (define (accumulate-n op init seqs)
-       (if (null? (car seqs))
-           '()
-           (cons (accumulate op init (map car seqs))
-                 (accumulate-n op init (map cdr seqs)))))
+     (if (null? (car seqs))
+         '()
+         (cons (accumulate op init (map car seqs))
+               (accumulate-n op init (map cdr seqs)))))
    (define (ex2.36)
      (println (accumulate-n + 0 '((1 2 3) (4 5 6) (7 8 9) (10 11 12))))
      )
@@ -728,15 +728,16 @@
      )
    (link 'ex2.37 ex2.37)
 
+   (define fold-right accumulate)
+   (define (fold-left op initial sequence)
+     (define (iter result rest)
+       (if (null? rest)
+           result
+           (iter (op result (car rest))
+                 (cdr rest))))
+     (iter initial sequence))
+   
    (define (ex2.38)
-     (define fold-right accumulate)
-     (define (fold-left op initial sequence)
-       (define (iter result rest)
-         (if (null? rest)
-             result
-             (iter (op result (car rest))
-                   (cdr rest))))
-       (iter initial sequence))
      (println (fold-right / 1 (list 1 2 3)))
      (println (fold-left / 1 (list 1 2 3)))
 
@@ -750,7 +751,21 @@
      ;;; 必须满足 (op a b)与(op b a)结果一样
      )
    (link 'ex2.38 ex2.38)
+
+   (define (ex2.39)
+     ((λ ()
+        (define (reverse sequence)
+          (fold-right (lambda (x y) (cons x y)) '() sequence))
+        (println (reverse '(1 2 3 4 5)))
+        ))
+     ((λ ()
+        (define (reverse sequence)
+          (fold-left (lambda (x y) (append x (list y))) '() sequence))
+        (println (reverse '(1 2 3 4 5)))
+        ))
+     )
+   (link 'ex2.39 ex2.39)
    ))
 
- (last-exercise)
+(last-exercise)
 
