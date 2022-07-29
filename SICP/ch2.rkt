@@ -765,6 +765,14 @@
         ))
      )
    (link 'ex2.39 ex2.39)
+
+   (define (enumerate-interval n)
+     (accumulate append
+                 '()
+                 (map (lambda (i)
+                        (map (lambda (j) (list i j))
+                             (enumerate-interval 1 (- i 1))))
+                      (enumerate-interval 1 n))))
    ))
 
 (last-exercise)
