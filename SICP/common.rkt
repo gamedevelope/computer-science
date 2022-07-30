@@ -57,6 +57,10 @@
 (define (smallest-divisor n)
   (find-divisor n 2 0))
 
+(define (prime? n)
+  (and (> n 1)
+       (= n (smallest-divisor n))))
+
 (define (find-divisor n test-divisor times)
   (define (next n)
     (if (= n 2) 3
