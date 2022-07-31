@@ -813,6 +813,21 @@
      (println (prime-sum-pairs 5))
      )
    (link 'NestedMappings NestedMappings)
+
+   (define (ex2.40)
+     (define (unique-pairs n)
+       (accumulate append
+                   '()
+                   (map (lambda (i)
+                          (map (lambda (j) (list i j))
+                               (enumerate-interval 1 (- i 1))))
+                        (enumerate-interval 1 n))))
+     (define (prime-sum-pairs n)
+       (filter prime-sum?
+               (unique-pairs n)))
+     (println (prime-sum-pairs 10))
+     )
+   (link 'ex2.40 ex2.40)
    ))
 
 (last-exercise)
