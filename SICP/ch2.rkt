@@ -828,6 +828,27 @@
      (println (prime-sum-pairs 10))
      )
    (link 'ex2.40 ex2.40)
+
+   (define (ex2.41)
+     (define (unique-pairs-3 n)
+       (accumulate append
+                   '()
+                   (map (lambda (i)
+                          (accumulate append
+                                      '()
+                                      (map (lambda (j)
+                                             (map (lambda (k)
+                                                    (list i j k))
+                                                  (enumerate-interval (+ j 1) n)))
+                                           (enumerate-interval (+ i 1) n))))
+                        (enumerate-interval 1 n))))
+     (define (f n s)
+       (filter (lambda (lst)
+                 (= s (apply + lst)))
+               (unique-pairs-3 n)))
+     (println (f 10 20))
+     )
+   (link 'ex2.41 ex2.41)
    ))
 
 (last-exercise)
