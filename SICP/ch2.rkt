@@ -853,6 +853,24 @@
    (link 'ex2.41 ex2.41)
 
    (define (ex2.42)
+     (define empty-board '())
+     (define (in-positions? row col positions)
+       (cond ((null? positions)
+              #f)
+             (else
+              (let ((c (car positions)))
+                (or (= (cdr c) col)
+                    (= (+ (car c) (cdr c))
+                       (+ row col))
+                    (= (+ (car c) (cdr c) 2)
+                       (+ row col))
+                    (in-positions? row col (cdr positions)))))))
+     (define (safe? k positions)
+       (if (null? positions) #t
+           (not (in-positions? k (cdr (car positions)) (cdr positions)))))
+     (define (adjoin-position new-row k rest-of-queens)
+       (cons (cons k new-row)
+             rest-of-queens))
      (define (queens board-size)
        (define (queen-cols k)
          (if (= k 0)
@@ -866,9 +884,9 @@
                       (enumerate-interval 1 board-size)))
                (queen-cols (- k 1))))))
        (queen-cols board-size))
+     (println (queens 6))
      )
    (link 'ex2.42 ex2.42)
    ))
 
 (last-exercise)
-
