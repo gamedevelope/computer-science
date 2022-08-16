@@ -1124,6 +1124,10 @@
          (lambda (frame)
            (paint-left frame)
            (paint-right frame)))))
+   (define (ex2.50)
+     (define (flip-horiz painter)
+       (transform-painter painter
+                          '())))
    '()
    ))
 
