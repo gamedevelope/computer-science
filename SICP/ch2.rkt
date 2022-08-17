@@ -195,7 +195,7 @@
      (println (sub-interval p1 p2))
      )
    (link 'ex2.8 ex2.8)
-
+   
    ;;; ex2.9
    (define (ex2.9)
      ;;; 用中间值与区间宽度表示的区间
@@ -203,7 +203,7 @@
        (cons a b))
      (define (lower-bound p) (- (car p) (cdr p)))
      (define (upper-bound p) (+ (car p) (cdr p)))
-
+     
      (define p1 (make-interval-v2 1 2))
      (define p2 (make-interval-v2 3 4))
      (println (sub-interval p1 p2))
@@ -314,7 +314,7 @@
      (println (last-pair '()))
      )
    (link 'ex2.17 ex2.17)
-
+   
    (define (ex2.18)
      (define (reverse list)
        (if (null? list) '()
@@ -1020,6 +1020,9 @@
      (cadr frame))
    (define (edge2-frame frame)
      (caddr frame))
+   (println ((frame-coord-map (make-frame (make-vect 1 1)
+                                          (make-vect 1 0.5)
+                                          (make-vect 0 1))) (make-vect 3 3)))
    (define (ex2.47)
      ;;; 需要实现 origin-grame, edge1-frame edge2-frame
      ;;; 三个方法
@@ -1127,8 +1130,43 @@
    (define (ex2.50)
      (define (flip-horiz painter)
        (transform-painter painter
-                          '())))
-   '()
+                          '()))
+     '())
+   (define (ex2.53)
+     (println (list 'a 'b 'c))
+     (println (list (list 'george)))
+     (println (cdr '((x1 x2) (y1 y2))))
+     (println (cadr '((x1 x2) (y1 y2))))
+     (println (pair? (car '(a short list))))
+     (define (memq item x)
+       (cond ((null? x) false)
+             ((eq? item (car x)) x)
+             (else (memq item (cdr x)))))
+     (println (memq 'red '((red shoes) (blue socks))))
+     (println (memq 'red '(red shoes blue socks)))
+     )
+   (link 'ex2.53 ex2.53)
+   
+   (define (ex2.54)
+     (define (equal? l1 l2)
+       (cond ((empty? l1) (empty? l2))
+             ((empty? l2) (empty? l1))
+             (else
+              (let ((e1 (car l1))
+                    (e2 (car l2)))
+                (cond ((eq? e1 e2)
+                       (equal? (cdr l1) (cdr l2)))
+                      (else
+                       (and (pair? e1)
+                            (pair? e2)
+                            (equal? e1 e2)
+                            (equal? (cdr l1) (cdr l2)))))))))
+     (println (equal? '(1 2 3) '(1 2 3)))
+     (println (equal? '(1 2 3) '(1 2 4)))
+     (println (equal? '((1) (2) (3)) '(1 2 4)))
+     (println (equal? '((1) (2) (3)) '((1) (2) (3))))
+     )
+   (link 'ex2.54 ex2.54)
    ))
 
 (last-exercise)
