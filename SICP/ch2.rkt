@@ -1252,6 +1252,26 @@
      (println (deriv '(** x n) 'x))
      )
    (link 'ex2.56 ex2.56)
+   (define (ex2.57)
+     ;;; 扩充求导程序，使之支持多个多个项的和与积
+     (define (deriv exp var)
+       (cond ((number? exp) 0)
+             ((variable? exp)
+              (if (same-variable? exp var) 1 0))
+             ((sum? exp)
+              (make-sum (deriv (addend exp) var)
+                        (deriv (augend exp) var)))
+             ((product? exp)
+              (make-sum
+               (make-product (multiplier exp)
+                             (deriv (multiplicand exp) var))
+               (make-product (deriv (multiplier exp) var)
+                             (multiplicand exp))))
+             (else
+              (error "unknown expression type -- DERIV" exp))))
+     '()
+     )
+   (link 'ex2.57 ex2.57)
    ))
 
 (last-exercise)
