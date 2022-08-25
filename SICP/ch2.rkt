@@ -1254,6 +1254,17 @@
    (link 'ex2.56 ex2.56)
    (define (ex2.57)
      ;;; 扩充求导程序，使之支持多个多个项的和与积
+     (define (addend s) (cadr s))
+     (define (augend s) 
+       (if (null? (cdddr s))
+           (caddr s)
+           (cons '+ (cddr s))))
+     (define (multiplier p) (cadr p))
+     (define (multiplicand p)
+       (if (null? (cdddr p))
+           (caddr p)
+           (cons '+ (cddr p))))
+     
      (define (deriv exp var)
        (cond ((number? exp) 0)
              ((variable? exp)
@@ -1269,10 +1280,10 @@
                              (multiplicand exp))))
              (else
               (error "unknown expression type -- DERIV" exp))))
-     '()
+     (println (deriv '(+ x (* 2 x) (* a x) (* b x) (* c x)) 'x))
+     (println (deriv '(* x (* 2 x) (* a x) (* b x) (* c x)) 'x))
      )
    (link 'ex2.57 ex2.57)
    ))
 
 (last-exercise)
-
