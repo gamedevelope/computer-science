@@ -1306,6 +1306,7 @@
      )
    (link 'ex2.57 ex2.57)
    (define (ex2.58)
+     ;;; a
      ;;; 扩充求导程序，使之支持多个多个项的和与积
      (define (addend s) (car s))
      (define (augend s)
@@ -1355,7 +1356,10 @@
                              (multiplicand exp))))
              (else
               (error "unknown expression type -- DERIV" exp))))
-     (println (deriv '(x * (3 * x)) 'x))
+     (println (deriv '(3 * (x * x)) 'x))
+     ;     (println (deriv '(x + x + x) 'x))
+     ;;; b
+     ;;; 支持标准的代数写法
      )
    (link 'ex2.58 ex2.58)
    ))
