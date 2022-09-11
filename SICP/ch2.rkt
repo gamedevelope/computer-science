@@ -1534,6 +1534,9 @@
        ;;; a 取一半建立树
        )
      (link 'ex2.64 ex2.64)
+     (define (ex2.65)
+       '())
+     (link 'ex2.65 ex2.65)
      )
    (link 'sets-as-binary-tree sets-as-binary-tree)
    ))
