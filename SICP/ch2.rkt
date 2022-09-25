@@ -1725,7 +1725,29 @@
        (println (length (encode '(SHA BOOM) tree)))
        ;;; 采用定长编码需要93个二进制位
        )
-     (link 'ex2.70 ex2.70)                          
+     (link 'ex2.70 ex2.70)
+
+     (define (ex2.71)
+       ;;; 最频繁出现的1个二进制位
+       ;;; 最不频繁的n个二进制位
+       (define tree (generate-huffman-tree '(
+                                             (A 1)
+                                             (B 2)
+                                             (C 4)
+                                             (D 8)
+                                             (E 16)
+                                             (F 32)
+                                             (G 64))))
+       (println tree)
+       (println (encode-symbol 'A tree))
+       (println (encode-symbol 'B tree))
+       (println (encode-symbol 'C tree))
+       (println (encode-symbol 'D tree))
+       (println (encode-symbol 'E tree))
+       (println (encode-symbol 'F tree))
+       (println (encode-symbol 'G tree))
+       )
+     (link 'ex2.71 ex2.71)
      )
    (link 'generating-huffman-trees generating-huffman-trees)
    ))
