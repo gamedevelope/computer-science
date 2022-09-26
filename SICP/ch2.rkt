@@ -1748,6 +1748,12 @@
        (println (encode-symbol 'G tree))
        )
      (link 'ex2.71 ex2.71)
+
+     (define (ex2.72)
+       ;;;
+       '()
+       )
+     (link 'ex2.72 ex2.72)
      )
    (link 'generating-huffman-trees generating-huffman-trees)
    ))
