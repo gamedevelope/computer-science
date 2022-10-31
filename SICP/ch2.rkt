@@ -1940,5 +1940,6 @@
                 (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
        dispatch)
      '())
+   (link 'ex2.75 ex2.75)
    ))
 (last-exercise)
