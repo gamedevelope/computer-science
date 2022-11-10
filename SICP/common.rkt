@@ -23,6 +23,42 @@
 (define (dec x)
   (- x 1))
 
+(define store '())
+(define (put k1 k2 f)
+  (set! store (cons (list k1 k2 f) store)))
+(define (get k1 k2)
+  (define (query-method k1 k2 store)
+    (if (null? store)
+        false
+        (let ((kv (car store)))
+          (if (and (equal? k1 (car kv))
+                   (equal? k2 (cadr kv)))
+              (caddr kv)
+              (query-method k1 k2 (cdr store))))))
+  (query-method k1 k2 store))
+
+(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+          (error
+           "No method for these types -- APPLY-GENERIC"
+           (list op type-tags))))))
+
+(define (attach-tag type-tag contents)
+       (cons type-tag contents))
+
+(define (type-tag datum)
+  (if (pair? datum)
+      (car datum)
+      (error "Bad tagged datum -- TYPE-TAG" datum)))
+
+(define (contents datum)
+  (if (pair? datum)
+      (cdr datum)
+      (error "Bad tagged datum -- CONTENTS" datum)))
+
 (define (lambda-cost f)
   (define t1 (current-inexact-milliseconds))
   (define v (f))

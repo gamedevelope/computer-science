@@ -4,19 +4,7 @@
 (require racket/trace)
 (require sicp-pict)
 
-(define store '())
-(define (put k1 k2 f)
-  (set! store (cons (list k1 k2 f) store)))
-(define (get k1 k2)
-  (define (query-method k1 k2 store)
-    (if (null? store)
-        false
-        (let ((kv (car store)))
-          (if (and (equal? k1 (car kv))
-                   (equal? k2 (cadr kv)))
-              (caddr kv)
-              (query-method k1 k2 (cdr store))))))
-  (query-method k1 k2 store))
+
 
 (define (add-rat x y)
   (make-rat (+ (* (numer x) (denom y))
@@ -1858,14 +1846,6 @@
        (put 'make-from-mag-ang 'polar
             (lambda (x y) (tag (make-from-mag-ang x y))))
        'done)
-     (define (apply-generic op . args)
-       (let ((type-tags (map type-tag args)))
-         (let ((proc (get op type-tags)))
-           (if proc
-               (apply proc (map contents args))
-               (error
-                "No method for these types -- APPLY-GENERIC"
-                (list op type-tags))))))
      
      (install-rectangular-package)
      (define (make-from-real-imag x y)
@@ -1952,7 +1932,7 @@
          (attach-tag 'scheme-number x))
        (put 'add '(scheme-number scheme-number)
             (lambda (x y) (tag (+ x y))))
-       (pub 'sub '(scheme-number scheme-number)
+       (put 'sub '(scheme-number scheme-number)
             (lambda (x y) (tag (- x y))))
        (put 'mul '(scheme-number scheme-number)
             (lambda (x y) (tag (* x y))))
@@ -1968,8 +1948,8 @@
        (define (numer x) (car x))
        (define (denom x) (cdr x))
        (define (make-ret n d)
-         (let ((g (gcd n d))
-               (cons (/ n g) (/ d g)))))
+         (let ((g (gcd n d)))
+           (cons (/ n g) (/ d g))))
        (define (add-rat x y)
          (make-rat (+ (* (numer x) (denom y))
                       (* (numer y) (denom x)))
@@ -1997,6 +1977,7 @@
        (put 'make 'rational
             (lambda (n d) (tag (make-rat n d))))
        'done)
+     '()
      )
    (ch2.5.1)
    ))
