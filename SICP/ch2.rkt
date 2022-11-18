@@ -2010,7 +2010,13 @@
        (put 'make-from-mag-ang 'complex
             (lambda (r a) (tag (make-from-mag-ang r a))))
        'done)
-     '())
-   '()
+     (define (make-complex-from-real-imag x y)
+       ((get 'make-from-real-imag 'complex) x y))
+     (define (make-complex-from-mag-ang r a)
+       ((get 'make-from-mag-ang 'complex) r a))
+     (install-complex-package)
+     
+     )
+   (link 'ch2.5.1 ch2.5.1)
    ))
 (last-exercise)
