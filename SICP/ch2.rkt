@@ -1926,7 +1926,7 @@
      (define (sub x y) (apply-generic 'sub x y))
      (define (mul x y) (apply-generic 'mul x y))
      (define (div x y) (apply-generic 'div x y))
-
+     
      (define (install-scheme-number-package)
        (define (tag x)
          (attach-tag 'scheme-number x))
@@ -1941,9 +1941,9 @@
        (put 'make 'scheme-number
             (lambda (x) (tag x)))
        'done)
-     (define (make-scheme-number n)
-       ((get 'make 'scheme-number) n))
-     (echo (make-scheme-number 100))
+     ;     (define (make-scheme-number n)
+     ;       ((get 'make 'scheme-number) n))
+     ;     (echo (make-scheme-number 100))
      (define (install-rational-package)
        (define (numer x) (car x))
        (define (denom x) (cdr x))
@@ -2010,12 +2010,13 @@
        (put 'make-from-mag-ang 'complex
             (lambda (r a) (tag (make-from-mag-ang r a))))
        'done)
+     (install-complex-package)
+     (run 'representations-for-complex-numbers)
      (define (make-complex-from-real-imag x y)
        ((get 'make-from-real-imag 'complex) x y))
-     (define (make-complex-from-mag-ang r a)
-       ((get 'make-from-mag-ang 'complex) r a))
-     (install-complex-package)
-     
+;     (define (make-complex-from-mag-ang r a)
+;       ((get 'make-from-mag-ang 'complex) r a))
+     (println (make-complex-from-real-imag 10 10))
      )
    (link 'ch2.5.1 ch2.5.1)
    ))
