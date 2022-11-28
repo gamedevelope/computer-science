@@ -2026,7 +2026,14 @@
        (define z (make-complex-from-real-imag 10 10))
        (magnitude z))
      (link 'ex2.77 ex2.77)
+
+     (define (ex2.78)
+       (define (equ? n1 n2)
+         '())
+;         ((get '
+       '())
+     (link 'ex2.78 ex2.78)
      )
    (link 'ch2.5.1 ch2.5.1)
-     ))
+   ))
 (last-exercise)
