@@ -2029,8 +2029,9 @@
 
      (define (ex2.78)
        (define (equ? n1 n2)
+         (println 'equ?)
          '())
-;         ((get '
+;         ((get 'equ? 
        '())
      (link 'ex2.78 ex2.78)
      )
