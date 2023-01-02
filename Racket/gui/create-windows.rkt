@@ -21,7 +21,7 @@
                    [parent frame]
                    [color (make-color 127 0 0)]
                    [label "No events so far..."]))
-   
+  
   ; Make a button in the frame
   (new button% [parent frame]
        [label "Click Me"]
