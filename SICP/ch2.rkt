@@ -2013,6 +2013,12 @@
        (put 'imag-part '(complex) imag-part)
        (put 'magnitude '(complex) magnitude)
        (put 'angle '(complex) angle)
+       (put 'equ? '(complex complex)
+            (lambda (z1 z2)
+              (and (= (real-part z1)
+                      (real-part z2))
+                   (= (imag-part z1)
+                      (imag-part z2)))))
        'done)
      
      (install-complex-package)
