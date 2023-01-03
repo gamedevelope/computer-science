@@ -1930,6 +1930,7 @@
      (define (install-scheme-number-package)
        (define (tag x)
          (attach-tag 'scheme-number x))
+       (put 'add '(number number) +)
        (put 'add '(scheme-number scheme-number)
             (lambda (x y) (tag (+ x y))))
        (put 'sub '(scheme-number scheme-number)
@@ -1941,8 +1942,7 @@
        (put 'make 'scheme-number
             (lambda (x) (tag x)))
        'done)
-     ;     (define (make-scheme-number n)
-     ;       ((get 'make 'scheme-number) n))
+     
      ;     (echo (make-scheme-number 100))
      (define (install-rational-package)
        (define (numer x) (car x))
@@ -2034,11 +2034,13 @@
      (link 'ex2.77 ex2.77)
 
      (define (ex2.78)
-       (define (equ? n1 n2)
-         (println 'equ?)
-         '())
-;         ((get 'equ? 
-       '())
+       (install-scheme-number-package)
+       (define (make-scheme-number n)
+         ((get 'make 'scheme-number) n))
+       (define n1 (make-scheme-number 100))
+       (define n2 (make-scheme-number 200))
+       (println (add 1 2))
+       (println (add 1 2)))
      (link 'ex2.78 ex2.78)
      )
    (link 'ch2.5.1 ch2.5.1)
